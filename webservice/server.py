@@ -1,8 +1,8 @@
 # Run `pip install flask flask-cors` first!
 from flask import Flask, request
 from flask_cors import CORS
-from threading import Lock
-from helpers import set_ecu_solenoid
+from threading import Lock, Thread
+from helpers import set_ecu_solenoid, set_gse_solenoid
 rocket_lock = Lock()
 gse_lock = Lock()
 
@@ -24,6 +24,7 @@ CORS(app)
 
 @app.route("/<system_name>/state", methods = ["GET"])
 def get_state(system_name):
+    '''Used by the GUI to get the current state of the given system'''
     if system_name == "ecu":
         with rocket_lock:
             return rocket_state
@@ -34,6 +35,7 @@ def get_state(system_name):
 
 @app.route("/<system_name>/state", methods=["POST"])
 def update_current_state(system_name):
+    '''Used by the rocket and GSE to update their state'''
     global rocket_state, gse_state
     if system_name == "ecu":
         with rocket_lock:
@@ -42,20 +44,24 @@ def update_current_state(system_name):
         # Send new state to database
         return rocket_state
     elif system_name == "gse":
-        pass
+        with gse_lock:
+            for key in request.json:
+                gse_state[key] = request.json[key]
+        # Send new state to database
+        return gse_state
 
-    pass
 
 @app.route("/<system_name>/solenoid/<solenoid_name>/<new_state>", methods = ["POST"])
 def set_solenoid(system_name, solenoid_name, new_state):
+    '''Used by the GUI to set a solenoid'''
     if system_name == "ecu":
-        ret = set_ecu_solenoid(solenoid_name, new_state)
-        if not ret:
-            return {"error": "Comms failure"}
+        t = Thread(target=set_ecu_solenoid, args=(solenoid_name, new_state)) # send some fake ecu new states
+        t.start()
         return {}
     elif system_name == "gse":
-        #send message to gse
-        #update state
+        t = Thread(target=set_gse_solenoid, args=(solenoid_name, new_state)) # send some fake ecu new states
+        t.start()
+        return {}
         pass
     return {"error": "No system"}
     
