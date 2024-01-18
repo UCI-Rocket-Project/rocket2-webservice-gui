@@ -7,8 +7,7 @@ $ cd webservice
 $ python server.py
 ```
 
-
-## Webservice Endpoints
+Webservice Endpoints:
 
 ### Get Webservice State
 Reads the launch vehicle / ground system state on the web service.
