@@ -15,12 +15,12 @@ export function SolenoidPage() {
         <div>
             <h2>Solenoids:</h2>
             <div>
-                {Object.entries(solenoids).map(([solenoidName, solenoidState]) => (
+                {Object.entries(solenoids).map(([solenoidName, solenoidStatus]) => (
                     <button
                         key={solenoidName}
-                        onClick={() => handleToggleSolenoid(solenoidName, !solenoidState)}
+                        onClick={() => handleToggleSolenoid(solenoidName, !solenoidStatus["expected"])}
                     >
-                        {solenoidName} {solenoidState ? "ON" : "OFF"}
+                        {solenoidName} {solenoidStatus["expected"] ? "ON" : "OFF"}
                     </button>
                 ))}
             </div>

@@ -12,7 +12,13 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
         let solenoids = {};
         for (const key in rocketState) {
             if (key.includes("solenoid")) {
-                solenoids[key] = rocketState[key];
+                // Keys are solenoid_feedback_name or solenoid_expected_name
+                console.log(key);
+                let split_key = key.split("_");
+                if (!Object.keys(solenoids).includes(split_key[2])) {
+                    solenoids[split_key[2]] = {};
+                }
+                solenoids[split_key[2]][split_key[1]] = rocketState[key];
             }
         }
         dispatch(setSolenoids(solenoids));
@@ -39,7 +45,7 @@ export const rocketSlice = createSlice({
     reducers: {
         toggleSolenoid: (state, action) => {
             const solenoidName = action.payload;
-            state.solenoids[solenoidName] = !state.solenoids[solenoidName];
+            state.solenoids[solenoidName]["expected"] = !state.solenoids[solenoidName]["expected"];
             console.log("state updated");
         },
         setSolenoids: (state, action) => {

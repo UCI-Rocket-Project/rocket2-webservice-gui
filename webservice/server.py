@@ -7,7 +7,14 @@ from helpers import set_ecu_solenoid, set_gse_solenoid
 rocket_lock = Lock()
 gse_lock = Lock()
 
-rocket_state = {"solenoidLox": 0, "solenoidLng": 0, "solenoidHe": 0, "solenoidMvas": 0}
+rocket_state = {
+    "solenoid_feedback_lox": 0.0,
+    "solenoid_expected_lox": 0,
+    "solenoid_feedback_lng": 0.0,
+    "solenoid_expected_lng": 0,
+    "solenoid_feedback_he": 0.0,
+    "solenoid_expected_he": 0,
+}
 
 gse_state = {
     "solenoidLox": 0,
@@ -51,14 +58,17 @@ def update_current_state(system_name):
 
 @app.route("/<system_name>/solenoid/<solenoid_name>/<new_state>", methods=["POST"])
 def set_solenoid(system_name, solenoid_name, new_state):
-    """Used by the GUI to set a solenoid"""
+    """Used by the GUI to set a solenoid
+    Solenoid_name: just the name of the solenoid (EX: lox(NOT solenoid_expected_lox))"""
     if system_name == "ecu":
+        rocket_state["solenoid_expected_" + solenoid_name] = int(new_state)
         t = Thread(
             target=set_ecu_solenoid, args=(solenoid_name, int(new_state))
         )  # send some fake ecu new states
         t.start()
         return {}
     elif system_name == "gse":
+        rocket_state["gse_expected_" + solenoid_name] = int(new_state)
         t = Thread(
             target=set_gse_solenoid, args=(solenoid_name, int(new_state))
         )  # send some fake ecu new states
