@@ -14,6 +14,8 @@ rocket_state = {
     "solenoid_expected_lng": 0,
     "solenoid_feedback_he": 0.0,
     "solenoid_expected_he": 0,
+    "pt_lox": 50,
+    "pt_lng": 75,
 }
 
 gse_state = {

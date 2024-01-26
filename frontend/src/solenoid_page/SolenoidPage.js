@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import {selectSolenoids, setRocketSolenoid, toggleSolenoid} from "../redux/rocketSlice";
 import styles from "./SolenoidPage.module.css";
-
 export function SolenoidPage() {
     const solenoids = useSelector(selectSolenoids);
     const dispatch = useDispatch();

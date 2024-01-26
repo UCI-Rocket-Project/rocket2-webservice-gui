@@ -4,7 +4,9 @@ import {Provider} from "react-redux";
 import {store} from "./redux/store";
 import App from "./App";
 import "./index.css";
+import "./globalStyles.css";
 import {SolenoidPage} from "./solenoid_page/SolenoidPage";
+import {SensorPage} from "./sensor_page/SensorPage";
 import {fetchRocketState} from "./redux/rocketSlice";
 
 const container = document.getElementById("root");
@@ -27,7 +29,7 @@ setInterval(fetchAndDispatchRocketState, 1000);
 root.render(
     <React.StrictMode>
         <Provider store={store}>
-            <SolenoidPage />
+            <SensorPage />
             <App />
         </Provider>
     </React.StrictMode>
