@@ -8,20 +8,30 @@ rocket_lock = Lock()
 gse_lock = Lock()
 
 rocket_state = {
-    "solenoid_feedback_lox": 0.0,
-    "solenoid_expected_lox": 0,
-    "solenoid_feedback_lng": 0.0,
-    "solenoid_expected_lng": 0,
-    "solenoid_feedback_he": 0.0,
-    "solenoid_expected_he": 0,
-    "pt_lox": 50,
-    "pt_lng": 75,
+    "timestamp": 0,
+    "solenoidCurrentGn2Vent": 0,
+    "solenoidCurrentPv1": 0,
+    "solenoidCurrentPv2": 0,
+    "solenoidCurrentVent": 0,
+    "temperatureGn2": 0,
+    "pressureGn2": 0,
+    "pressureLox": 0,
+    "pressureLng": 0,
 }
 
 gse_state = {
-    "solenoidLox": 0,
-    "solenoidLng": 0,
-    "solenoidHe": 0,
+    "solenoidCurrentGn2Fill": 0,
+    "solenoidCurrentGn2Vent": 0,
+    "solenoidCurrentMvasFill": 0,
+    "solenoidCurrentMvasVent": 0,
+    "solenoidCurrentMvas": 0,
+    "solenoidCurrentLoxFill": 0,
+    "solenoidCurrentLoxVent": 0,
+    "solenoidCurrentLngFill": 0,
+    "solenoidCurrentLngVent": 0,
+    "temperatureLox": 0,
+    "temperatureLng": 0,
+    "pressureGn2": 0,
 }
 
 app = Flask(__name__)
