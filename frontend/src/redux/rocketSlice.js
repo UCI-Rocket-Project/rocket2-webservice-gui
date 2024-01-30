@@ -22,9 +22,9 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
                 }
                 solenoids[split_key[2]][split_key[1]] = rocketState[key];
             }
-            if (key.includes("pt")) {
-                let split_key = key.split("_");
-                pts[split_key[1]] = rocketState[key];
+            if (key.includes("pressure")) {
+                let key_name = key.substring(8, key.length);
+                pts[key_name] = rocketState[key];
             }
         }
         dispatch(setPts(pts));

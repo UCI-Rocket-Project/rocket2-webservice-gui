@@ -20,6 +20,7 @@ rocket_state = {
 }
 
 gse_state = {
+    "timestamp": 0,
     "solenoidCurrentGn2Fill": 0,
     "solenoidCurrentGn2Vent": 0,
     "solenoidCurrentMvasFill": 0,
