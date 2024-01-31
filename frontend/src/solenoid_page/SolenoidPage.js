@@ -5,7 +5,7 @@ import Switch from '@mui/material/Switch';
 import { StatusIndicator } from '@zendeskgarden/react-avatars';
 import styles from "./SolenoidPage.module.css";
 
-export default function SolenoidPage() {
+export function SolenoidPage() {
     const solenoids = useSelector(selectSolenoids);
     const dispatch = useDispatch();
 
