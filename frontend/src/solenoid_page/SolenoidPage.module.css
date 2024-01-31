@@ -1,3 +1,31 @@
+.subtitles {
+    display: flex;
+    flex-direction: row;
+}
+
+.specific_subtitles {
+    margin-left: 10px;
+    margin-bottom: -15px;
+}
+
+
+.switches {
+    transform: rotate(-90deg);
+    margin-left: 42px;
+}
+
+.statuses {
+    display: inline-flex;
+    padding-left: 25px;
+    flex-direction: column;
+}
+
+.together {
+    display: flex;
+    /* align-items: baseline; */
+    margin: 30px;
+}
+
 .row {
     display: flex;
     align-items: center;
