@@ -74,14 +74,14 @@ def set_solenoid(system_name, solenoid_name, new_state):
     """Used by the GUI to set a solenoid
     Solenoid_name: just the name of the solenoid (EX: lox(NOT solenoid_expected_lox))"""
     if system_name == "ecu":
-        rocket_state["solenoid_expected_" + solenoid_name] = int(new_state)
+        rocket_state["solenoidExpected" + solenoid_name] = int(new_state)
         t = Thread(
             target=set_ecu_solenoid, args=(solenoid_name, int(new_state))
         )  # send some fake ecu new states
         t.start()
         return {}
     elif system_name == "gse":
-        rocket_state["gse_expected_" + solenoid_name] = int(new_state)
+        rocket_state["solenoidExpected" + solenoid_name] = int(new_state)
         t = Thread(
             target=set_gse_solenoid, args=(solenoid_name, int(new_state))
         )  # send some fake ecu new states
