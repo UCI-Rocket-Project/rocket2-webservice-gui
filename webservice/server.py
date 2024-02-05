@@ -4,10 +4,10 @@ from flask_cors import CORS
 from threading import Lock, Thread
 from helpers import set_ecu_solenoid, set_gse_solenoid
 
-rocket_lock = Lock()
+ecu_lock = Lock()
 gse_lock = Lock()
 
-rocket_state = {
+ecu_state = {
     "timestamp": 0,
     "solenoidCurrentGn2Vent": 0,
     "solenoidCurrentPv1": 0,
@@ -43,8 +43,8 @@ CORS(app)
 def get_state(system_name):
     """Used by the GUI to get the current state of the given system"""
     if system_name == "ecu":
-        with rocket_lock:
-            return rocket_state
+        with ecu_lock:
+            return ecu_state
     elif system_name == "gse":
         with gse_lock:
             return gse_state
@@ -53,14 +53,14 @@ def get_state(system_name):
 
 @app.route("/<system_name>/state", methods=["POST"])
 def update_current_state(system_name):
-    """Used by the rocket and GSE to update their state"""
-    global rocket_state, gse_state
+    """Used by the ecu and GSE to update their state"""
+    global ecu_state, gse_state
     if system_name == "ecu":
-        with rocket_lock:
+        with ecu_lock:
             for key in request.json:
-                rocket_state[key] = request.json[key]
+                ecu_state[key] = request.json[key]
         # Send new state to database
-        return rocket_state
+        return ecu_state
     elif system_name == "gse":
         with gse_lock:
             for key in request.json:
@@ -74,17 +74,13 @@ def set_solenoid(system_name, solenoid_name, new_state):
     """Used by the GUI to set a solenoid
     Solenoid_name: just the name of the solenoid (EX: lox(NOT solenoid_expected_lox))"""
     if system_name == "ecu":
-        rocket_state["solenoidExpected" + solenoid_name] = int(new_state)
-        t = Thread(
-            target=set_ecu_solenoid, args=(solenoid_name, int(new_state))
-        )  # send some fake ecu new states
+        ecu_state["solenoidExpected" + solenoid_name] = int(new_state)
+        t = Thread(target=set_ecu_solenoid, args=(solenoid_name, int(new_state)))
         t.start()
         return {}
     elif system_name == "gse":
-        rocket_state["solenoidExpected" + solenoid_name] = int(new_state)
-        t = Thread(
-            target=set_gse_solenoid, args=(solenoid_name, int(new_state))
-        )  # send some fake ecu new states
+        gse_state["solenoidExpected" + solenoid_name] = int(new_state)
+        t = Thread(target=set_gse_solenoid, args=(solenoid_name, int(new_state)))
         t.start()
         return {}
     return {"error": "No system"}
