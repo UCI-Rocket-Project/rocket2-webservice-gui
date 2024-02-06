@@ -8,6 +8,7 @@ import "./globalStyles.css";
 import {SolenoidPage} from "./solenoid_page/SolenoidPage";
 import {SensorPage} from "./sensor_page/SensorPage";
 import {fetchRocketState} from "./redux/rocketSlice";
+import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -38,6 +39,10 @@ root.render(
                     <Route
                         path="/sensors"
                         element={<SensorPage />}
+                    />
+                    <Route
+                        path="/telemetry"
+                        element={<TelemetryPage />}
                     />
                 </Routes>
             </Router>
