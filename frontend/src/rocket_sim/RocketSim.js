@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OBJLoader} from "three/addons/loaders/OBJLoader";
 
 const RocketSim = () => {
-    let scene, camera, renderer, rocketModel, hemisphereLight;
+    let scene, camera, renderer, rocketModel, hemisphereLight, ground;
 
     const loader = new OBJLoader();
 
@@ -38,7 +38,7 @@ const RocketSim = () => {
 
                 // Shrink the rocket model
                 rocketModel.scale.set(0.1, 0.1, 0.1); // Adjust the scale as needed
-
+                rocketModel.position.y = 2;
                 scene.add(rocketModel);
             },
             function (xhr) {
@@ -53,8 +53,24 @@ const RocketSim = () => {
         hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
         scene.add(hemisphereLight);
 
+        // Create ground
+        const textureLoader = new THREE.TextureLoader();
+        const groundTexture = textureLoader.load("dirt.jpg"); // Replace with your texture path
+
+        const groundGeometry = new THREE.PlaneGeometry(1000, 1000); // Adjust size as needed
+        const groundMaterial = new THREE.MeshStandardMaterial({
+            map: groundTexture,
+            color: 0xaaaaaa,
+            roughness: 1
+        });
+        ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2; // Rotate the ground to be horizontal
+        scene.add(ground);
+
         // Set camera position
-        camera.position.z = 5;
+        // Set camera position
+        camera.position.set(0, 5, 0);
+        camera.lookAt(scene.position);
 
         // Animation function
         const animate = () => {
@@ -64,10 +80,14 @@ const RocketSim = () => {
 
             // Update camera rotation
             const time = performance.now() * 0.001; // Convert milliseconds to seconds
-            const rotationSpeed = 1; // Degrees per second
-            camera.position.x = 5 * Math.cos(time * rotationSpeed);
-            camera.position.z = 5 * Math.sin(time * rotationSpeed);
-            camera.lookAt(scene.position);
+            const rotationSpeed = 0.1; // Degrees per second
+            if (rocketModel) {
+                rocketModel.position.y = rocketModel.position.y + 0.1;
+                camera.position.x = 8 * Math.cos(time * rotationSpeed);
+                camera.position.z = 8 * Math.sin(time * rotationSpeed);
+                camera.position.y = rocketModel.position.y + 5;
+                camera.lookAt(rocketModel.position);
+            }
 
             // Render the scene
             renderer.render(scene, camera);
