@@ -16,7 +16,7 @@ const RocketSim = () => {
 
         // Create a renderer
         renderer = new THREE.WebGLRenderer();
-        renderer.setSize(600, 600); // Set canvas size to 600x600 pixels
+        renderer.setSize(800, 800); // Set canvas size to 600x600 pixels
 
         // Check if the renderer.domElement is already appended
         const existingCanvas = document.getElementById("rocket-container").querySelector("canvas");

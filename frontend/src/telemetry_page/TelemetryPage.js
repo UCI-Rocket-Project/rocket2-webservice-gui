@@ -9,16 +9,42 @@ export function TelemetryPage() {
     const dispatch = useDispatch();
 
     return (
-        <div>
-            <h2>Pts:</h2>
-            <RocketSim color={"#ff0000"}></RocketSim>
+        <div className={styles.container}>
+            <RocketGauge
+                value={1000}
+                minValue={0}
+                maxValue={15000}
+                name={"Altitude"}
+                units={" ft"}
+            />
+            <RocketGauge
+                value={1000}
+                minValue={0}
+                maxValue={500}
+                name={"Speed"}
+                units={" mph"}
+                arc={{
+                    colorArray: ["#5BE12C", "#EA4228"],
+                    subArcs: [{limit: 100}, {limit: 300}, {}],
+                    padding: 0.02,
+                    width: 0.3
+                }}
+            />
+            <RocketGauge
+                value={0}
+                minValue={0}
+                maxValue={125}
+                name={"Y Acceleration"}
+                units={" ft/s²"}
+                arc={{
+                    colorArray: ["#5BE12C", "#EA4228"],
+                    subArcs: [{limit: 30}, {limit: 60}, {limit: 80}],
+                    padding: 0.02,
+                    width: 0.3
+                }}
+            />
             <div>
-                {Object.entries(pts).map(([name, val]) => (
-                    <RocketGauge
-                        value={val}
-                        name={name}
-                    />
-                ))}
+                <RocketSim color={"#ff0000"}></RocketSim>
             </div>
         </div>
     );

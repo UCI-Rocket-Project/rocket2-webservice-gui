@@ -1,41 +1,44 @@
 import React from "react";
-import PropTypes from "prop-types";
 import GaugeComponent from "react-gauge-component";
 import styles from "./RocketGauge.module.css";
 
-const RocketGauge = ({name, value}) => {
+const RocketGauge = ({name, value, minValue, maxValue, units, width, arc}) => {
     return (
-        <div>
-            <h1>{name}</h1>
+        <div style={{width: width ? width : 300}}>
             <GaugeComponent
-                className={styles.gauge} // Use className instead of class
                 value={value}
                 key={name}
+                minValue={minValue ? minValue : 0}
+                maxValue={maxValue ? maxValue : 10000}
                 type="radial"
+                arc={
+                    arc
+                        ? arc
+                        : {
+                              colorArray: ["#EA4228", "#5BE12C"],
+                              subArcs: [{limit: 5000}, {}, {}],
+                              padding: 0.02,
+                              width: 0.3
+                          }
+                }
                 labels={{
+                    valueLabel: {
+                        fontSize: 40,
+                        formatTextValue: (value) => value + units
+                    },
                     tickLabels: {
-                        type: "inner",
-                        ticks: [{value: 20}, {value: 40}, {value: 60}, {value: 80}, {value: 100}]
+                        type: "outer",
+                        valueConfig: {formatTextValue: (value) => value + units}
                     }
-                }}
-                arc={{
-                    colorArray: ["#5BE12C", "#EA4228"],
-                    subArcs: [{limit: 10}, {limit: 30}, {}, {}, {}],
-                    padding: 0.02,
-                    width: 0.3
                 }}
                 pointer={{
                     elastic: false,
                     animationDelay: 0
                 }}
             />
+            <h1 style={{textAlign: "center", margin: 0}}>{name}</h1>
         </div>
     );
-};
-
-RocketGauge.propTypes = {
-    name: PropTypes.string.isRequired,
-    value: PropTypes.number.isRequired
 };
 
 export default RocketGauge;
