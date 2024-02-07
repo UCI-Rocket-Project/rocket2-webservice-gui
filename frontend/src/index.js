@@ -7,6 +7,7 @@ import "./index.css";
 import "./globalStyles.css";
 import {SolenoidPage} from "./solenoid_page/SolenoidPage";
 import {SensorPage} from "./sensor_page/SensorPage";
+import {CombinedPage} from "./combined_page/CombinedPage";
 import {fetchRocketState} from "./redux/rocketSlice";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 
@@ -43,7 +44,11 @@ root.render(
                     <Route
                         path="/telemetry"
                         element={<TelemetryPage />}
-                    />
+                        />
+                    <Route 
+                    path="/combined"
+                    element={<CombinedPage />}
+                />
                 </Routes>
             </Router>
         </Provider>

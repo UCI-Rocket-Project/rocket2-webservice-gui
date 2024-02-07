@@ -1,0 +1,33 @@
+.rocketSwitch {
+    transform: rotate(-90deg);
+    margin-top: 10px;
+}
+
+.status {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.status-one {
+    height: 50px;
+}
+
+h2 {
+    background-color: rgb(50, 51, 56);
+    text-align: center;
+    margin-bottom: -8px;
+}
+
+.rocketSwitchParts {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    margin-left: 20px;
+}
+
+.components {
+    background-color: rgb(65, 66, 73);
+    border-radius: 5px;
+    padding-top: 15px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+}
