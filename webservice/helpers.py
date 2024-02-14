@@ -2,6 +2,28 @@ import random
 import time
 import socket
 import json
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+
+
+def insert_into_ecu(engine, data):
+    try:
+        insert_statement = dict_to_insert_statement("ecu", data)
+        with Session(engine) as session:
+            session.execute(text(insert_statement))
+            session.commit()
+        return True
+
+    except IntegrityError:
+        # Handle integrity error (if needed)
+        print("IntegrityError: Data integrity violation")
+        return False
+
+    except Exception as e:
+        # Handle other exceptions
+        print(f"Error: {e}")
+        return False
 
 
 def send_state_update(solenoid_name, new_state, server_address):
@@ -24,11 +46,20 @@ def send_state_update(solenoid_name, new_state, server_address):
     client_socket.close()
 
 
+def dict_to_insert_statement(table_name, data):
+    columns = ", ".join(data.keys())
+    values = ", ".join([f"{data[column]}" for column in data.keys()])
+
+    insert_statement = f"INSERT INTO {table_name} ({columns}) VALUES ({values});"
+
+    return insert_statement
+
+
 def set_ecu_solenoid(solenoid_name, new_state):
     """Attempts to update the given solenoid on the rocket"""
     for x in range(0, 5):
         time.sleep(0.25)
-        send_state_update(solenoid_name, new_state, ("127.0.0.1", 12345))
+        send_state_update(solenoid_name, new_state, ("127.0.0.1", 11111))
         # Send a request
 
 
@@ -36,5 +67,5 @@ def set_gse_solenoid(solenoid_name, new_state):
     """Attempts to update the given solenoid on the gse"""
     for x in range(0, 5):
         time.sleep(0.25)
-        send_state_update(solenoid_name, new_state, ("127.0.0.1", 54321))
+        send_state_update(solenoid_name, new_state, ("127.0.0.1", 22222))
         # Send a request

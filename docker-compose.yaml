@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+    frontend:
+        image: frontend
+        volumes:
+            - ./frontend/src:/app/src
+        ports:
+            - "3000:3000"
+        networks:
+            - basic_net
+        environment:
+            - WATCHPACK_POLLING=true
+    webservice:
+        image: webservice
+        ports:
+            - "8000:8000"
+        networks:
+            - basic_net
+    fake_rocket:
+        image: fake_rocket
+        ports:
+            - "1111:1111"
+            - "2222:2222"
+        depends_on:
+            - webservice
+        networks:
+            - basic_net
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            POSTRGRES_DB: rocket2
+            POSTGRES_USER: gs
+            POSTGRES_PASSWORD: rocket
+        volumes:
+            - ./postgres:/docker-entrypoint-initdb.d
+        ports:
+            - 5432:5432
+        networks:
+            - basic_net
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
+networks:
+    basic_net:
+        driver: bridge
