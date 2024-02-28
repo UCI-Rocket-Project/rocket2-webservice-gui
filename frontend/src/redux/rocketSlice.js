@@ -26,6 +26,7 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
                 let key_name = key.substring(8, key.length);
                 pts[key_name] = rocketState[key];
             }
+            // add if key.includes("temperature")
         }
         dispatch(setPts(pts));
         dispatch(setSolenoids(solenoids));
@@ -90,3 +91,8 @@ export const selectSolenoids = (state) => state.rocket.solenoids;
 export const selectPts = (state) => state.rocket.pts;
 
 export default rocketSlice.reducer;
+
+// expected, current
+// solenoidFeedbackName
+// solenoidExpectedName
+// key.split

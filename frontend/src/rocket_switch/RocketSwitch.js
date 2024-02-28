@@ -8,7 +8,7 @@ import styles from "./RocketSwitch.module.css";
 import PropTypes from "prop-types";
 
 
-const RocketSwitch= ({name, expected_value, current_value}) => {
+const RocketSwitch= ({name, expected_value, feedback_value}) => {
     const solenoids = useSelector(selectSolenoids);
     const dispatch = useDispatch();
 
@@ -16,17 +16,27 @@ const RocketSwitch= ({name, expected_value, current_value}) => {
         dispatch(setRocketSolenoid({solenoidName: solenoidName, solenoidState: value}));
     };
 
+    const getStatusType1 = (feedbackValue) => {
+        return feedbackValue === 0 ? 'offline' : 'available';
+    };
+
+    const getStatusType2 = (feedbackValue) => {
+        return feedbackValue === 0 ? 'available': 'offline';
+    };
+
     return (
         <div className={styles.rocketSwitchParts}>
-                <h2>{name}</h2>
                 <div className={styles.components}>
+                    <h2>{name}</h2>
+                    <p className={styles.on}>On</p>
                     <div className={styles.status}>
-                        <StatusIndicator type="offline" aria-label="status: offline" className="status-one">Open</StatusIndicator>
-                        <StatusIndicator type="available" aria-label="status: available">Close</StatusIndicator>
+                        <StatusIndicator type={getStatusType1(feedback_value)} aria-label="status: offline" className="status-one">Open</StatusIndicator>
+                        <StatusIndicator type={getStatusType2(feedback_value)} aria-label="status: available">Close</StatusIndicator>
                     </div>
                     <MuiSwitch className={styles.rocketSwitch} 
                     onClick={() => handleToggleSolenoid(name, !expected_value)}></MuiSwitch>
-                                            
+                    <p className={styles.off}>Off</p>
+                    
 
                 </div>
             </div>
