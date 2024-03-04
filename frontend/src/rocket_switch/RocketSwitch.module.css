@@ -13,9 +13,9 @@
 }
 
 h2 {
-    background-color: rgb(50, 51, 56);
+    /* background-color: rgb(50, 51, 56); */
     text-align: center;
-    margin-bottom: -8px;
+    /* margin-bottom: -8px; */
 }
 
 .rocketSwitchParts {
@@ -30,4 +30,20 @@ h2 {
     padding-top: 15px;
     padding-bottom: 20px;
     padding-left: 20px;
+    padding-right: 20px;
+}
+
+.circle {
+    height: 30;
+    width: 30;
+    border-radius: 1000;
+    border-width: 2px;
+}
+
+p {
+    padding-left: 82px;
+}
+
+.on {
+    margin-bottom: 4%;
 }

@@ -4,8 +4,10 @@ import styles from "./RocketGauge.module.css";
 
 const RocketGauge = ({name, value, minValue, maxValue, units, width, arc}) => {
     return (
-        <div style={{width: width ? width : "14%"}}>
+        <div>
+            <center><h1 className={styles.title}>{name}</h1></center>
             <GaugeComponent
+                style={{width: "75%"}}
                 value={value}
                 key={name}
                 minValue={minValue ? minValue : 0}
@@ -36,9 +38,6 @@ const RocketGauge = ({name, value, minValue, maxValue, units, width, arc}) => {
                     animationDelay: 0
                 }}
             />
-            <center>
-                <h1 className={styles.title}>{name}</h1>
-            </center>
         </div>
     );
 };
