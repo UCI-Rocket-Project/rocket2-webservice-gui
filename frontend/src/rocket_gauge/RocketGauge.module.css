@@ -1,4 +1,12 @@
 .gauge {
     width: 200px;
-    height: 200px;
+    height: auto;
+}
+
+.title {
+    /* width: 50px; */
+    font-size: 20px;
+    margin-bottom: -26px;
+    background-color: rgb(44,45,49); 
+    text-align: center;
 }

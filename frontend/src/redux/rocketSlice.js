@@ -1,8 +1,10 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {getRocketState, updateRocket} from "../webservice";
+
 const initialState = {
     solenoids: {},
-    pts: {}
+    pts: {},
+    tcs: {}
 };
 
 export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", async (_, {dispatch}) => {
@@ -12,6 +14,8 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
 
         let solenoids = {};
         let pts = {};
+        let tcs = {};
+
         for (const key in rocketState) {
             if (key.includes("solenoid")) {
                 // Keys are solenoid_feedback_name or solenoid_expected_name
@@ -22,13 +26,22 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
                 }
                 solenoids[split_key[2]][split_key[1]] = rocketState[key];
             }
+
+            if (key.includes("temperature")) {
+                let key_name = key.substring(11, key.length);
+                tcs[key_name] = rocketState[key];
+            }
+
             if (key.includes("pressure")) {
                 let key_name = key.substring(8, key.length);
                 pts[key_name] = rocketState[key];
             }
         }
+
         dispatch(setPts(pts));
         dispatch(setSolenoids(solenoids));
+        dispatch(setTcs(tcs))
+
     } catch (error) {
         // Handle errors (dispatch an error action or throw the error)
         throw error;
@@ -64,6 +77,11 @@ export const rocketSlice = createSlice({
             for (let ptName in action.payload) {
                 state.pts[ptName] = action.payload[ptName];
             }
+        },
+        setTcs: (state, action) => {
+            for (let tcName in action.payload) {
+                state.tcs[tcName] = action.payload[tcName];
+            }
         }
     }
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -80,13 +98,20 @@ export const rocketSlice = createSlice({
     // },
 });
 
-export const {toggleSolenoid, setSolenoids, setPts} = rocketSlice.actions;
+export const {toggleSolenoid, setSolenoids, setPts, setTcs} = rocketSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectSolenoids = (state) => state.rocket.solenoids;
 
+export const selectSolenoids = (state) => state.rocket.solenoids;
 export const selectPts = (state) => state.rocket.pts;
+export const selectTcs = (state) => state.rocket.tcs;
+
 
 export default rocketSlice.reducer;
+
+// expected, current
+// solenoidFeedbackName
+// solenoidExpectedName
+// key.split

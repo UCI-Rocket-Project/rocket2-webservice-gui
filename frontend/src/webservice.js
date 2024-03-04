@@ -8,6 +8,13 @@ export const getRocketState = () => {
     });
 };
 
+// can just make a separate getGSEState and getECUState ?
+
 export const updateRocket = (solenoidName, solenoidState) => {
     return client.post("ecu/solenoid/" + solenoidName + "/" + (solenoidState ? "1" : "0"));
 };
+
+export const updateRocketGSE = (solenoidName, solenoidState) => {
+    return client.post("gse/solenoid/" + solenoidName + "/" + (solenoidState ? "1" : "0"));
+};
+
