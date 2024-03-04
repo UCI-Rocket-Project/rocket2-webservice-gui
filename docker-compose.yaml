@@ -15,17 +15,14 @@ services:
         image: webservice
         ports:
             - "8000:8000"
+        volumes:
+            - ./webservice:/app
         networks:
             - basic_net
-    fake_rocket:
-        image: fake_rocket
-        ports:
-            - "1111:1111"
-            - "2222:2222"
-        depends_on:
-            - webservice
-        networks:
-            - basic_net
+        healthcheck:
+          test: curl --fail http://localhost:8000/ecu/state || exit 1
+          interval: 20s
+
     postgres:
         image: postgres
         restart: always

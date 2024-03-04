@@ -65,42 +65,46 @@ def start_gse_server(host, port, shared_gse_state):
 
 def send_ecu_post_request(url, shared_ecu_state):
     while True:
-        # Get a copy of the current ecu_state
-        shared_ecu_state["pressureGn2"] += random.randint(-5, 20)
-        shared_ecu_state["pressureLng"] += random.randint(-5, 20)
-        shared_ecu_state["pressureLox"] += random.randint(-5, 20)
-        shared_ecu_state["temperatureGn2"] += random.randint(-5, 20)
-        data_to_send = dict(shared_ecu_state)
+        try:
+            # Get a copy of the current ecu_state
+            shared_ecu_state["pressureGn2"] += random.randint(-5, 20)
+            shared_ecu_state["pressureLng"] += random.randint(-5, 20)
+            shared_ecu_state["pressureLox"] += random.randint(-5, 20)
+            shared_ecu_state["temperatureGn2"] += random.randint(-5, 20)
+            data_to_send = dict(shared_ecu_state)
 
-        # Send the entire dictionary as the body of the POST request
-        response = requests.post(url, json=data_to_send)
+            # Send the entire dictionary as the body of the POST request
+            response = requests.post(url, json=data_to_send)
 
-        # Wait for one second before sending the next request
-        time.sleep(1)
-
+            # Wait for one second before sending the next request
+            time.sleep(1)
+        except Exception as e:
+            print(e)
 
 def send_gse_post_request(url, shared_gse_state):
     while True:
-        # Get a copy of the current gse_state
-        shared_gse_state["temperatureLox"] += random.randint(-5, 20)
-        shared_gse_state["temperatureLng"] += random.randint(-5, 20)
-        shared_gse_state["pressureGn2"] += random.randint(-5, 20)
-        data_to_send = dict(shared_gse_state)
+        try:
+            # Get a copy of the current gse_state
+            shared_gse_state["temperatureLox"] += random.randint(-5, 20)
+            shared_gse_state["temperatureLng"] += random.randint(-5, 20)
+            shared_gse_state["pressureGn2"] += random.randint(-5, 20)
+            data_to_send = dict(shared_gse_state)
 
-        # Send the entire dictionary as the body of the POST request
-        response = requests.post(url, json=data_to_send)
+            # Send the entire dictionary as the body of the POST request
+            response = requests.post(url, json=data_to_send)
 
-        # Wait for one second before sending the next request
-        time.sleep(1)
-
+            # Wait for one second before sending the next request
+            time.sleep(1)
+        except Exception as e:
+            print(e)
 
 def main():
-    # Set the host and port to listen on
-    host = "127.0.0.1"  # localhost
-    gse_port = 22222
-    ecu_port = 11111
-    gse_post_request_url = "http://webservice:8000/gse/state"
-    ecu_post_request_url = "http://webservice:8000/ecu/state"
+    # Set the host and port to listen ony
+    host = "127.0.0.1"
+    gse_port = 2222
+    ecu_port = 1111
+    gse_post_request_url = "http://localhost:8000/gse/state"
+    ecu_post_request_url = "http://localhost:8000/ecu/state"
 
     # Fake GSE
     gse_manager = Manager()
