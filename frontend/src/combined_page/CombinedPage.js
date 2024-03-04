@@ -10,9 +10,7 @@ export function CombinedPage() {
     const solenoids = useSelector(selectSolenoids);
     const tcs = useSelector(selectTcs);
     const dispatch = useDispatch();
-
-    console.log(pts.Gn2);
-    return (
+    return Object.keys(solenoids).length != 0 ? (
         <div>
             {/* page titles */}
             <div className={styles.titles}>
@@ -44,8 +42,8 @@ export function CombinedPage() {
                 {/* GSE top row switches */}
                 <div className={styles.secondleft}>
                     <RocketSwitch
-                        expected_value={solenoids["solenoid_expected_CurrentGn2Vent"]}
-                        feedback_value={solenoids["solenoid_feedback_CurrentGn2Vent"]}
+                        expected_value={solenoids["Gn2Vent"]["expected"]}
+                        feedback_value={solenoids["Gn2Vent"]["current"]}
                         name="Gn2Vent"
                         className="switches"
                     ></RocketSwitch>
@@ -155,5 +153,5 @@ export function CombinedPage() {
                 </div>
             </div>
         </div>
-    );
+    ) : <></>;
 }

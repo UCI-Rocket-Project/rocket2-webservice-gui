@@ -18,13 +18,13 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
 
         for (const key in rocketState) {
             if (key.includes("solenoid")) {
-                // Keys are solenoid_feedback_name or solenoid_expected_name
-                console.log(key);
-                let split_key = key.split("_");
-                if (!Object.keys(solenoids).includes(split_key[2])) {
-                    solenoids[split_key[2]] = {};
+                let solenoidType =  key.includes("Expected") ? "expected": "current";
+                let solenoidName = key.includes("Expected") ? key.split("Expected")[1] : key.split("Current")[1] ;
+                if (!Object.keys(solenoids).includes(solenoidName)) {
+                    solenoids[solenoidName] = { "expected": 0,
+                "current":0};
                 }
-                solenoids[split_key[2]][split_key[1]] = rocketState[key];
+                solenoids[solenoidName][solenoidType] = rocketState[key];
             }
 
             if (key.includes("temperature")) {
@@ -37,7 +37,7 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
                 pts[key_name] = rocketState[key];
             }
         }
-
+        console.log("solenoids", solenoids);
         dispatch(setPts(pts));
         dispatch(setSolenoids(solenoids));
         dispatch(setTcs(tcs))
@@ -50,7 +50,6 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
 
 export const setRocketSolenoid = createAsyncThunk("rocket/setRocketSolenoid", async ({solenoidName, solenoidState}, {dispatch}) => {
     try {
-        console.log("sending");
         const response = await updateRocket(solenoidName, solenoidState);
     } catch (error) {
         // Handle errors (dispatch an error action or throw the error)
