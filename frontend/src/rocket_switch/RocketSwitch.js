@@ -8,7 +8,7 @@ import styles from "./RocketSwitch.module.css";
 import PropTypes from "prop-types";
 
 
-const RocketSwitch= ({name, expected_value, feedback_value}) => {
+const RocketSwitch= ({title, name, expected_value, feedback_value}) => {
     const solenoids = useSelector(selectSolenoids);
     const dispatch = useDispatch();
 
@@ -27,7 +27,7 @@ const RocketSwitch= ({name, expected_value, feedback_value}) => {
     return (
         <div className={styles.rocketSwitchParts}>
                 <div className={styles.components}>
-                    <h2>{name}</h2>
+                    <h2>{title}</h2>
                     <p className={styles.on}>On</p>
                     <div className={styles.status}>
                         <StatusIndicator type={getStatusType1(feedback_value)} aria-label="status: offline" className="status-one">Open</StatusIndicator>

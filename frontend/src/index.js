@@ -6,10 +6,10 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import "./index.css";
 import "./globalStyles.css";
 import {SolenoidPage} from "./solenoid_page/SolenoidPage";
-import {SensorPage} from "./sensor_page/SensorPage";
 import {CombinedPage} from "./combined_page/CombinedPage";
+import {SensorPage} from "./sensor_page/SensorPage";
+import {DiagramPage} from "./diagram_page/DiagramPage";
 import {fetchRocketState} from "./redux/rocketSlice";
-import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -42,13 +42,13 @@ root.render(
                         element={<SensorPage />}
                     />
                     <Route
-                        path="/telemetry"
-                        element={<TelemetryPage />}
-                        />
-                    <Route 
-                    path="/combined"
-                    element={<CombinedPage />}
-                />
+                        path="/combined"
+                        element={<CombinedPage />}
+                    />
+                    <Route
+                        path="/diagram"
+                        element={<DiagramPage />}
+                    />
                 </Routes>
             </Router>
         </Provider>

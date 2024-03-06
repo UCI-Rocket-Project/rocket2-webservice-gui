@@ -2,11 +2,6 @@ import React, {useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import {selectSolenoids, setRocketSolenoid, toggleSolenoid} from "../redux/rocketSlice";
 import styles from "./SolenoidPage.module.css";
-
-import { StatusIndicator } from '@zendeskgarden/react-avatars'
-import Switch from '@mui/material/Switch';
-import RocketSwitch from "../rocket_switch/RocketSwitch";
-
 export function SolenoidPage() {
     const solenoids = useSelector(selectSolenoids);
     const dispatch = useDispatch();
@@ -16,7 +11,7 @@ export function SolenoidPage() {
     };
 
     return (
-        <div className={styles.total}>
+        <div>
             <h2>Solenoids:</h2>
             <div>
                 {Object.entries(solenoids).map(([solenoidName, solenoidStatus]) => (
@@ -28,9 +23,6 @@ export function SolenoidPage() {
                     </button>
                 ))}
             </div>
-            {/* <div className={styles.rocketSwitchParts}>
-                <RocketSwitch name="Gn2 Vent"></RocketSwitch>
-            </div> */}
         </div>
     );
 }
