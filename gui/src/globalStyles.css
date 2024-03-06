@@ -1,10 +1,9 @@
 body {
     font-family: "Arial", sans-serif;
     font-size: 16px;
-    /* line-height: 1.6; */
+    line-height: 1.6;
     color: #fff; /* White font color */
     background-color: rgb(50, 51, 56); /* Dark grey background color */
-    /* background-color: #101117; */
     /* Slighly darker background rgb(44,45,49) */
 }
 
@@ -14,13 +13,9 @@ h3,
 h4,
 h5,
 h6 {
-    /* color: rgb(182, 186, 185); Dark blue for headings */
-    /* background-color: rgb(65, 66, 73); */
-    font-family: "Arial", sans-serif;
+    color: rgb(182, 186, 185); /* Dark blue for headings */
+    
 }
 
-a {
-    color: #3498db; /* Dark blue for links */
-}
 
 /* Add more global styles as needed */

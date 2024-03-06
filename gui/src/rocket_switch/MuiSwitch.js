@@ -3,7 +3,7 @@ import { StatusIndicator } from '@zendeskgarden/react-avatars'
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 
-export const MuiSwitch = styled(Switch)(({ theme, }) => ({
+export const MuiSwitch = styled(Switch)(({ theme }) => ({
     width: 68,
     height: 34,
     padding: 7,

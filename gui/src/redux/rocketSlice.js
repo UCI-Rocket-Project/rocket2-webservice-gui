@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {getRocketState, updateRocket} from "../webservice";
+import {getEcuState, updateRocket, getGseState} from "../webservice";
 
 const initialState = {
     solenoids: {},
@@ -7,41 +7,45 @@ const initialState = {
     tcs: {}
 };
 
+function parseState(state, dispatch) {
+    let solenoids = {};
+    let pts = {};
+    let tcs = {};
+
+    for (const key in state) {
+        if (key.includes("solenoid")) {
+            let solenoidType = key.includes("Expected") ? "expected" : "current";
+            let solenoidName = key.includes("Expected") ? key.split("Expected")[1] : key.split("Current")[1];
+            if (!Object.keys(solenoids).includes(solenoidName)) {
+                solenoids[solenoidName] = {expected: 0, current: 0};
+            }
+            solenoids[solenoidName][solenoidType] = state[key];
+        }
+
+        if (key.includes("temperature")) {
+            let key_name = key.substring(11, key.length);
+            tcs[key_name] = state[key];
+        }
+
+        if (key.includes("pressure")) {
+            let key_name = key.substring(8, key.length);
+            pts[key_name] = state[key];
+        }
+    }
+    dispatch(setPts(pts));
+    dispatch(setSolenoids(solenoids));
+    dispatch(setTcs(tcs));
+}
+
 export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", async (_, {dispatch}) => {
     try {
-        const rocketState = (await getRocketState()).data;
-        console.log("recv", rocketState);
-
-        let solenoids = {};
-        let pts = {};
-        let tcs = {};
-
-        for (const key in rocketState) {
-            if (key.includes("solenoid")) {
-                let solenoidType =  key.includes("Expected") ? "expected": "current";
-                let solenoidName = key.includes("Expected") ? key.split("Expected")[1] : key.split("Current")[1] ;
-                if (!Object.keys(solenoids).includes(solenoidName)) {
-                    solenoids[solenoidName] = { "expected": 0,
-                "current":0};
-                }
-                solenoids[solenoidName][solenoidType] = rocketState[key];
-            }
-
-            if (key.includes("temperature")) {
-                let key_name = key.substring(11, key.length);
-                tcs[key_name] = rocketState[key];
-            }
-
-            if (key.includes("pressure")) {
-                let key_name = key.substring(8, key.length);
-                pts[key_name] = rocketState[key];
-            }
-        }
-        console.log("solenoids", solenoids);
-        dispatch(setPts(pts));
-        dispatch(setSolenoids(solenoids));
-        dispatch(setTcs(tcs))
-
+        const ecuState = (await getEcuState()).data;
+        parseState(ecuState, dispatch);
+        // console.log("ECU", ecuState);
+        const gseState = (await getGseState()).data;
+        // console.log("GSE", gseState);
+        parseState(gseState, dispatch);
+        dispatch(setTimestamp(5));
     } catch (error) {
         // Handle errors (dispatch an error action or throw the error)
         throw error;
@@ -81,6 +85,9 @@ export const rocketSlice = createSlice({
             for (let tcName in action.payload) {
                 state.tcs[tcName] = action.payload[tcName];
             }
+        },
+        setTimestamp: (state, action) => {
+            state.timestamp = action.payload;
         }
     }
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -97,7 +104,7 @@ export const rocketSlice = createSlice({
     // },
 });
 
-export const {toggleSolenoid, setSolenoids, setPts, setTcs} = rocketSlice.actions;
+export const {toggleSolenoid, setSolenoids, setPts, setTcs, setTimestamp} = rocketSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -106,11 +113,6 @@ export const {toggleSolenoid, setSolenoids, setPts, setTcs} = rocketSlice.action
 export const selectSolenoids = (state) => state.rocket.solenoids;
 export const selectPts = (state) => state.rocket.pts;
 export const selectTcs = (state) => state.rocket.tcs;
-
+export const selectTimestamp = (state) => state.rocket.timestamp;
 
 export default rocketSlice.reducer;
-
-// expected, current
-// solenoidFeedbackName
-// solenoidExpectedName
-// key.split

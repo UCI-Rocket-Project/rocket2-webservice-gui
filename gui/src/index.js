@@ -5,11 +5,9 @@ import {store} from "./redux/store";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import "./index.css";
 import "./globalStyles.css";
-import {SolenoidPage} from "./solenoid_page/SolenoidPage";
-import {SensorPage} from "./sensor_page/SensorPage";
-import {CombinedPage} from "./combined_page/CombinedPage";
-import {fetchRocketState} from "./redux/rocketSlice";
+import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
+import {fetchRocketState} from "./redux/rocketSlice";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -26,7 +24,7 @@ const fetchAndDispatchRocketState = async () => {
 };
 
 // Periodically fetch the rocket state every 1 second
-setInterval(fetchAndDispatchRocketState, 1000);
+setInterval(fetchAndDispatchRocketState, 250);
 
 root.render(
     <React.StrictMode>
@@ -34,21 +32,13 @@ root.render(
             <Router>
                 <Routes>
                     <Route
-                        path="/solenoids"
-                        element={<SolenoidPage />}
+                        path="/"
+                        element={<DashboardPage />}
                     />
-                    <Route
-                        path="/sensors"
-                        element={<SensorPage />}
-                    />
-                    <Route
+                     <Route
                         path="/telemetry"
                         element={<TelemetryPage />}
-                        />
-                    <Route 
-                    path="/combined"
-                    element={<CombinedPage />}
-                />
+                    />
                 </Routes>
             </Router>
         </Provider>

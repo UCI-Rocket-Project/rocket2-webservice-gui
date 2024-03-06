@@ -1,0 +1,74 @@
+.row {
+  display: flex;
+}
+
+.title{
+  text-align: center;
+  margin-top:1%;
+  margin-bottom: 1%;
+}
+
+.boundingBox {
+  /* border: 1px solid; */
+  border-radius: 10px;
+  background-color: rgb(44,45,49);
+}
+
+.gseBox {
+  flex: 55%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+.ecuBox {
+  flex: 45%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+.ecuSwitchColumn {
+  padding: 10px;
+}
+
+.ecuGaugeColumn {
+  margin-top:-5%;
+  padding:10px;
+  width:28%;
+}
+
+.battery {
+  padding: 30px;
+  padding-left: 40px;
+  padding-right: 40px;
+  background-color: rgb(65, 66, 73);
+  border-radius: 5px; 
+  text-align: center;
+  border-color: white;
+  border-width: 3px;
+  width:80%;
+}
+
+.gseGaugeRow {
+  display: flex;
+  border-radius: 10px;
+  justify-content: space-between;
+  width:100%;
+}
+.switchRow {
+  display: inline-flex;
+  flex-direction: row;
+  border-radius: 10px;
+  justify-content: space-evenly;
+  width:100%;
+}
+
+.batteryButtons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.supplyBattery {
+  display: inline-flex;
+  justify-content: space-around;
+}
+
