@@ -17,17 +17,17 @@ services:
             - "8000:8000"
         volumes:
             - ./webservice:/app
-        networks:
-            - basic_net
         healthcheck:
           test: curl --fail http://localhost:8000/ecu/state || exit 1
           interval: 20s
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
     postgres:
         image: postgres
         restart: always
         environment:
-            POSTRGRES_DB: rocket2
+            POSTGRES_DB: rocket2
             POSTGRES_USER: gs
             POSTGRES_PASSWORD: rocket
         volumes:
@@ -44,3 +44,4 @@ services:
 networks:
     basic_net:
         driver: bridge
+

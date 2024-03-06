@@ -2,6 +2,7 @@
 
 ## Getting Started
 
+sudo apt install docker-compose
 ```shell
 $ make build
 $ make run
