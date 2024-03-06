@@ -59,7 +59,7 @@ def set_ecu_solenoid(solenoid_name, new_state):
     """Attempts to update the given solenoid on the rocket"""
     for x in range(0, 5):
         time.sleep(0.25)
-        send_state_update(solenoid_name, new_state, ("127.0.0.1", 11111))
+        send_state_update(solenoid_name, new_state, ("host.docker.internal", 1111))
         # Send a request
 
 
@@ -67,5 +67,5 @@ def set_gse_solenoid(solenoid_name, new_state):
     """Attempts to update the given solenoid on the gse"""
     for x in range(0, 5):
         time.sleep(0.25)
-        send_state_update(solenoid_name, new_state, ("127.0.0.1", 22222))
+        send_state_update(solenoid_name, new_state, ("host.docker.interanl", 2222))
         # Send a request

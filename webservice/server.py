@@ -9,7 +9,9 @@ from helpers import (
     insert_into_ecu,
 )
 from sqlalchemy import create_engine
+import logging 
 
+import requests
 ecu_lock = Lock()
 gse_lock = Lock()
 
@@ -88,20 +90,21 @@ def update_current_state(system_name):
         return gse_state
 
 
+import socket
 @app.route("/<system_name>/solenoid/<solenoid_name>/<new_state>", methods=["POST"])
 def set_solenoid(system_name, solenoid_name, new_state):
     """Used by the GUI to set a solenoid
     Solenoid_name: just the name of the solenoid (EX: Lox(NOT solenoid_expected_lox))"""
+    logging.error(requests.get("http://localhost:8000/ecu/state"))
     if system_name == "ecu":
         ecu_state["solenoidExpected" + solenoid_name] = int(new_state)
-        t = Thread(target=set_ecu_solenoid, args=(solenoid_name, int(new_state)))
-        t.start()
+        set_ecu_solenoid(solenoid_name, int(new_state))
         return {}
-    elif system_name == "gse":
-        gse_state["solenoidExpected" + solenoid_name] = int(new_state)
-        t = Thread(target=set_gse_solenoid, args=(solenoid_name, int(new_state)))
-        t.start()
-        return {}
+    # elif system_name == "gse":
+    #     gse_state["solenoidExpected" + solenoid_name] = int(new_state)
+    #     t = Thread(target=set_gse_solenoid, args=(solenoid_name, int(new_state)))
+    #     t.start()
+    #     return {}
     return {"error": "No system"}
 
 
