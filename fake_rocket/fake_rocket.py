@@ -77,7 +77,7 @@ def send_ecu_post_request(url, shared_ecu_state):
             response = requests.post(url, json=data_to_send)
 
             # Wait for one second before sending the next request
-            time.sleep(0.1)
+            time.sleep(0.5)
         except Exception as e:
             print("Had trouble sending POST request to ECU")
 
@@ -95,7 +95,7 @@ def send_gse_post_request(url, shared_gse_state):
             response = requests.post(url, json=data_to_send)
 
             # Wait for one second before sending the next request
-            time.sleep(0.1)
+            time.sleep(0.5)
         except Exception as e:
             print("Had trouble sending POST request to GSE")
 
@@ -111,7 +111,7 @@ def main():
     # Fake GSE
     gse_manager = Manager()
     initial_gse_state = {
-        "timestamp": 0,
+        "time_recv": 0,
         "solenoidCurrentGn2Fill": 0,
         "solenoidCurrentGn2Vent": 0,
         "solenoidCurrentMvasFill": 0,
@@ -134,8 +134,7 @@ def main():
         args=(gse_post_request_url, gse_state),
         daemon=True,
     )
-    gse_server_thread.start()
-    gse_post_request_thread.start()
+
 
     # Fake ECU
     ecu_manager = Manager()
@@ -148,7 +147,7 @@ def main():
         "solenoidCurrentPv2": 0,
         "solenoidCurrentVent": 0,
         "temperatureCopv": 20,
-        "timestamp": 0,
+        "time_recv": 0,
     }
     ecu_state = ecu_manager.dict(initial_ecu_state)
 
@@ -162,6 +161,8 @@ def main():
     )
     ecu_server_thread.start()
     ecu_post_request_thread.start()
+    gse_server_thread.start()
+    gse_post_request_thread.start()
 
     try:
         # Keep the main thread running

@@ -36,7 +36,7 @@ Returns:
 
 ```json
 {
-    "timestamp": 0,
+    "time_recv": 0,
     "solenoidCurrentGn2Vent": 0,
     "solenoidCurrentPv1": 0,
     "solenoidCurrentPv2": 0,
@@ -76,7 +76,7 @@ Body:
 
 ```json
 {
-    "timestamp": 0,
+    "time_recv": 0,
     "solenoidCurrentGn2Vent": 0,
     "solenoidCurrentPv1": 0,
     "solenoidCurrentPv2": 0,

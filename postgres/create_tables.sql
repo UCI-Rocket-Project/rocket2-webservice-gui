@@ -2,7 +2,7 @@
 -- This script will be executed during the PostgreSQL initialization process
 
 -- Create the "rocket2" database
-CREATE DATABASE rocket2;
+-- CREATE DATABASE rocket2;
 
 -- Connect to the "rocket2" database
 \c rocket2;
@@ -12,12 +12,12 @@ CREATE TABLE IF NOT EXISTS ecu (
     time_recv INTEGER,
     supplyVoltage FLOAT,
     batteryVoltage FLOAT,
-    solenoidCurrentGn2Vent FLOAT,
+    solenoidCurrentCopvVent FLOAT,
     solenoidCurrentPv1 FLOAT,
     solenoidCurrentPv2 FLOAT,
     solenoidCurrentVent FLOAT,
-    temperatureGn2 FLOAT,
-    pressureGn2 FLOAT,
+    temperatureCopv FLOAT,
+    pressureCopv FLOAT,
     pressureLox FLOAT,
     pressureLng FLOAT,
     angularVelocityX FLOAT,

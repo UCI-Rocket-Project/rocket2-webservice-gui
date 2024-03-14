@@ -12,11 +12,13 @@ from sqlalchemy import create_engine
 import logging 
 
 import requests
+is_ecu_initialized = False
+is_gse_initialized = False
 ecu_lock = Lock()
 gse_lock = Lock()
 
 ecu_state = {
-    "timestamp": 0,
+    "time_recv": 0,
     "solenoidCurrentCopvVent": 0,
     "solenoidCurrentPv1": 0,
     "solenoidCurrentPv2": 0,
@@ -28,7 +30,7 @@ ecu_state = {
 }
 
 gse_state = {
-    "timestamp": 0,
+    "time_recv": 0,
     "solenoidCurrentGn2Fill": 0,
     "solenoidCurrentGn2Vent": 0,
     "solenoidCurrentMvasFill": 0,
@@ -46,7 +48,7 @@ gse_state = {
 app = Flask(__name__)
 
 db_config = {
-    "host": "postgres",
+    "host": "host.docker.internal",
     "port": "5432",
     "database": "rocket2",
     "user": "gs",
@@ -75,17 +77,35 @@ def get_state(system_name):
 @app.route("/<system_name>/state", methods=["POST"])
 def update_current_state(system_name):
     """Used by the ecu and GSE to update their state"""
-    global ecu_state, gse_state
+    global ecu_state, gse_state, is_ecu_initialized, is_gse_initialized
     if system_name == "ecu":
         with ecu_lock:
-            for key in request.json:
-                ecu_state[key] = request.json[key]
-        insert_into_ecu(engine, request.json)
+            if not is_ecu_initialized: # If we haven't received any states from ECU, then we dont know what values should be "expected"
+                for key in request.json:
+                    if "Current" in key: # Initialize each SolenoidExpected key to the current value so the default expected value is not just zero
+                        key_name = "solenoidExpected"+ key.split("Current")[-1]
+                        ecu_state[key_name] = request.json[key]
+                    ecu_state[key] = request.json[key]
+                is_ecu_initialized = True
+            else:
+                for key in request.json:
+                    ecu_state[key] = request.json[key]
+        db_thread = Thread(target=insert_into_ecu, args=(engine, request.json))
+        db_thread.start()
+        # insert_into_ecu(engine, request.json)
         return ecu_state
     elif system_name == "gse":
         with gse_lock:
-            for key in request.json:
-                gse_state[key] = request.json[key]
+            if not is_gse_initialized: # If we haven't received any states from GSE, then we dont know what values should be "expected"
+                for key in request.json:
+                    if "Current" in key: # Initialize each SolenoidExpected key to the current value so the default expected value is not just zero
+                        key_name = "solenoidExpected"+ key.split("Current")[-1]
+                        gse_state[key_name] = request.json[key]
+                    gse_state[key] = request.json[key]
+                is_gse_initialized = True
+            else:
+                for key in request.json:
+                    gse_state[key] = request.json[key]
         # Send new state to database
         return gse_state
 
