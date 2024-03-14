@@ -24,8 +24,8 @@ def send_hello(address, port):
         print("Connection closed")
 
 # Replace 'your_server_address' and 'your_port' with the actual server address and port
-server_address = "10.0.0.255"
-server_port = 10001
+server_address = "10.0.255.1"
+server_port = 2222
 
 # Call the function to send "hello" to the specified address and port
 send_hello(server_address, server_port)

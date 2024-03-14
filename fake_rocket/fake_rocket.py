@@ -5,7 +5,7 @@ import requests
 import json
 import random
 from multiprocessing import Manager
-
+import logging
 
 def start_ecu_server(host, port, shared_ecu_state):
     # Create a socket object
@@ -16,51 +16,53 @@ def start_ecu_server(host, port, shared_ecu_state):
         try:
             # Wait for a connection
             client_socket, client_address = server_socket.accept()
-            print(f"Connection to ECU from {client_address}")
+            logging.info(f"Connection to ECU from {client_address}")
 
             # Receive and parse data as JSON
             data = client_socket.recv(1024)
             json_data = json.loads(data.decode("utf-8"))
-            print(json_data)
+            logging.info(json_data)
 
             # Update the shared ecu_state dictionary
             for key, val in json_data.items():
                 shared_ecu_state[f"solenoidCurrent{key}"] = val
 
-            print(f"Updated ecu_state: {shared_ecu_state}")
+            logging.info(f"Updated ecu_state: {shared_ecu_state}")
 
             # Close the connection
             client_socket.close()
         except Exception as e:
-            print("Had trouble receiving command for ECU", e)
+            logging.error(f"Had trouble receiving command for ECU")
+            time.sleep(2)
 
 
 def start_gse_server(host, port, shared_gse_state):
     # Create a socket object
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((host, port))
+    server_socket.bind(("", port))
     server_socket.listen(1)
     while True:
         try:
             # Wait for a connection
             client_socket, client_address = server_socket.accept()
-            print(f"Connection to GSE from {client_address}")
+            logging.info(f"Connection to GSE from {client_address}")
 
             # Receive and parse data as JSON
             data = client_socket.recv(1024)
             json_data = json.loads(data.decode("utf-8"))
-            print(json_data)
+            logging.info(json_data)
 
             # Update the shared gse_state dictionary
             for key, val in json_data.items():
                 shared_gse_state[f"solenoidCurrent{key}"] = val
 
-            print(f"Updated gse_state: {shared_gse_state}")
+            logging.info(f"Updated gse_state: {shared_gse_state}")
 
             # Close the connection
             client_socket.close()
         except Exception as e:
-            print("Had trouble receiving command for GSE", e)
+            logging.error(f"Had trouble receiving command for GSE")
+            time.sleep(2)
 
 
 def send_ecu_post_request(url, shared_ecu_state):
@@ -79,8 +81,8 @@ def send_ecu_post_request(url, shared_ecu_state):
             # Wait for one second before sending the next request
             time.sleep(0.5)
         except Exception as e:
-            print("Had trouble sending POST request to ECU")
-
+            logging.error(f"Had trouble sending POST request to ECU")
+            time.sleep(2)
 
 def send_gse_post_request(url, shared_gse_state):
     while True:
@@ -97,16 +99,18 @@ def send_gse_post_request(url, shared_gse_state):
             # Wait for one second before sending the next request
             time.sleep(0.5)
         except Exception as e:
-            print("Had trouble sending POST request to GSE")
+            logging.error(f"Had troublesending POST request to GSE{e}")
+            time.sleep(2)
+
 
 
 def main():
     # Set the host and port to listen on
-    host = "127.0.0.1"  # localhost
+    host = "0.0.0.0"  # localhost
     gse_port = 2222
     ecu_port = 1111
-    gse_post_request_url = "http://localhost:8000/gse/state"
-    ecu_post_request_url = "http://localhost:8000/ecu/state"
+    gse_post_request_url = "http://host.docker.internal:8000/gse/state"
+    ecu_post_request_url = "http://host.docker.internal:8000/ecu/state"
 
     # Fake GSE
     gse_manager = Manager()
@@ -169,7 +173,7 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("Terminating main program...")
+        logging.info("Terminating main program...")
 
 
 if __name__ == "__main__":
