@@ -6,6 +6,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 import logging
+import os
+
+ecu_ip = os.environ["ECU_IP"]
+gse_ip = os.environ["GSE_IP"]
 
 def insert_into_ecu(engine, data):
     try:
@@ -57,11 +61,11 @@ def dict_to_insert_statement(table_name, data):
 
 def set_ecu_solenoid(solenoid_name, new_state):
     """Attempts to update the given solenoid on the rocket. Returns error if encountered"""
+    global ecu_ip
     try:
         for x in range(0, 5):
             time.sleep(0.25)
-            send_state_update(solenoid_name, new_state, ("host.docker.internal", 1111))
-            # Send a request
+            send_state_update(solenoid_name, new_state, (ecu_ip, 1111))
     except Exception as e:
         logging.error(f"Failed to set ECU Solenoid {e}")
         return {"error": str(e)}
@@ -73,8 +77,7 @@ def set_gse_solenoid(solenoid_name, new_state):
     try:
         for x in range(0, 5):
             time.sleep(0.25)
-            send_state_update(solenoid_name, new_state, ("host.docker.internal", 2222))
-            # Send a request
+            send_state_update(solenoid_name, new_state, (gse_ip, 2222))
     except Exception as e:
         logging.error(f"Failed to set GSE Solenoid {e}")
         return {"error": str(e)}

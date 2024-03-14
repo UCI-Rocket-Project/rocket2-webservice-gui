@@ -1,0 +1,226 @@
+.container {
+    position: relative;
+  }
+
+.testy {
+    text-align: center;
+}
+
+.copvbv {
+    position: absolute;
+    top: 18%;
+    left: 63.5%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 35px 35px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.vent {
+    position: absolute;
+    top: 36.5%;
+    left: 63%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 33px 40px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.gn2vent {
+    position: absolute;
+    top: 18%;
+    left: 39.5%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 23px 23px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+.mvasvent {
+    position: absolute;
+    top: 29%;
+    left: 39.5%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 22px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.loxvent {
+    position: absolute;
+    top: 53%;
+    left: 39.5%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 25px 22px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+.lngvent {
+    position: absolute;
+    top: 69%;
+    left: 39.5%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 22px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.gn2fill {
+    position: absolute;
+    top: 18%;
+    left: 48%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 24px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+
+.pv1 {
+    position: absolute;
+    top: 25%;
+    left: 51.4%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 29px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.pv2 {
+    position: absolute;
+    top: 32.4%;
+    left: 47%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 29px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.loxfill {
+    position: absolute;
+    top: 53%;
+    left: 48%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 29px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.lngfill {
+    position: absolute;
+    top: 69.2%;
+    left: 48.3%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 25px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.mvasfill {
+    position: absolute;
+    top: 75%;
+    left: 48.3%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 25px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}
+
+
+.mvas {
+    position: absolute;
+    top: 75%;
+    left: 56.8%; 
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    background-color: #007bff; 
+    color: #fff;
+    /* border: none; */
+    padding: 24px 25px; 
+    cursor: pointer; 
+    border-radius: 4px;
+    border-color: white;
+    border-width: 3px;
+}

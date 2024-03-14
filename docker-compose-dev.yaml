@@ -15,14 +15,16 @@ services:
         image: webservice
         ports:
             - "8000:8000"
+        environment:
+            - ECU_IP=fake_rocket
+            - GSE_IP=fake_rocket
         volumes:
             - ./webservice:/app
         healthcheck:
           test: curl --fail http://localhost:8000/ecu/state || exit 1
           interval: 20s
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
-
+        networks:
+            - basic_net
     postgres:
         image: postgres
         restart: always
@@ -41,6 +43,18 @@ services:
         restart: always
         ports:
             - 8080:8080
+    fake_rocket:
+        image: fake_rocket
+        restart: always
+        ports:
+            - 1111:1111
+            - 2222:2222
+        volumes:
+            - ./fake_rocket:/app
+        depends_on:
+            - webservice
+        networks:
+            - basic_net
 networks:
     basic_net:
         driver: bridge

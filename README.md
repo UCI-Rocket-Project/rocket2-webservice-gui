@@ -1,15 +1,33 @@
 # Webservice & GUI
 
-## Getting Started
- NOTE: The first time you run this the POSTGRES database will fail. Don't know why, dont care, just make run again
-sudo apt install docker-compose
+## Initial Setup
+Note: If you are on linux you can just install docker instead of docker desktop, but this works for all OS
+
+Download and install docker desktop from docker website https://www.docker.com/products/docker-desktop/
+
+Create a docker account and sign in on docker desktop. You will need to keep docker desktop open when you want to run a docker container.
+
+If you already have access to make commands, you are done. Otherwise, install Make from here https://gnuwin32.sourceforge.net/packages/make.htm
+
+Finally, build the docker Containers
 ```shell
+$ sudo apt install docker-compose
 $ make build
+```
+
+## Startup
+NOTE: If you are starting up the containers for the first time, POSTGRES might fail because it takes time to initialize. Just make run again
+
+Spin up the docker containers:
+
+For dev environment which includes fake_rocket
+```shell
 $ make run 
-In a new terminal
-$ pip install requests
-$ cd fake_rocket
-$ python fake_rocket.py
+```
+
+For prod environment which sends requests to 10.0.255.1 instead of fake_rocket
+```shell
+$ make run_prod
 ```
 
 Webservice Endpoints:

@@ -92,7 +92,6 @@ def update_current_state(system_name):
                     ecu_state[key] = request.json[key]
         db_thread = Thread(target=insert_into_ecu, args=(engine, request.json))
         db_thread.start()
-        # insert_into_ecu(engine, request.json)
         return ecu_state
     elif system_name == "gse":
         with gse_lock:
@@ -109,11 +108,34 @@ def update_current_state(system_name):
         # Send new state to database
         return gse_state
 
+import socket
+def send_hello(address, port):
+    # Create a socket object
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        # Connect to the server
+        client_socket.connect((address, port))
+        logging.error(f"Connected to {address}:{port}")
+        # Send the message "hello"
+        import json
+        message = json.dumps({"Pv2": 1})
+        client_socket.sendall(message.encode())
+        logging.error(f"Sent: {message}")
+
+    except Exception as e:
+        logging.error(f"Error: {e}")
+
+    finally:
+        # Close the connection
+        client_socket.close()
+        logging.error("Connection closed")
 
 @app.route("/<system_name>/solenoid/<solenoid_name>/<new_state>", methods=["POST"])
 def set_solenoid(system_name, solenoid_name, new_state):
     """Used by the GUI to set a solenoid
     Solenoid_name: just the name of the solenoid (EX: Lox(NOT solenoid_expected_lox))"""
+    # send_hello("fake_rocket", 2222)
     if system_name == "ecu":
         ecu_state["solenoidExpected" + solenoid_name] = int(new_state)
         return set_ecu_solenoid(solenoid_name, int(new_state))
@@ -122,5 +144,6 @@ def set_solenoid(system_name, solenoid_name, new_state):
         return set_gse_solenoid(solenoid_name, int(new_state))
     else:
         return {"error": "no system with that name"}
+    return {}
 
 app.run(host="0.0.0.0", port=8000, debug=True)
