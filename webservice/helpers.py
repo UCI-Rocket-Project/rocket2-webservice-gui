@@ -65,8 +65,7 @@ def set_ecu_solenoid(solenoid_name, new_state):
     try:
         for x in range(0, 5):
             time.sleep(0.25)
-            send_state_update(solenoid_name, new_state, ("fake_rocket", 1111))
-            # Send a request
+            send_state_update(solenoid_name, new_state, (ecu_ip, 1111))
     except Exception as e:
         logging.error(f"Failed to set ECU Solenoid {e}")
         return {"error": str(e)}
@@ -78,8 +77,7 @@ def set_gse_solenoid(solenoid_name, new_state):
     try:
         for x in range(0, 5):
             time.sleep(0.25)
-            send_state_update(solenoid_name, new_state, ("fake_rocket", 2222))
-            # Send a request
+            send_state_update(solenoid_name, new_state, (gse_ip, 2222))
     except Exception as e:
         logging.error(f"Failed to set GSE Solenoid {e}")
         return {"error": str(e)}

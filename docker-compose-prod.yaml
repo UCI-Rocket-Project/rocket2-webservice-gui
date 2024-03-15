@@ -15,14 +15,16 @@ services:
         image: webservice
         ports:
             - "8000:8000"
-        environment:
+        environment: 
             - ECU_IP=10.0.255.1
+            - GSE_IP=10.0.255.1
         volumes:
             - ./webservice:/app
         healthcheck:
           test: curl --fail http://localhost:8000/ecu/state || exit 1
           interval: 20s
-
+        networks:
+            - basic_net
     postgres:
         image: postgres
         restart: always

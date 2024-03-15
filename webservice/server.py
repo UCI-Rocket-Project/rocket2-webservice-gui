@@ -92,7 +92,6 @@ def update_current_state(system_name):
                     ecu_state[key] = request.json[key]
         db_thread = Thread(target=insert_into_ecu, args=(engine, request.json))
         db_thread.start()
-        # insert_into_ecu(engine, request.json)
         return ecu_state
     elif system_name == "gse":
         with gse_lock:

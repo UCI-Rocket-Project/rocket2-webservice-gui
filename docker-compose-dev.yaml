@@ -25,7 +25,6 @@ services:
           interval: 20s
         networks:
             - basic_net
-
     postgres:
         image: postgres
         restart: always
