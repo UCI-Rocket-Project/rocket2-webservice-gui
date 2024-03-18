@@ -7,6 +7,7 @@ import "./index.css";
 import "./globalStyles.css";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
+import {DiagramPage} from "./diagram_page/DiagramPage";
 import {fetchRocketState} from "./redux/rocketSlice";
 
 const container = document.getElementById("root");
@@ -34,6 +35,10 @@ root.render(
                     <Route
                         path="/"
                         element={<DashboardPage />}
+                    />
+                    <Route
+                        path="/rocket"
+                        element={<DiagramPage />}
                     />
                      <Route
                         path="/telemetry"
