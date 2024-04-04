@@ -4,7 +4,7 @@ import {MuiSwitch} from "./MuiSwitch.js";
 import styles from "./RocketSwitch.module.css";
 import PropTypes from "prop-types";
 
-const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {}}) => {
+const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {}, enabled}) => {
     const getStatusType1 = (feedbackValue) => {
         return feedbackValue === 0 ? "offline" : "available";
     };
@@ -33,7 +33,8 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {}}
                     </StatusIndicator>
                 </div>
                 <MuiSwitch
-                    checked={expected_value ? true : false}
+                    checked={expected_value == 1 ? true : false}
+                    disabled={expected_value == -1 || enabled == false}
                     className={styles.rocketSwitch}
                     onChange={(event) => onClick(event.target.checked)}
                 ></MuiSwitch>

@@ -5,6 +5,6 @@ build:
 run:
 	docker-compose -f docker-compose-dev.yaml up
 run_prod:
-	docker-compose  -f docker-compose-prod.yaml up
+	docker-compose -f docker-compose-prod.yaml up
 rocket:
 	python fake_rocket/fake_rocket.py

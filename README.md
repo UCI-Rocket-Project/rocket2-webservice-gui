@@ -1,22 +1,28 @@
 # Webservice & GUI
 
 ## Initial Setup
-Note: If you are on linux you can just install docker instead of docker desktop, but this works for all OS
 
-Download and install docker desktop from docker website https://www.docker.com/products/docker-desktop/
-
+1: Download and install docker desktop from docker website https://www.docker.com/products/docker-desktop/
 Create a docker account and sign in on docker desktop. You will need to keep docker desktop open when you want to run a docker container.
 
-If you already have access to make commands, you are done. Otherwise, install Make from here https://gnuwin32.sourceforge.net/packages/make.htm
+If you are on a windows computer:
+    1: Install chocolatey
+    Open an administrative shell(powershell but run as admin)
+    Run Set-ExecutionPolicy AllSigned or Set-ExecutionPolicy Bypass -Scope Process
+    Run Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-Finally, build the docker Containers
-```shell
-$ sudo apt install docker-compose
-$ make build
-```
+    2: Install Make
+    Run choco install make
+
+    Once this is done, restart your computer
+
+Open up Docker desktop and make sure you are still signed in
+Open up this git repo in a command line and run make build
 
 ## Startup
 NOTE: If you are starting up the containers for the first time, POSTGRES might fail because it takes time to initialize. Just make run again
+
+Open up Docker Desktop and make sure you are still signed in
 
 Spin up the docker containers:
 

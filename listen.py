@@ -21,8 +21,8 @@ def start_ecu_server(host, port):
             # Receive and parse data as JSON
             data = client_socket.recv(1024)
             json_data = json.loads(data.decode("utf-8"))
-            while(True):
-                client_socket.sendall("hello".encode())
+            # while(True):
+            #     client_socket.sendall("hello".encode())
             print(json_data)
             # Close the connection
             client_socket.close()
@@ -32,7 +32,7 @@ def start_ecu_server(host, port):
 def main():
     # Set the host and port to listen ony
     host = "127.0.0.1"
-    port = 2222
+    port = 6970
     
     # Fake ECU
     ecu_server_thread = threading.Thread(

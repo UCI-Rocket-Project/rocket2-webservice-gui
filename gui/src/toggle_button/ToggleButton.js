@@ -5,16 +5,16 @@ const ToggleButton = ({name, className, feedback_value = 0, customClick = ()=>{}
     return feedback_value == 0 ? (
         <button
             className={`${className} ${styles.valveClose}`}
-            onClick={()=>customClick(1)} // Turn on
+            onClick={()=>customClick(1)} // open
         >
-            Open {name}
+            Closed {name}
         </button>
     ) : (
         <button
             className={`${className} ${styles.valveOpen}`}
-            onClick={()=>customClick(0)} // Turn off
+            onClick={()=>customClick(0)} // close
         >
-            Closed {name}
+            Open {name}
         </button>
     );
 };

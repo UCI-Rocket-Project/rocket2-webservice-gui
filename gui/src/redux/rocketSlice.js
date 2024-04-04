@@ -4,14 +4,14 @@ import {getEcuState, updateRocket, getGseState} from "../webservice";
 const initialState = {
     solenoids: {},
     pts: {},
-    tcs: {}
+    tcs: {},
+    keydown: null
 };
 
 function parseState(state, dispatch) {
     let solenoids = {};
     let pts = {};
     let tcs = {};
-
     for (const key in state) {
         if (key.includes("solenoid")) {
             let solenoidType = key.includes("Expected") ? "expected" : "current";
@@ -41,9 +41,7 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
     try {
         const ecuState = (await getEcuState()).data;
         parseState(ecuState, dispatch);
-        // console.log("ECU", ecuState);
         const gseState = (await getGseState()).data;
-        // console.log("GSE", gseState);
         parseState(gseState, dispatch);
         dispatch(setTimestamp(5));
     } catch (error) {
@@ -88,6 +86,9 @@ export const rocketSlice = createSlice({
         },
         setTimestamp: (state, action) => {
             state.timestamp = action.payload;
+        },
+        setKeydown: (state, action) => {
+            state.keydown = action.payload;
         }
     }
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -104,7 +105,7 @@ export const rocketSlice = createSlice({
     // },
 });
 
-export const {toggleSolenoid, setSolenoids, setPts, setTcs, setTimestamp} = rocketSlice.actions;
+export const {toggleSolenoid, setSolenoids, setPts, setTcs, setTimestamp, setKeydown} = rocketSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -114,5 +115,5 @@ export const selectSolenoids = (state) => state.rocket.solenoids;
 export const selectPts = (state) => state.rocket.pts;
 export const selectTcs = (state) => state.rocket.tcs;
 export const selectTimestamp = (state) => state.rocket.timestamp;
-
+export const selectKeydown = (state) => state.rocket.keydown;
 export default rocketSlice.reducer;

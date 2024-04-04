@@ -17,7 +17,9 @@ services:
             - "8000:8000"
         environment:
             - ECU_IP=fake_rocket
+            - ECU_PORT=10002
             - GSE_IP=fake_rocket
+            - GSE_PORT=10002
         volumes:
             - ./webservice:/app
         healthcheck:
