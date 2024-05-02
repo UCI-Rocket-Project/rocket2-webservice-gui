@@ -17,14 +17,14 @@ services:
             - "8000:8000"
         environment:
             - ECU_IP=fake_rocket
-            - ECU_PORT=10002
+            - ECU_PORT=10004
             - GSE_IP=fake_rocket
             - GSE_PORT=10002
         volumes:
             - ./webservice:/app
         healthcheck:
-          test: curl --fail http://localhost:8000/ecu/state || exit 1
-          interval: 20s
+            test: curl --fail http://localhost:8000/ecu/state || exit 1
+            interval: 20s
         networks:
             - basic_net
     postgres:
@@ -60,4 +60,3 @@ services:
 networks:
     basic_net:
         driver: bridge
-

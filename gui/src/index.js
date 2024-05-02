@@ -8,11 +8,12 @@ import "./globalStyles.css";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 import {DiagramPage} from "./diagram_page/DiagramPage";
+import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
 import {fetchRocketState} from "./redux/rocketSlice";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
-
+let rocket_state = {};
 // Function to fetch and update rocket state periodically
 const fetchAndDispatchRocketState = async () => {
     try {
@@ -40,6 +41,9 @@ const Navbar = () => {
             <button>
                 <Link to="/telemetry">Telemetry</Link>
             </button>
+            <button>
+                <Link to="/analytics">Analytics</Link>
+            </button>
         </div>
     );
 };
@@ -61,6 +65,10 @@ root.render(
                     <Route
                         path="/telemetry"
                         element={<TelemetryPage />}
+                    />
+                    <Route
+                        path="/analytics"
+                        element={<AnalyticsPage />}
                     />
                 </Routes>
             </Router>

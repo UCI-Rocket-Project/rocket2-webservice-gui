@@ -1,0 +1,25 @@
+.row {
+    display: flex;
+}
+
+.chart {
+    width: 100%;
+}
+.selectionBox {
+    width: 25%;
+}
+.graphBox {
+    width: 75%;
+}
+.selectedKey {
+    display: flex;
+    justify-content: space-between;
+}
+.keyTitle {
+    margin: 0;
+    margin-left: 5%;
+    margin-right: 2%;
+}
+.keyButton {
+    width: 10%;
+}

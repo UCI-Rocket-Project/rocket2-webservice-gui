@@ -39,7 +39,6 @@ export function DiagramPage() {
                 className={styles.loxvent}
                 feedback_value={solenoids["LoxVent"]["expected"]}
                 customClick={(event) => handleToggleSolenoid("gse", "LoxVent", event)}
-
             ></ToggleButton>
             <ToggleButton
                 className={styles.lngvent}

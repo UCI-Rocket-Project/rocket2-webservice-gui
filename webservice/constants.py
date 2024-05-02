@@ -1,3 +1,4 @@
+GSE_DATA_LENGTH = 79  # 4(time_recv) + 15(bool) + 4 * 14(floats) + 4(crc)
 GSE_DATA_FORMAT = [
     "time_recv",
     "igniterArmed",
@@ -28,5 +29,50 @@ GSE_DATA_FORMAT = [
     "solenoidCurrentLngVent",
     "temperatureLox",
     "temperatureLng",
-    "pressureGn2"
-    ]
+    "pressureGn2",
+]
+
+ECU_DATA_LENGTH = (
+    144  # 4(time_recv) + 4 * 2(floats) + 4(bool) + 4 * 31(floats) + 4(crc) + \r\n
+)
+
+ECU_DATA_FORMAT = [
+    "time_recv",
+    "packetRssi",
+    "packetLoss",
+    "solenoidInternalStateCopvVent",
+    "solenoidInternalStatePv1",
+    "solenoidInternalStatePv2",
+    "solenoidInternalStateVent",
+    "supplyVoltage",
+    "batteryVoltage",
+    "solenoidCurrentCopvVent",
+    "solenoidCurrentPv1",
+    "solenoidCurrentPv2",
+    "solenoidCurrentVent",
+    "temperatureCopv",
+    "pressureCopv",
+    "pressureLox",
+    "pressureLng",
+    "pressureInjectorLox",
+    "pressureInjectorLng",
+    "angularVelocityX",
+    "angularVelocityY",
+    "angularVelocityZ",
+    "accelerationX",
+    "accelerationY",
+    "accelerationZ",
+    "magneticFieldX",
+    "magneticFieldY",
+    "magneticFieldZ",
+    "temperature",
+    "altitude",
+    "ecefPositionX",
+    "ecefPositionY",
+    "ecefPositionZ",
+    "ecefPositionAccuracy",
+    "ecefVelocityX",
+    "ecefVelocityY",
+    "ecefVelocityZ",
+    "ecefVelocityAccuracy",
+]

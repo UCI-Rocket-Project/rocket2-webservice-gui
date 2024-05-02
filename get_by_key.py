@@ -10,36 +10,21 @@ db_params = {
 }
 
 
-def retrieve_ecu_data(connection):
+def retrieve_gse_data(connection, keys):
     try:
         cursor = connection.cursor()
-
+        key_str = "time_recv, "
+        for key in keys:
+            key_str += f"{key}, "
+        key_str = key_str[:-2]
         # Select all rows from the 'ecu' table
-        cursor.execute("SELECT * FROM ecu;")
+        cursor.execute(f"SELECT {key_str} FROM gse;")
         rows = cursor.fetchall()
 
         # Print the retrieved data
         for row in rows:
             print(row)
-
-    except Exception as e:
-        print(f"Error: {e}")
-
-    finally:
-        cursor.close()
-
-
-def retrieve_gse_data(connection):
-    try:
-        cursor = connection.cursor()
-
-        # Select all rows from the 'ecu' table
-        cursor.execute("SELECT * FROM gse;")
-        rows = cursor.fetchall()
-
-        # Print the retrieved data
-        for row in rows:
-            print(row)
+        return rows
 
     except Exception as e:
         print(f"Error: {e}")
@@ -51,9 +36,7 @@ def retrieve_gse_data(connection):
 # Connect to the PostgreSQL database
 try:
     connection = psycopg2.connect(**db_params)
-    retrieve_ecu_data(connection)
-    print("GSE")
-    retrieve_gse_data(connection)
+    retrieve_gse_data(connection, ["temperatureLox", "temperatureLng"])
 
 except psycopg2.Error as e:
     print(f"Unable to connect to the database. Error: {e}")

@@ -1,15 +1,22 @@
 -- ./postgres/init.sql
 -- This script will be executed during the PostgreSQL initialization process
 
--- Create the "rocket2" database
+-- Create the rocket2 database
 -- CREATE DATABASE rocket2;
 
--- Connect to the "rocket2" database
+-- Connect to the rocket2 database
 \c rocket2;
 
--- Create the "ecu" table
+-- Create the ecu table
+
 CREATE TABLE IF NOT EXISTS ecu (
     time_recv INTEGER,
+    packetRssi FLOAT,
+    packetLoss FLOAT,
+    solenoidInternalStateCopvVent BOOLEAN,
+    solenoidInternalStatePv1 BOOLEAN,
+    solenoidInternalStatePv2 BOOLEAN,
+    solenoidInternalStateVent BOOLEAN,
     supplyVoltage FLOAT,
     batteryVoltage FLOAT,
     solenoidCurrentCopvVent FLOAT,
@@ -20,6 +27,8 @@ CREATE TABLE IF NOT EXISTS ecu (
     pressureCopv FLOAT,
     pressureLox FLOAT,
     pressureLng FLOAT,
+    pressureInjectorLox FLOAT,
+    pressureInjectorLng FLOAT,
     angularVelocityX FLOAT,
     angularVelocityY FLOAT,
     angularVelocityZ FLOAT,
@@ -39,7 +48,6 @@ CREATE TABLE IF NOT EXISTS ecu (
     ecefVelocityY FLOAT,
     ecefVelocityZ FLOAT,
     ecefVelocityAccuracy FLOAT
-
 );
 CREATE TABLE IF NOT EXISTS gse (
     time_recv INTEGER,

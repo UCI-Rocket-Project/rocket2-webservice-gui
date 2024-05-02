@@ -12,12 +12,14 @@ const RocketGauge = ({name, value = 0, minValue = 0, maxValue = 100, arc}) => {
                 value={value}
                 key={name}
                 type="radial"
-                arc={arc || {
-                    colorArray: ["#5BE12C", "#EA4228"],
-                    subArcs: [{limit: 10}, {limit: 30}, {}, {}, {}],
-                    padding: 0.02,
-                    width: 0.3
-                }}
+                arc={
+                    arc || {
+                        colorArray: ["#5BE12C", "#EA4228"],
+                        subArcs: [{limit: 10}, {limit: 30}, {}, {}, {}],
+                        padding: 0.02,
+                        width: 0.3
+                    }
+                }
                 pointer={{
                     elastic: false,
                     animationDelay: 0

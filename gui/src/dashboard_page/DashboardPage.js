@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { selectKeydown, selectPts, selectSolenoids, selectTcs, selectTimestamp } from "../redux/rocketSlice";
-import { setKeydown } from "../redux/rocketSlice";
-import { updateRocket } from "../webservice";
+import React, {useState, useEffect} from "react";
+import {useSelector, useDispatch} from "react-redux";
+import {selectKeydown, selectPts, selectSolenoids, selectTcs, selectTimestamp} from "../redux/rocketSlice";
+import {setKeydown} from "../redux/rocketSlice";
+import {updateRocket} from "../webservice";
 import styles from "./DashboardPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
 import RocketSwitch from "../rocket_switch/RocketSwitch";
@@ -25,13 +25,13 @@ export function DashboardPage() {
         };
 
         // Adding event listeners when component mounts
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('keyup', handleKeyUp);
+        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keyup", handleKeyUp);
 
         // Removing event listeners when component unmounts
         return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-            document.removeEventListener('keyup', handleKeyUp);
+            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("keyup", handleKeyUp);
         };
     }, []); // Empty dependency array ensures this effect runs only once
     // systemName: "gse" or "ecu"
@@ -55,7 +55,7 @@ export function DashboardPage() {
                             name={"GN2 PT"}
                             arc={{
                                 colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
+                                subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
                                 padding: 0.02,
                                 width: 0.3
                             }}
@@ -68,7 +68,7 @@ export function DashboardPage() {
                             units={" °C"}
                             arc={{
                                 colorArray: ["#5BE12C"],
-                                subArcs: [{ limit: 50 }],
+                                subArcs: [{limit: 50}],
                                 padding: 0.02,
                                 width: 0.3
                             }}
@@ -81,7 +81,7 @@ export function DashboardPage() {
                             units={" °C"}
                             arc={{
                                 colorArray: ["#5BE12C"],
-                                subArcs: [{ limit: 50 }],
+                                subArcs: [{limit: 50}],
                                 padding: 0.02,
                                 width: 0.3
                             }}
@@ -232,7 +232,7 @@ export function DashboardPage() {
                                 units={" °C"}
                                 arc={{
                                     colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                    subArcs: [{ limit: 50 }, { limit: 65 }, { limit: 75 }],
+                                    subArcs: [{limit: 50}, {limit: 65}, {limit: 75}],
                                     padding: 0.02,
                                     width: 0.3
                                 }}
@@ -245,7 +245,7 @@ export function DashboardPage() {
                                 units={" psi"}
                                 arc={{
                                     colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                    subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
+                                    subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
                                     padding: 0.02,
                                     width: 0.3
                                 }}
@@ -258,7 +258,7 @@ export function DashboardPage() {
                                 units={" psi"}
                                 arc={{
                                     colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                    subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
+                                    subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
                                     padding: 0.02,
                                     width: 0.3
                                 }}
@@ -271,7 +271,7 @@ export function DashboardPage() {
                                 units={" psi"}
                                 arc={{
                                     colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                    subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
+                                    subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
                                     padding: 0.02,
                                     width: 0.3
                                 }}
