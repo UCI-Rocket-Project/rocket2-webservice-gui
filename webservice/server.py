@@ -2,6 +2,7 @@ import logging
 import socket
 import time
 import os
+import sys
 import math
 import struct
 from threading import Lock, Thread
@@ -79,8 +80,11 @@ gse_state = {
 }
 
 app = Flask(__name__)
+
+hostname = "host.docker.internal" if not sys.platform.startswith('linux') else "172.17.0.1" 
+
 db_config = {
-    "host": "host.docker.internal",
+    "host": hostname,
     "port": "5432",
     "database": "rocket2",
     "user": "gs",
