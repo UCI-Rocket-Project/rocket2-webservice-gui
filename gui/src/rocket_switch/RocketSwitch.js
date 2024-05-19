@@ -22,6 +22,7 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                         type={getStatusType1(feedback_value)}
                         aria-label="status: offline"
                         className="status-one"
+                        data-testid={"status " + name}
                     >
                         Open
                     </StatusIndicator>
@@ -37,6 +38,7 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                     disabled={expected_value == -1 || enabled == false}
                     className={styles.rocketSwitch}
                     onChange={(event) => onClick(event.target.checked)}
+                    data-testid={"switch " + name}
                 ></MuiSwitch>
             </div>
         </div>

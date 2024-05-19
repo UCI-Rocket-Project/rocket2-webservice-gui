@@ -8,3 +8,5 @@ run_prod:
 	docker-compose -f docker-compose-prod.yaml up
 rocket:
 	python fake_rocket/fake_rocket.py
+test:
+	cd gui && npx playwright test

@@ -45,7 +45,12 @@ export function DashboardPage() {
         <div className={styles.row}>
             <div className={styles.gseBox}>
                 <div className={styles.boundingBox}>
-                    <h2 className={styles.title}>GSE</h2>
+                    <h2
+                        className={styles.title}
+                        data-testid="gsePanel"
+                    >
+                        GSE
+                    </h2>
                     <div className={styles.gseGaugeRow}>
                         <RocketGauge
                             value={pts.Gn2}
@@ -163,7 +168,12 @@ export function DashboardPage() {
             </div>
             <div className={styles.ecuBox}>
                 <div className={styles.boundingBox}>
-                    <h2 className={styles.title}>ECU</h2>
+                    <h2
+                        className={styles.title}
+                        data-testid="ecuPanel"
+                    >
+                        ECU
+                    </h2>
                     <div className={styles.row}>
                         <div className={styles.ecuSwitchColumn}>
                             <div className={styles.switchRow}>

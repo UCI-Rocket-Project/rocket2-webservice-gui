@@ -11,6 +11,7 @@ const RocketGauge = ({name, value = 0, minValue = 0, maxValue = 100, arc}) => {
                 className={styles.gauge} // Use className instead of class
                 value={value}
                 key={name}
+                data-testid={"gauge-" + name}
                 type="radial"
                 arc={
                     arc || {
