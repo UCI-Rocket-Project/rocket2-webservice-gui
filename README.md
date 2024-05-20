@@ -2,29 +2,49 @@
 
 ## For developers
 
-1: Set up pre-commit to make all your code nice before committing
-Run pip install pre-commit
-Run pre-commit install
+### 1: Set up pre-commit to make all your code nice before committing
+
+```shell
+$ pip install pre-commit
+$ pre-commit install
+```
+
 Now whenever you try to commit, prettier will fix everything up, so you will need to git add \* and then git commit again which is annoying but it makes your stuff pretty.
+
+### 2: Install Node.js from https://nodejs.org/en/download/package-manager
+
+Install playwright for integration tests by running
+
+```shell
+$ npx -y playwright@1.44.0 install --with-deps
+```
 
 ## Initial Setup
 
 1: Download and install docker desktop from docker website https://www.docker.com/products/docker-desktop/
 Create a docker account and sign in on docker desktop. You will need to keep docker desktop open when you want to run a docker container.
 
-If you are on a windows computer:
+## If you are on Windows
 
-    1: Install chocolatey
-    Open an administrative shell(powershell but run as admin)
-    Run Set-ExecutionPolicy AllSigned or Set-ExecutionPolicy Bypass -Scope Process
-    Run Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+### 1: Install chocolatey
 
-    2: Install Make
-    Run choco install make
+Open an administrative shell (powershell but run as admin)
 
-    Once this is done, restart your computer
+```shell
+$ Set-ExecutionPolicy AllSigned or Set-ExecutionPolicy Bypass -Scope Process
+$ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+### 2: Install Make
+
+```shell
+$ choco install make
+```
+
+Once this is done, restart your computer
 
 Open up Docker desktop and make sure you are still signed in
+
 Open up this git repo in a command line and run
 
 ```shell
@@ -51,102 +71,10 @@ For prod environment which sends requests to 10.0.255.1 instead of fake_rocket
 $ make run_prod
 ```
 
-Webservice Endpoints:
+## Testing
 
-### Get Webservice State
+To run tests, run
 
-Reads the launch vehicle / ground system state on the web service.
-
-```http
-GET http://localhost:8081/<system_name>/state
-```
-
-`<system_name>` can be: `ecu` or `gse`.
-
-Returns: the state for the given system.
-
-Example:
-
-```http
-GET http://localhost:8081/ecu/state
-```
-
-Returns:
-
-```json
-{
-    "time_recv": 0,
-    "solenoidCurrentGn2Vent": 0,
-    "solenoidCurrentPv1": 0,
-    "solenoidCurrentPv2": 0,
-    "solenoidCurrentVent": 0,
-    "solenoidExpectedGn2Vent": 0,
-    "solenoidExpectedPv1": 0,
-    "solenoidExpectedPv2": 0,
-    "solenoidExpectedVent": 0,
-    "temperatureGn2": 0,
-    "pressureGn2": 0,
-    "pressureLox": 0,
-    "pressureLng": 0
-}
-```
-
-For documentation on specific keys, see [Rocket2 Overview](https://github.com/UCI-Rocket-Project/rocket2-overview).
-
-### Update Webservice State
-
-Updates the launch vehicle / ground system state on the web service and saves it to the database.
-
-```http
-POST http://localhost:8081/<system_name>/state
-```
-
-`<system_name>` can be: `ecu`, `gse`, `tracking`.
-
-Returns: None.
-
-Example:
-
-```http
-POST http://localhost:8081/ecu/state
-```
-
-Body:
-
-```json
-{
-    "time_recv": 0,
-    "solenoidCurrentGn2Vent": 0,
-    "solenoidCurrentPv1": 0,
-    "solenoidCurrentPv2": 0,
-    "solenoidCurrentVent": 0,
-    "solenoidExpectedGn2Vent": 0,
-    "solenoidExpectedPv1": 0,
-    "solenoidExpectedPv2": 0,
-    "solenoidExpectedVent": 0,
-    "temperatureGn2": 0,
-    "pressureGn2": 0,
-    "pressureLox": 0,
-    "pressureLng": 0
-}
-```
-
-For documentation on specific keys, see [Rocket2 Overview](https://github.com/UCI-Rocket-Project/rocket2-overview).
-
-### Update Solenoid State
-
-```http
-UPDATE http://localhost:8081/<system_name>/solenoid/<solenoid_name>/<new_state>
-```
-
-`<system_name>` can be: `ecu`, `gse`. \
-`<solenoid_name>` see [Rocket2 Overview](https://github.com/UCI-Rocket-Project/rocket2-overview). \
-`<new_state>` can be: 0(close), 1(open).
-
-Returns: None.
-
-Example:
-
-```http
-UPDATE http://localhost:8081/ecu/solenoid/Lox/open
+```shell
+$ make test
 ```
