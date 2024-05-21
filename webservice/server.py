@@ -7,7 +7,7 @@ import struct
 from threading import Lock, Thread
 import binascii
 
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from sqlalchemy import create_engine
 import psycopg2
@@ -107,8 +107,12 @@ def get_data(selected_keys):
     for key in selected_keys.split(","):
         key_str += f"{key}, "
     key_str = key_str[:-2]
-    cursor.execute(f"SELECT {key_str} FROM ecu ORDER BY time_recv DESC LIMIT 200;")
+    where_claus = ""
+    if request.args.get("startTime") or request.args.get("endTime"):
+        where_claus = f"WHERE time_recv > {request.args.get('startTime', 0)} \
+        AND time_recv < {request.args.get('endTime',200)}"
 
+    cursor.execute(f"SELECT {key_str} FROM ecu {where_claus} ORDER BY time_recv DESC;")
     rows = cursor.fetchall()
     cursor.close()
     return {"sensors": selected_keys.split(","), "data": rows[::-1]}
@@ -286,4 +290,4 @@ if __name__ == "__main__":
     ecu_listening_thread = Thread(target=start_ecu_listening, args=())
     ecu_listening_thread.daemon = True
     ecu_listening_thread.start()
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8000, debug=True)

@@ -12,9 +12,17 @@ export const getGseState = () => {
         console.log("error");
     });
 };
-export const getDatabase = (data_type) => {
+export const getDatabase = (data_type, startTime, endTime) => {
     console.log("GETTING DATABASE", data_type);
-    return client.get("data/" + data_type).catch(() => {
+    let params = null;
+    if (startTime || endTime) {
+        params = {
+            startTime: startTime,
+            endTime: endTime
+        };
+    }
+    console.log(params, "params");
+    return client.get("data/" + data_type, {params: params}).catch(() => {
         console.log("error");
     });
 };

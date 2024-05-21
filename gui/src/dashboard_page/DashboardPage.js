@@ -164,6 +164,7 @@ export function DashboardPage() {
                             enabled={keydown == TOGGLE_KEY}
                         ></RocketSwitch>
                     </div>
+                    <div>{keydown == TOGGLE_KEY ? <img src="/button_open.png" /> : <img src="/button_closed.png" />}</div>
                 </div>
             </div>
             <div className={styles.ecuBox}>

@@ -8,9 +8,12 @@ export function AnalyticsPage() {
     const [newKey, setNewKey] = useState("pressureLng");
     const [selectedKeys, setSelectedKeys] = useState(["pressureCopv"]);
     const chartRef = useRef(null);
+    const [startTime, setStartTime] = useState("0");
+    const [endTime, setEndTime] = useState("200");
     const keys = ["pressureInjectorLox", "pressureInjectorLng", "pressureLox", "pressureLng"];
     const fetchData = async (dataString) => {
-        const response = (await getDatabase(dataString)).data;
+        console.log("start time", startTime, endTime);
+        const response = (await getDatabase(dataString, startTime, endTime)).data;
         setData(response);
     };
 
@@ -124,7 +127,18 @@ export function AnalyticsPage() {
                     ></canvas>
                 </div>
             </div>
-
+            <input
+                type="text"
+                placeholder="Start Time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="End Time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+            />
             <button onClick={generateGraph}>Generate</button>
         </div>
     );
