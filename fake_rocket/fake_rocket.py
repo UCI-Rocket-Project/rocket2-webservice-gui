@@ -15,53 +15,6 @@ logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 start_time = datetime.now()
 
 
-def start_gse_server(port, shared_gse_state):
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.settimeout(5)
-    server_socket.bind(("", port))
-    server_socket.listen(1)
-    while True:
-        # Wait for a connection
-        client_socket, client_address = server_socket.accept()
-        logging.info(f"Connection to GSE from {client_address}")
-
-        # Receive thread
-        def gse_listener(client_socket):
-            try:
-                while True:
-                    raw_data = client_socket.recv(16)
-                    if len(raw_data) == 16:
-                        list_data = struct.unpack("<????????????", raw_data[:-4])
-                        handle_update_gse_state(list_data)
-            except Exception as e:
-                logging.info(f"GSE listener failed {e}")
-
-        gse_thread = threading.Thread(target=gse_listener, args=(client_socket,))
-        gse_thread.daemon = True
-        gse_thread.start()
-        # Send
-        while True:
-            data_format = "<L???????????????ffffffffffffff"
-            data_to_send = (shared_gse_state[key] for key in GSE_DATA_FORMAT)
-            packed_data = struct.pack(data_format, *data_to_send)
-            crc32_value = binascii.crc32(packed_data)
-            try:
-                shared_gse_state["time_recv"] = int(
-                    (datetime.now() - start_time).total_seconds()
-                )
-                shared_gse_state["temperatureLox"] += random.randint(-1, 1)
-                shared_gse_state["temperatureLng"] += random.randint(-1, 1)
-                shared_gse_state["pressureGn2"] += random.randint(-1, 1)
-                client_socket.sendall(packed_data + struct.pack("<L", crc32_value))
-                time.sleep(0.5)
-            except BrokenPipeError:
-                client_socket.close()
-                logging.info("GSE lost connection to webservice. Restarting")
-                break
-            except Exception as e:
-                logging.info(f"GSE failed to send data: {e}")
-
-
 def handle_update_gse_state(data):
     global gse_state
     for key, val in zip(GSE_COMMAND_FORMAT, data):
@@ -69,53 +22,13 @@ def handle_update_gse_state(data):
         gse_state[key[1]] = val
 
 
-def start_ecu_server(port, shared_ecu_state):
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.settimeout(5)
-    server_socket.bind(("", port))
-    server_socket.listen(1)
-    while True:
-        # Wait for a connection
-        client_socket, client_address = server_socket.accept()
-        client_socket.settimeout(5)
-        logging.info(f"Connection to ecu from {client_address}")
-
-        # Receive thread
-        def ecu_listener(client_socket):
-            try:
-                while True:
-                    raw_data = client_socket.recv(8)  ## switch
-                    if len(raw_data) == 8:
-                        handle_update_ecu_state(struct.unpack("<????", raw_data[:-4]))
-            except Exception as e:
-                logging.info(f"ecu listener failed {e}")
-
-        ecu_thread = threading.Thread(target=ecu_listener, args=(client_socket,))
-        ecu_thread.daemon = True
-        ecu_thread.start()
-
-        # Send
-        while True:
-            data_format = "<Lff????fffffffffffffffffffffffffffffff"
-            data_to_send = (shared_ecu_state[key] for key in ECU_DATA_FORMAT)
-            packed_data = struct.pack(data_format, *data_to_send)
-            crc32_value = binascii.crc32(packed_data)
-            try:
-                shared_ecu_state["time_recv"] = int(
-                    (datetime.now() - start_time).total_seconds()
-                )
-                shared_ecu_state["pressureCopv"] += random.randint(-1, 1)
-                shared_ecu_state["pressureLox"] += random.randint(-1, 1)
-                shared_ecu_state["pressureLng"] += random.randint(-1, 1)
-                shared_ecu_state["temperatureCopv"] += random.randint(-1, 1)
-                client_socket.sendall(packed_data + struct.pack("<L", crc32_value))
-                time.sleep(0.5)
-            except BrokenPipeError:
-                client_socket.close()
-                logging.info("ECU lost connection to webservice. Restarting")
-                break
-            except Exception as e:
-                logging.info(f"ECU failed to send data: {e}")
+def gse_command_handler(client_socket, stop_event):
+    while not stop_event.is_set():
+        raw_data = client_socket.recv(16)
+        if len(raw_data) == 16:
+            list_data = struct.unpack("<????????????", raw_data[:-4])
+            handle_update_gse_state(list_data)
+    logging.info("gse Command handler stop event set")
 
 
 def handle_update_ecu_state(data):
@@ -123,6 +36,84 @@ def handle_update_ecu_state(data):
     for key, val in zip(ECU_COMMAND_FORMAT, data):
         ecu_state[key[0]] = val
         ecu_state[key[1]] = val
+
+
+def ecu_command_handler(client_socket, stop_event):
+    while not stop_event.is_set():
+        raw_data = client_socket.recv(8)
+        if len(raw_data) == 8:
+            handle_update_ecu_state(struct.unpack("<????", raw_data[:-4]))
+    logging.info("ECU Command handler stop event set")
+
+
+def start_server(
+    system_name,
+    port,
+    shared_state,
+    command_handler,
+):
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(("", port))
+    server_socket.listen(1)
+
+    def handle_client(client_socket):
+        stop_event = threading.Event()
+        command_thread = threading.Thread(
+            target=command_handler, args=(client_socket, stop_event)
+        )
+        command_thread.daemon = True
+        command_thread.start()
+        try:
+            while True:
+                packed_data = None
+                if system_name == "ECU":
+                    data_format = "<Lff????fffffffffffffffffffffffffffffff"
+                    data_to_send = (shared_state[key] for key in ECU_DATA_FORMAT)
+                    packed_data = struct.pack(data_format, *data_to_send)
+                    crc32_value = binascii.crc32(packed_data)
+
+                    shared_state["time_recv"] = int(
+                        (datetime.now() - start_time).total_seconds()
+                    )
+                    shared_state["pressureCopv"] += random.randint(-1, 1)
+                    shared_state["pressureLox"] += random.randint(-1, 1)
+                    shared_state["pressureLng"] += random.randint(-1, 1)
+                    shared_state["temperatureCopv"] += random.randint(-1, 1)
+                else:
+                    data_format = "<L???????????????ffffffffffffff"
+                    data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
+                    packed_data = struct.pack(data_format, *data_to_send)
+                    crc32_value = binascii.crc32(packed_data)
+                    shared_state["time_recv"] = int(
+                        (datetime.now() - start_time).total_seconds()
+                    )
+                    shared_state["temperatureLox"] += random.randint(-1, 1)
+                    shared_state["temperatureLng"] += random.randint(-1, 1)
+                    shared_state["pressureGn2"] += random.randint(-1, 1)
+
+                client_socket.sendall(packed_data + struct.pack("<L", crc32_value))
+                time.sleep(0.5)
+        except BrokenPipeError:
+            logging.warning(f"{system_name} lost connection to webservice. Restarting")
+        except Exception as e:
+            logging.error(f"{system_name} failed to send data: {e}")
+        finally:
+            client_socket.close()
+            stop_event.set()
+            command_thread.join()
+            logging.info(f"{system_name} thread has died. Restarting")
+
+    while True:
+        try:
+            client_socket, client_address = server_socket.accept()
+            logging.info(f"Connection to {system_name} from {client_address}")
+            threading.Thread(
+                target=handle_client, args=(client_socket,), daemon=True
+            ).start()
+        except socket.timeout:
+            logging.warning(f"{system_name} server socket accept timed out")
+        except Exception as e:
+            logging.error(f"{system_name} server encountered an error: {e}")
 
 
 gse_state = {}
@@ -211,13 +202,17 @@ def main():
 
     ecu_state = ecu_manager.dict(initial_ecu_state)
     ecu_server_thread = threading.Thread(
-        target=start_ecu_server, args=(ecu_port, ecu_state), daemon=True
+        target=start_server,
+        args=("ECU", ecu_port, ecu_state, ecu_command_handler),
+        daemon=True,
     )
     ecu_server_thread.start()
 
     gse_state = gse_manager.dict(initial_gse_state)
     gse_server_thread = threading.Thread(
-        target=start_gse_server, args=(gse_port, gse_state), daemon=True
+        target=start_server,
+        args=("GSE", gse_port, gse_state, gse_command_handler),
+        daemon=True,
     )
     gse_server_thread.start()
     try:

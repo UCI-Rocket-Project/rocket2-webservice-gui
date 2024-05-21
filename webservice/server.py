@@ -154,41 +154,52 @@ def set_solenoid(system_name, solenoid_name, new_state):
         return {"error": "no system with that name"}
 
 
-def start_gse_listening():
-    global gse_connection
+def start_system_listening(
+    connection_info,
+    connection_lock,
+    package_length,
+    package_format,
+    update_handler,
+    system_name,
+):
+    global ecu_connection, gse_connection
     while True:
         try:
-            logging.info("Waiting for connection to GSE")
-            gse_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            gse_connection.settimeout(5)
-            gse_connection.connect((gse_ip, gse_port))
+            logging.info(f"Attempting to connect to {system_name}")
+            connection = ecu_connection
+            if system_name == "ECU":
+                ecu_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                ecu_connection.connect(connection_info)
+                connection = ecu_connection
+            else:
+                gse_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                gse_connection.connect(connection_info)
+                connection = gse_connection
             failed_attempts = 0
             while True:
-                with gse_connection_lock:
-                    raw_data = gse_connection.recv(GSE_DATA_LENGTH)
-                if len(raw_data) == GSE_DATA_LENGTH:
-                    if (
-                        binascii.crc32(raw_data[:-4])
-                        == struct.unpack("<L", raw_data[-4:])[0]
-                    ):
-                        handle_update_gse_state(
-                            list(
-                                struct.unpack(
-                                    "<L???????????????ffffffffffffff", raw_data[:-4]
-                                )
-                            )
-                        )
+                with connection_lock:
+                    raw_data = connection.recv(ECU_DATA_LENGTH)
+                if len(raw_data) == package_length:
+                    list_data = struct.unpack("<L", raw_data[-4:])[0]
+                    if binascii.crc32(raw_data[:-4]) == list_data:
+                        list_data = list(struct.unpack(package_format, raw_data[:-4]))
+                        update_handler(list_data)
+                    # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
                     logging.error(
-                        f"Didn't get complete packet from GSE: {len(raw_data)}"
+                        f"Didn't get complete packet from {system_name}: {len(raw_data)}"
                     )
                     failed_attempts += 1
                     if failed_attempts > 10:  # Assume we have disconnected
+                        logging.error(
+                            f"Failed to get consistent packets from {system_name}. Restarting connection"
+                        )
                         break
                     time.sleep(0.5)
         except Exception as e:
-            gse_connection.close()
-            logging.error(f"Failed to connect to GSE: {e}")
+            if connection:
+                connection.close()
+            logging.error(f"{system_name} listener failed: {e}")
             time.sleep(0.5)
 
 
@@ -220,41 +231,6 @@ def handle_update_gse_state(new_state):
     is_gse_initialized = True
 
 
-def start_ecu_listening():
-    global ecu_connection
-    while True:
-        try:
-            logging.info("Waiting for connection to ECU")
-            ecu_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            ecu_connection.settimeout(5)
-            ecu_connection.connect((ecu_ip, ecu_port))
-            failed_attempts = 0
-            while True:
-                with ecu_connection_lock:
-                    raw_data = ecu_connection.recv(ECU_DATA_LENGTH)
-                if len(raw_data) == ECU_DATA_LENGTH:
-                    list_data = struct.unpack("<L", raw_data[-4:])[0]
-                    if binascii.crc32(raw_data[:-4]) == list_data:
-                        list_data = list(
-                            struct.unpack(
-                                "<Lff????fffffffffffffffffffffffffffffff", raw_data[:-4]
-                            )
-                        )
-                        handle_update_ecu_state(list_data)
-                else:
-                    logging.error(
-                        f"Didn't get complete packet from ECU: {len(raw_data)}"
-                    )
-                    failed_attempts += 1
-                    if failed_attempts > 10:  # Assume we have disconnected
-                        break
-                    time.sleep(0.5)
-        except Exception as e:
-            ecu_connection.close()
-            logging.error(f"Failed to connect to ECU: {e}")
-            time.sleep(0.5)
-
-
 def handle_update_ecu_state(new_state):
     global is_ecu_initialized
     state_missmatch = False
@@ -283,11 +259,33 @@ def handle_update_ecu_state(new_state):
 
 
 if __name__ == "__main__":
-    gse_listening_thread = Thread(target=start_gse_listening, args=())
+    gse_listening_thread = Thread(
+        target=start_system_listening,
+        args=(
+            (gse_ip, gse_port),
+            gse_connection_lock,
+            GSE_DATA_LENGTH,
+            "<L???????????????ffffffffffffff",
+            handle_update_gse_state,
+            "GSE",
+        ),
+    )
     gse_listening_thread.daemon = True
     gse_listening_thread.start()
 
-    ecu_listening_thread = Thread(target=start_ecu_listening, args=())
+    ecu_listening_thread = Thread(
+        target=start_system_listening,
+        args=(
+            (ecu_ip, ecu_port),
+            ecu_connection_lock,
+            ECU_DATA_LENGTH,
+            "<Lff????fffffffffffffffffffffffffffffff",
+            handle_update_ecu_state,
+            "ECU",
+        ),
+    )
     ecu_listening_thread.daemon = True
     ecu_listening_thread.start()
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(
+        host="0.0.0.0", port=8000
+    )  # DO NOT TURN ON DEBUG MODE OR IT WILL SHIT BRICKS
