@@ -2,8 +2,8 @@ GSE_DATA_LENGTH = 79  # 4(time_recv) + 15(bool) + 4 * 14(floats) + 4(crc)
 GSE_DATA_FORMAT = [
     "time_recv",
     "igniterArmed",
-    "igniter0Continuity",
-    "igniter1Continuity",
+    "igniterCurrent0",
+    "igniterCurrent1",
     "igniterInternalState0",
     "igniterInternalState1",
     "alarmInternalState",

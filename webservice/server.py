@@ -52,6 +52,8 @@ gse_state = {
     "time_recv": 0,
     "igniterExpected0": 0,
     "igniterExpected1": 0,
+    "igniterCurrent0": 0,
+    "igniterCurrent1": 0,
     "alarmExpected": 0,
     "solenoidCurrentGn2Fill": 0,
     "solenoidCurrentGn2Vent": 0,
@@ -130,23 +132,27 @@ def get_state(system_name):
     return {"error": "No system"}
 
 
-@app.route("/<system_name>/solenoid/<solenoid_name>/<new_state>", methods=["POST"])
-def set_solenoid(system_name, solenoid_name, new_state):
-    """Used by the GUI to set a solenoid
+@app.route("/<system_name>/state/<switch_name>/<new_state>", methods=["POST"])
+def set_solenoid(system_name, switch_name, new_state):
+    """Used by the GUI to set a solenoid or igniter
     Solenoid_name: just the name of the solenoid (EX: Lox(NOT solenoid_expected_lox))"""
     if system_name == "ecu":
         logging.info(
-            f"Old state {ecu_state['solenoidExpected' + solenoid_name]} new state {new_state} "
+            f"Old state {ecu_state['solenoidExpected' + switch_name]} new state {new_state} "
         )
-        ecu_state["solenoidExpected" + solenoid_name] = int(new_state)
+        ecu_state["solenoidExpected" + switch_name] = int(new_state)
         return send_solenoid_command(
             ecu_state, ecu_connection, ecu_connection_lock, "ecu"
         )
     elif system_name == "gse":
-        logging.info(
-            f"Old state {gse_state['solenoidExpected' + solenoid_name]} new state {new_state} "
-        )
-        gse_state["solenoidExpected" + solenoid_name] = int(new_state)
+        if len(switch_name) != 1:  # If it is a solenoid name
+            logging.info(
+                f"Old state {gse_state['solenoidExpected' + switch_name]} new state {new_state} "
+            )
+            gse_state["solenoidExpected" + switch_name] = int(new_state)
+        else:
+            logging.info("IGNITER SWITCHED")
+            gse_state["igniterExpected" + switch_name] = int(new_state)
         return send_solenoid_command(
             gse_state, gse_connection, gse_connection_lock, "gse"
         )
@@ -178,7 +184,7 @@ def start_system_listening(
             failed_attempts = 0
             while True:
                 with connection_lock:
-                    raw_data = connection.recv(ECU_DATA_LENGTH)
+                    raw_data = connection.recv(package_length)
                 if len(raw_data) == package_length:
                     list_data = struct.unpack("<L", raw_data[-4:])[0]
                     if binascii.crc32(raw_data[:-4]) == list_data:
@@ -212,6 +218,9 @@ def handle_update_gse_state(new_state):
                 if not is_gse_initialized:
                     gse_state[key.replace("InternalState", "Expected")] = val
                 elif gse_state[key.replace("InternalState", "Expected")] != val:
+                    logging.info(
+                        f"GSE STATE for {key.replace('InternalState', 'Expected')} does not match "
+                    )
                     state_missmatch = True
             else:
                 if type(val) == bool:

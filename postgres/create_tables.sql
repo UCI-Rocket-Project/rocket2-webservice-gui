@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS ecu (
 CREATE TABLE IF NOT EXISTS gse (
     time_recv INTEGER,
     igniterArmed BOOLEAN,
-    igniter0Continuity BOOLEAN,
-    igniter1Continuity BOOLEAN,
+    igniterCurrent0 BOOLEAN,
+    igniterCurrent1 BOOLEAN,
     igniterInternalState0 BOOLEAN,
     igniterInternalState1 BOOLEAN,
     alarmInternalState BOOLEAN,

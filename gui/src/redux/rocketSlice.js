@@ -5,6 +5,7 @@ const initialState = {
     solenoids: {},
     pts: {},
     tcs: {},
+    igniters: {},
     keydown: null
 };
 
@@ -12,6 +13,7 @@ function parseState(state, dispatch) {
     let solenoids = {};
     let pts = {};
     let tcs = {};
+    let igniters = {};
     for (const key in state) {
         if (key.includes("solenoid")) {
             let solenoidType = key.includes("Expected") ? "expected" : "current";
@@ -31,10 +33,19 @@ function parseState(state, dispatch) {
             let key_name = key.substring(8, key.length);
             pts[key_name] = state[key];
         }
+        if (key.includes("igniter")) {
+            let igniterType = key.includes("Expected") ? "expected" : "current";
+            let igniterName = key.includes("Expected") ? key.split("Expected")[1] : key.split("Current")[1];
+            if (!Object.keys(igniters).includes(igniterName)) {
+                igniters[igniterName] = {expected: 0, current: 0};
+            }
+            igniters[igniterName][igniterType] = state[key];
+        }
     }
     dispatch(setPts(pts));
     dispatch(setSolenoids(solenoids));
     dispatch(setTcs(tcs));
+    dispatch(setIgniters(igniters));
 }
 
 export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", async (_, {dispatch}) => {
@@ -84,6 +95,11 @@ export const rocketSlice = createSlice({
                 state.tcs[tcName] = action.payload[tcName];
             }
         },
+        setIgniters: (state, action) => {
+            for (let igniterName in action.payload) {
+                state.igniters[igniterName] = action.payload[igniterName];
+            }
+        },
         setTimestamp: (state, action) => {
             state.timestamp = action.payload;
         },
@@ -105,7 +121,7 @@ export const rocketSlice = createSlice({
     // },
 });
 
-export const {toggleSolenoid, setSolenoids, setPts, setTcs, setTimestamp, setKeydown} = rocketSlice.actions;
+export const {toggleSolenoid, setSolenoids, setPts, setTcs, setIgniters, setTimestamp, setKeydown} = rocketSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -114,6 +130,7 @@ export const {toggleSolenoid, setSolenoids, setPts, setTcs, setTimestamp, setKey
 export const selectSolenoids = (state) => state.rocket.solenoids;
 export const selectPts = (state) => state.rocket.pts;
 export const selectTcs = (state) => state.rocket.tcs;
+export const selectIgniters = (state) => state.rocket.igniters;
 export const selectTimestamp = (state) => state.rocket.timestamp;
 export const selectKeydown = (state) => state.rocket.keydown;
 export default rocketSlice.reducer;

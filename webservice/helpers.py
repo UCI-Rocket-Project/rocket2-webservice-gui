@@ -40,8 +40,8 @@ def _gen_gse_pack(gse_state):
     """Returns a byte string representing a GSE command packet"""
     pack = struct.pack(
         "<????????????",
-        False,  # igniter0Fire
-        False,  # igniter1Fire
+        gse_state["igniterExpected0"],  # igniter0Fire
+        gse_state["igniterExpected1"],  # igniter1Fire
         False,  # alarm
         gse_state["solenoidExpectedGn2Fill"],
         gse_state["solenoidExpectedGn2Vent"],
@@ -72,6 +72,7 @@ def _gen_ecu_pack(ecu_state):
 
 def send_solenoid_command(state, connection, connection_lock, system_name):
     """Attempts to update the given solenoid on the gse"""
+    logging.info("SENDING SOLENOID COMMAND")
     try:
         with connection_lock:
             if system_name == "ecu":
