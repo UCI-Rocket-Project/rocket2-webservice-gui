@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import GaugeComponent from "react-gauge-component";
 import styles from "./RocketGauge.module.css";
 
-const RocketGauge = ({name, value = 0, minValue = 0, maxValue = 100, arc}) => {
+const RocketGauge = ({name, value = 0, minValue = 0, maxValue = 100, arc, width = 225}) => {
     return (
-        <div className={styles.box}>
+        <div style={{width: `${width}px`}}>
             <h1 className={styles.title}>{name}</h1>
             <GaugeComponent
                 className={styles.gauge} // Use className instead of class

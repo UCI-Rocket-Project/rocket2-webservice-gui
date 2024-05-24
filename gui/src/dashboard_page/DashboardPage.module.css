@@ -1,5 +1,6 @@
 .row {
     display: flex;
+    justify-content: space-between;
 }
 
 .title {
@@ -30,12 +31,6 @@
     padding: 10px;
 }
 
-.ecuGaugeColumn {
-    margin-top: -5%;
-    padding: 10px;
-    width: 28%;
-}
-
 .battery {
     padding: 30px;
     padding-left: 40px;
@@ -51,17 +46,34 @@
 .gseGaugeRow {
     display: flex;
     border-radius: 10px;
+    justify-content: space-evenly;
+    width: 100%;
+}
+.ecuGaugeRow {
+    display: flex;
+    border-radius: 10px;
     justify-content: space-between;
     width: 100%;
+    height: 225;
 }
 .switchRow {
     display: inline-flex;
     flex-direction: row;
     border-radius: 10px;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    width: 100%;
+}
+.launchRow {
+    display: inline-flex;
+    flex-direction: row;
+    border-radius: 10px;
+    justify-content: space-between;
     width: 100%;
 }
 
+.launchRowRight {
+    width: 50%;
+}
 .batteryButtons {
     display: flex;
     justify-content: space-around;

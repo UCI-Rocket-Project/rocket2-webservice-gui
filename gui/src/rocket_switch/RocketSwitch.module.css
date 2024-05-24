@@ -2,6 +2,10 @@
     transform: rotate(-90deg);
     margin-top: 10px;
 }
+.switchRow {
+    display: flex;
+    justify-content: space-evenly;
+}
 
 .status {
     display: inline-flex;
@@ -10,6 +14,10 @@
 
 .status-one {
     height: 50px;
+}
+.flame {
+    width: 50%;
+    margin-top: -20%;
 }
 
 h2 {
@@ -21,7 +29,8 @@ h2 {
 .rocketSwitchParts {
     margin-bottom: 20px;
     padding-bottom: 15px;
-    margin-left: 20px;
+    margin-left: 40px;
+    margin-right: 40px;
 }
 
 .components {

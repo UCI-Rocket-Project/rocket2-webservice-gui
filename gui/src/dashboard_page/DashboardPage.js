@@ -100,7 +100,7 @@ export function DashboardPage() {
                             expected_value={solenoids["Gn2Vent"]["expected"]}
                             feedback_value={solenoids["Gn2Vent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "Gn2Vent", event)}
-                            name="Gn2Vent"
+                            name="GN2 Vent"
                             className="switches"
                             enabled={keydown == TOGGLE_KEY}
                         ></RocketSwitch>
@@ -121,7 +121,7 @@ export function DashboardPage() {
                             enabled={keydown == TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
-                            name="Mvas Vent"
+                            name="MVAS Vent"
                             className="switches"
                             expected_value={solenoids["MvasVent"]["expected"]}
                             feedback_value={solenoids["MvasVent"]["current"]}
@@ -165,40 +165,58 @@ export function DashboardPage() {
                             enabled={keydown == TOGGLE_KEY}
                         ></RocketSwitch>
                     </div>
-                    <div>
-                        <RocketSwitch
-                            name="Igniter 1"
-                            className="switches"
-                            expected_value={igniters["0"]["expected"]}
-                            feedback_value={igniters["0"]["current"]}
-                            onClick={(event) => handleToggleState("gse", "0", event)}
-                            enabled={keydown == TOGGLE_KEY}
-                        ></RocketSwitch>
-                        <RocketSwitch
-                            name="Igniter 2"
-                            className="switches"
-                            expected_value={igniters["1"]["expected"]}
-                            feedback_value={igniters["1"]["current"]}
-                            onClick={(event) => handleToggleState("gse", "1", event)}
-                            enabled={keydown == TOGGLE_KEY}
-                        ></RocketSwitch>
-                    </div>
-                    <div>
-                        {keydown == TOGGLE_KEY ? (
-                            solenoids["Mvas"]["expected"] ? (
-                                <img
-                                    onClick={(event) => handleToggleState("gse", "Mvas", 0)}
-                                    src="/button_down.png"
-                                />
+                    <div className={styles.launchRow}>
+                        <div>
+                            <RocketSwitch
+                                name="Alarm"
+                                className="switches"
+                                expected_value={igniters["0"]["expected"]}
+                                feedback_value={igniters["0"]["current"]}
+                                onClick={(event) => handleToggleState("gse", "0", event)}
+                                enabled={keydown == TOGGLE_KEY}
+                            ></RocketSwitch>
+                        </div>
+                        <div style={{flex: 2}}></div>
+                        <div>
+                            <RocketSwitch
+                                name="Igniter 1"
+                                className="switches"
+                                expected_value={igniters["0"]["expected"]}
+                                feedback_value={igniters["0"]["current"]}
+                                onClick={(event) => handleToggleState("gse", "0", event)}
+                                enabled={keydown == TOGGLE_KEY}
+                                switch_type="igniter"
+                            ></RocketSwitch>
+                            <RocketSwitch
+                                name="Igniter 2"
+                                className="switches"
+                                expected_value={igniters["1"]["expected"]}
+                                feedback_value={igniters["1"]["current"]}
+                                onClick={(event) => handleToggleState("gse", "1", event)}
+                                enabled={keydown == TOGGLE_KEY}
+                                switch_type="igniter"
+                            ></RocketSwitch>
+                        </div>
+                        <div style={{flex: 1}}></div>
+                        <div className={styles.launchRowRight}>
+                            {keydown == TOGGLE_KEY ? (
+                                solenoids["Mvas"]["expected"] ? (
+                                    <img
+                                        onClick={(event) => handleToggleState("gse", "Mvas", 0)}
+                                        src="/button_on_open.png"
+                                    />
+                                ) : (
+                                    <img
+                                        onClick={(event) => handleToggleState("gse", "Mvas", 1)}
+                                        src="/button_off_open.png"
+                                    />
+                                )
+                            ) : solenoids["Mvas"]["expected"] ? (
+                                <img src="/button_on_closed.png" />
                             ) : (
-                                <img
-                                    onClick={(event) => handleToggleState("gse", "Mvas", 1)}
-                                    src="/button_open.png"
-                                />
-                            )
-                        ) : (
-                            <img src="/button_closed.png" />
-                        )}
+                                <img src="/button_off_closed.png" />
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -210,6 +228,48 @@ export function DashboardPage() {
                     >
                         ECU
                     </h2>
+                    <div className={styles.ecuGaugeRow}>
+                        <RocketGauge
+                            value={tcs.Copv}
+                            minValue={15}
+                            maxValue={75}
+                            name={"COPV TC"}
+                            units={" °C"}
+                            arc={{
+                                colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                                subArcs: [{limit: 50}, {limit: 65}, {limit: 75}],
+                                padding: 0.02,
+                                width: 0.3
+                            }}
+                        />
+                        <RocketGauge
+                            value={pts.Copv}
+                            minValue={0}
+                            maxValue={6000}
+                            name={"COPV PT"}
+                            units={" psi"}
+                            arc={{
+                                colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                                subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                                padding: 0.02,
+                                width: 0.3
+                            }}
+                        />
+                        <RocketGauge
+                            value={pts.Lox}
+                            minValue={0}
+                            maxValue={6000}
+                            name={"LOX PT"}
+                            units={" psi"}
+                            arc={{
+                                colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                                subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                                padding: 0.02,
+                                width: 0.3
+                            }}
+                        />
+                    </div>
+
                     <div className={styles.row}>
                         <div className={styles.ecuSwitchColumn}>
                             <div className={styles.switchRow}>
@@ -269,51 +329,38 @@ export function DashboardPage() {
                         </div>
 
                         {/* ECU gauges */}
-                        <div className={styles.ecuGaugeColumn}>
-                            <RocketGauge
-                                value={tcs.Copv}
-                                minValue={15}
-                                maxValue={75}
-                                name={"COPV TC"}
-                                units={" °C"}
-                                arc={{
-                                    colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                    subArcs: [{limit: 50}, {limit: 65}, {limit: 75}],
-                                    padding: 0.02,
-                                    width: 0.3
-                                }}
-                            />
-                            <RocketGauge
-                                value={pts.Copv}
-                                minValue={0}
-                                maxValue={6000}
-                                name={"COPV PT"}
-                                units={" psi"}
-                                arc={{
-                                    colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                    subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
-                                    padding: 0.02,
-                                    width: 0.3
-                                }}
-                            />
-                            <RocketGauge
-                                value={pts.Lox}
-                                minValue={0}
-                                maxValue={6000}
-                                name={"LOX PT"}
-                                units={" psi"}
-                                arc={{
-                                    colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                    subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
-                                    padding: 0.02,
-                                    width: 0.3
-                                }}
-                            />
+                        <div>
                             <RocketGauge
                                 value={pts.Gn2}
                                 minValue={0}
                                 maxValue={6000}
                                 name={"LNG PT"}
+                                units={" psi"}
+                                arc={{
+                                    colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                                    subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                                    padding: 0.02,
+                                    width: 0.3
+                                }}
+                            />
+                            <RocketGauge
+                                value={pts.InjectorLox}
+                                minValue={0}
+                                maxValue={6000}
+                                name={"LOX INJ PT"}
+                                units={" psi"}
+                                arc={{
+                                    colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                                    subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                                    padding: 0.02,
+                                    width: 0.3
+                                }}
+                            />
+                            <RocketGauge
+                                value={pts.InjectorLng}
+                                minValue={0}
+                                maxValue={6000}
+                                name={"LNG INJ PT"}
                                 units={" psi"}
                                 arc={{
                                     colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
