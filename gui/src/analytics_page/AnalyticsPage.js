@@ -79,6 +79,34 @@ export function AnalyticsPage() {
     const generateGraph = () => {
         fetchData(_.reduce(selectedKeys, (acc, key, _) => acc + key + ",", "").slice(0, -1));
     };
+    const convertDictToCsv = (dict) => {
+        const {sensors, data} = dict;
+        let csvContent = "time,";
+
+        // Add column headers
+        csvContent += sensors.join(",") + "\n";
+
+        // Add rows
+        data.forEach((row) => {
+            csvContent += row.join(",") + "\n";
+        });
+
+        return csvContent;
+    };
+
+    const downloadCsv = () => {
+        const csvContent = convertDictToCsv(data);
+        const blob = new Blob([csvContent], {type: "text/csv;charset=utf-8;"});
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "data.csv");
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <div>
@@ -140,6 +168,7 @@ export function AnalyticsPage() {
                 onChange={(e) => setEndTime(e.target.value)}
             />
             <button onClick={generateGraph}>Generate</button>
+            <button onClick={downloadCsv}>Export to CSV</button>
         </div>
     );
 }

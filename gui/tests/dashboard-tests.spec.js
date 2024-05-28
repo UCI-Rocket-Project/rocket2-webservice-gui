@@ -26,13 +26,14 @@ test("Check for panels", async ({page}) => {
 test("Check keylock", async ({page}) => {
     await page.goto("/");
 
-    const gn2Switch = await page.getByTestId("switch Gn2Vent");
+    const gn2Switch = await page.getByTestId("switch GN2 Vent");
     const ariaDisabled = await gn2Switch.getAttribute("aria-disabled");
     expect(ariaDisabled).toBe("true");
 
     await page.keyboard.down("Control");
     const ariaDisabled2 = await gn2Switch.getAttribute("aria-disabled");
     expect(ariaDisabled2).toBeNull();
+
     await page.keyboard.up("Control");
     const ariaDisabled3 = await gn2Switch.getAttribute("aria-disabled");
     expect(ariaDisabled3).toBe("true");
@@ -41,7 +42,7 @@ test("Check keylock", async ({page}) => {
 test("check switch", async ({page}) => {
     await page.goto("/");
     await page.waitForTimeout(1000);
-    const gn2Switch = await page.getByTestId("switch Gn2Vent");
+    const gn2Switch = await page.getByTestId("switch GN2 Vent");
     await page.keyboard.down("Control");
     await gn2Switch.click({force: true});
     await page.waitForTimeout(1000);
@@ -50,7 +51,7 @@ test("check switch", async ({page}) => {
     await continualCheck(page, async () => await gn2Switch.evaluate((el) => el.classList.contains("Mui-checked")), true);
 
     // Check to see if feedback opens
-    const openIndicator = await page.getByTestId("status Gn2Vent");
+    const openIndicator = await page.getByTestId("status GN2 Vent");
     const imgElement = await openIndicator.locator('[role="img"]');
     await continualCheck(page, async () => await imgElement.getAttribute("type"), "available");
 
