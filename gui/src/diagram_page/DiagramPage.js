@@ -1,8 +1,8 @@
-import React, {Component} from "react";
+import React from "react";
 // import diagram from './diagram.png';
 import styles from "./DiagramPage.module.css";
-import {useSelector, useDispatch} from "react-redux";
-import {selectPts, selectSolenoids, selectTcs, selectTimestamp} from "../redux/rocketSlice";
+import {useSelector} from "react-redux";
+import {selectSolenoids, selectTimestamp} from "../redux/rocketSlice";
 import {updateRocket} from "../webservice";
 import ToggleButton from "../toggle_button/ToggleButton";
 
@@ -18,7 +18,10 @@ export function DiagramPage() {
     return timestamp ? (
         <div className={styles.container}>
             <div className={styles.testy}>
-                <img src="/diagram.png" />
+                <img
+                    src="/diagram.png"
+                    alt=""
+                />
             </div>
             <ToggleButton
                 className={styles.copvbv}

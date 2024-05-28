@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {StatusIndicator} from "@zendeskgarden/react-avatars";
 import {MuiSwitch} from "./MuiSwitch.js";
 import styles from "./RocketSwitch.module.css";
@@ -18,7 +18,7 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
             <div className={styles.components}>
                 <h2>{name}</h2>
                 <div className={styles.switchRow}>
-                    {switch_type == "solenoid" ? (
+                    {switch_type === "solenoid" ? (
                         <div className={styles.status}>
                             <StatusIndicator
                                 type={getStatusType1(feedback_value)}
@@ -45,8 +45,8 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                         </div>
                     )}
                     <MuiSwitch
-                        checked={expected_value == 1 ? true : false}
-                        disabled={expected_value == -1 || enabled == false}
+                        checked={expected_value === 1 ? true : false}
+                        disabled={expected_value === -1 || enabled === false}
                         className={styles.rocketSwitch}
                         onChange={(event) => onClick(event.target.checked)}
                         data-testid={"switch " + name}

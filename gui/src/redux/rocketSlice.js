@@ -63,7 +63,7 @@ export const fetchRocketState = createAsyncThunk("rocket/fetchRocketState", asyn
 
 export const setRocketSolenoid = createAsyncThunk("rocket/setRocketSolenoid", async ({solenoidName, solenoidState}, {dispatch}) => {
     try {
-        const response = await updateRocket(solenoidName, solenoidState);
+        await updateRocket(solenoidName, solenoidState);
     } catch (error) {
         // Handle errors (dispatch an error action or throw the error)
         throw error;

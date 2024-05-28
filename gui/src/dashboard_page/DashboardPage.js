@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import {selectIgniters, selectKeydown, selectPts, selectSolenoids, selectTcs, selectTimestamp} from "../redux/rocketSlice";
 import {setKeydown} from "../redux/rocketSlice";
@@ -102,7 +102,7 @@ export function DashboardPage() {
                             onClick={(event) => handleToggleState("gse", "Gn2Vent", event)}
                             name="GN2 Vent"
                             className="switches"
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
                             name="LOX Vent"
@@ -110,7 +110,7 @@ export function DashboardPage() {
                             expected_value={solenoids["LoxVent"]["expected"]}
                             feedback_value={solenoids["LoxVent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LoxVent", event)}
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
                             name="LNG Vent"
@@ -118,7 +118,7 @@ export function DashboardPage() {
                             expected_value={solenoids["LngVent"]["expected"]}
                             feedback_value={solenoids["LngVent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LngVent", event)}
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
                             name="MVAS Vent"
@@ -126,7 +126,7 @@ export function DashboardPage() {
                             expected_value={solenoids["MvasVent"]["expected"]}
                             feedback_value={solenoids["MvasVent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "MvasVent", event)}
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                     </div>
 
@@ -138,7 +138,7 @@ export function DashboardPage() {
                             expected_value={solenoids["Gn2Fill"]["expected"]}
                             feedback_value={solenoids["Gn2Fill"]["current"]}
                             onClick={(event) => handleToggleState("gse", "Gn2Fill", event)}
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
                             name="LOX Fill"
@@ -146,7 +146,7 @@ export function DashboardPage() {
                             expected_value={solenoids["LoxFill"]["expected"]}
                             feedback_value={solenoids["LoxFill"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LoxFill", event)}
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
                             name="LNG Fill"
@@ -154,15 +154,15 @@ export function DashboardPage() {
                             expected_value={solenoids["LngFill"]["expected"]}
                             feedback_value={solenoids["LngFill"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LngFill", event)}
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
-                            name="Mvas Fill"
+                            name="MVAS Fill"
                             className="switches"
                             expected_value={solenoids["MvasFill"]["expected"]}
                             feedback_value={solenoids["MvasFill"]["current"]}
                             onClick={(event) => handleToggleState("gse", "MvasFill", event)}
-                            enabled={keydown == TOGGLE_KEY}
+                            enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                     </div>
                     <div className={styles.launchRow}>
@@ -173,7 +173,7 @@ export function DashboardPage() {
                                 expected_value={igniters["0"]["expected"]}
                                 feedback_value={igniters["0"]["current"]}
                                 onClick={(event) => handleToggleState("gse", "0", event)}
-                                enabled={keydown == TOGGLE_KEY}
+                                enabled={keydown === TOGGLE_KEY}
                             ></RocketSwitch>
                         </div>
                         <div style={{flex: 2}}></div>
@@ -184,7 +184,7 @@ export function DashboardPage() {
                                 expected_value={igniters["0"]["expected"]}
                                 feedback_value={igniters["0"]["current"]}
                                 onClick={(event) => handleToggleState("gse", "0", event)}
-                                enabled={keydown == TOGGLE_KEY}
+                                enabled={keydown === TOGGLE_KEY}
                                 switch_type="igniter"
                             ></RocketSwitch>
                             <RocketSwitch
@@ -193,28 +193,36 @@ export function DashboardPage() {
                                 expected_value={igniters["1"]["expected"]}
                                 feedback_value={igniters["1"]["current"]}
                                 onClick={(event) => handleToggleState("gse", "1", event)}
-                                enabled={keydown == TOGGLE_KEY}
+                                enabled={keydown === TOGGLE_KEY}
                                 switch_type="igniter"
                             ></RocketSwitch>
                         </div>
                         <div style={{flex: 1}}></div>
                         <div className={styles.launchRowRight}>
-                            {keydown == TOGGLE_KEY ? (
+                            {keydown === TOGGLE_KEY ? (
                                 solenoids["Mvas"]["expected"] ? (
                                     <img
                                         onClick={(event) => handleToggleState("gse", "Mvas", 0)}
                                         src="/button_on_open.png"
+                                        alt=""
                                     />
                                 ) : (
                                     <img
                                         onClick={(event) => handleToggleState("gse", "Mvas", 1)}
                                         src="/button_off_open.png"
+                                        alt=""
                                     />
                                 )
                             ) : solenoids["Mvas"]["expected"] ? (
-                                <img src="/button_on_closed.png" />
+                                <img
+                                    src="/button_on_closed.png"
+                                    alt=""
+                                />
                             ) : (
-                                <img src="/button_off_closed.png" />
+                                <img
+                                    src="/button_off_closed.png"
+                                    alt=""
+                                />
                             )}
                         </div>
                     </div>
@@ -279,7 +287,7 @@ export function DashboardPage() {
                                     expected_value={solenoids["CopvVent"]["expected"]}
                                     feedback_value={solenoids["CopvVent"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "CopvVent", event)}
-                                    enabled={keydown == TOGGLE_KEY}
+                                    enabled={keydown === TOGGLE_KEY}
                                 />
                                 <RocketSwitch
                                     name="Vent"
@@ -287,7 +295,7 @@ export function DashboardPage() {
                                     expected_value={solenoids["Vent"]["expected"]}
                                     feedback_value={solenoids["Vent"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "Vent", event)}
-                                    enabled={keydown == TOGGLE_KEY}
+                                    enabled={keydown === TOGGLE_KEY}
                                 />
                             </div>
                             <div className={styles.switchRow}>
@@ -297,7 +305,7 @@ export function DashboardPage() {
                                     expected_value={solenoids["Pv1"]["expected"]}
                                     feedback_value={solenoids["Pv1"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "Pv1", event)}
-                                    enabled={keydown == TOGGLE_KEY}
+                                    enabled={keydown === TOGGLE_KEY}
                                 />
                                 <RocketSwitch
                                     name="PV2"
@@ -305,7 +313,7 @@ export function DashboardPage() {
                                     expected_value={solenoids["Pv2"]["expected"]}
                                     feedback_value={solenoids["Pv2"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "Pv2", event)}
-                                    enabled={keydown == TOGGLE_KEY}
+                                    enabled={keydown === TOGGLE_KEY}
                                 />
                             </div>
                             {/* battery */}

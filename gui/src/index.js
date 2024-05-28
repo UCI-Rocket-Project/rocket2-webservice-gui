@@ -13,7 +13,6 @@ import {fetchRocketState} from "./redux/rocketSlice";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
-let rocket_state = {};
 // Function to fetch and update rocket state periodically
 const fetchAndDispatchRocketState = async () => {
     try {
