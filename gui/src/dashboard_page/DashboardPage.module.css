@@ -16,13 +16,13 @@
 }
 
 .gseBox {
-    flex: 55%;
+    flex: 60%;
     padding: 10px;
     height: 300px; /* Should be removed. Only for demonstration */
 }
 
 .ecuBox {
-    flex: 45%;
+    flex: 40%;
     padding: 10px;
     height: 300px; /* Should be removed. Only for demonstration */
 }
@@ -72,6 +72,8 @@
 }
 
 .launchRowRight {
+    display: flex;
+    justify-content: space-between;
     width: 50%;
 }
 .batteryButtons {

@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useSelector, useDispatch} from "react-redux";
-import {selectIgniters, selectKeydown, selectPts, selectSolenoids, selectTcs, selectTimestamp} from "../redux/rocketSlice";
+import {selectIgniters, selectKeydown, selectMisc, selectPts, selectSolenoids, selectTcs, selectTimestamp} from "../redux/rocketSlice";
 import {setKeydown} from "../redux/rocketSlice";
 import {updateRocket} from "../webservice";
 import styles from "./DashboardPage.module.css";
@@ -13,6 +13,7 @@ export function DashboardPage() {
     const solenoids = useSelector(selectSolenoids);
     const igniters = useSelector(selectIgniters);
     const tcs = useSelector(selectTcs);
+    const misc = useSelector(selectMisc);
     const timestamp = useSelector(selectTimestamp);
     const dispatch = useDispatch();
     const keydown = useSelector(selectKeydown);
@@ -199,6 +200,19 @@ export function DashboardPage() {
                         </div>
                         <div style={{flex: 1}}></div>
                         <div className={styles.launchRowRight}>
+                            {igniters.armed ? (
+                                <img
+                                    style={{width: "200px", height: "213px"}}
+                                    src="/key_armed.png"
+                                    alt=""
+                                />
+                            ) : (
+                                <img
+                                    style={{width: "200px", height: "213px"}}
+                                    src="/key_unarmed.png"
+                                    alt=""
+                                />
+                            )}
                             {keydown === TOGGLE_KEY ? (
                                 solenoids["Mvas"]["expected"] ? (
                                     <img

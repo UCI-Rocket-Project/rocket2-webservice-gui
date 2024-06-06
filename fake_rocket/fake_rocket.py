@@ -127,7 +127,7 @@ def main():
     gse_manager = Manager()
     initial_gse_state = {
         "time_recv": 10,
-        "igniterArmed": 0,
+        "igniterArmed": 1,
         "igniter0Continuity": 0,
         "igniter1Continuity": 0,
         "igniterInternalState0": 0,
