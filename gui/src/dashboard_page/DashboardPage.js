@@ -144,19 +144,19 @@ export function DashboardPage() {
                             enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
-                            name="LOX Fill"
+                            name="MVAS Open"
                             className="switches"
-                            expected_value={solenoids["LoxFill"]["expected"]}
-                            feedback_value={solenoids["LoxFill"]["current"]}
-                            onClick={(event) => handleToggleState("gse", "LoxFill", event)}
+                            expected_value={solenoids["MvasOpen"]["expected"]}
+                            feedback_value={solenoids["MvasOpen"]["current"]}
+                            onClick={(event) => handleToggleState("gse", "MvasOpen", event)}
                             enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
-                            name="LNG Fill"
+                            name="MVAS Close"
                             className="switches"
-                            expected_value={solenoids["LngFill"]["expected"]}
-                            feedback_value={solenoids["LngFill"]["current"]}
-                            onClick={(event) => handleToggleState("gse", "LngFill", event)}
+                            expected_value={solenoids["MvasClose"]["expected"]}
+                            feedback_value={solenoids["MvasClose"]["current"]}
+                            onClick={(event) => handleToggleState("gse", "MvasClose", event)}
                             enabled={keydown === TOGGLE_KEY}
                         ></RocketSwitch>
                         <RocketSwitch
@@ -224,20 +224,20 @@ export function DashboardPage() {
                                 />
                             )}
                             {keydown === TOGGLE_KEY ? (
-                                solenoids["Mvas"]["expected"] ? (
+                                solenoids["MvasOpen"]["expected"] ? (
                                     <img
-                                        onClick={(event) => handleToggleState("gse", "Mvas", 0)}
+                                        onClick={(event) => handleToggleState("gse", "MvasOpen", 0)}
                                         src="/button_on_open.png"
                                         alt=""
                                     />
                                 ) : (
                                     <img
-                                        onClick={(event) => handleToggleState("gse", "Mvas", 1)}
+                                        onClick={(event) => handleToggleState("gse", "MvasOpen", 1)}
                                         src="/button_off_open.png"
                                         alt=""
                                     />
                                 )
-                            ) : solenoids["Mvas"]["expected"] ? (
+                            ) : solenoids["MvasOpen"]["expected"] ? (
                                 <img
                                     src="/button_on_closed.png"
                                     alt=""

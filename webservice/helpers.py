@@ -48,10 +48,9 @@ def _gen_gse_pack(gse_state):
         gse_state["solenoidExpectedGn2Disconnect"],
         gse_state["solenoidExpectedMvasFill"],
         gse_state["solenoidExpectedMvasVent"],
-        gse_state["solenoidExpectedMvas"],
-        gse_state["solenoidExpectedLoxFill"],
+        gse_state["solenoidExpectedMvasOpen"],
+        gse_state["solenoidExpectedMvasClose"],
         gse_state["solenoidExpectedLoxVent"],
-        gse_state["solenoidExpectedLngFill"],
         gse_state["solenoidExpectedLngVent"],
     )
     pack += struct.pack("<L", binascii.crc32(pack))
