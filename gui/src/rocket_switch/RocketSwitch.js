@@ -4,13 +4,13 @@ import {MuiSwitch} from "./MuiSwitch.js";
 import styles from "./RocketSwitch.module.css";
 import PropTypes from "prop-types";
 
-const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {}, enabled, switch_type = "solenoid"}) => {
-    const getStatusType1 = (feedbackValue) => {
-        return feedbackValue === 0 ? "offline" : "available";
+const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {}, enabled, switch_type = "solenoid", isNormallyOpen = false}) => {
+    const getClosedIndicator = (feedbackValue) => {
+        return isNormallyOpen ? (feedbackValue === 0 ? "offline" : "available") : feedbackValue === 0 ? "available" : "offline";
     };
 
-    const getStatusType2 = (feedbackValue) => {
-        return feedbackValue === 0 ? "available" : "offline";
+    const getOpenIndicator = (feedbackValue) => {
+        return isNormallyOpen ? (feedbackValue === 0 ? "available" : "offline") : feedbackValue === 0 ? "offline" : "available";
     };
 
     return (
@@ -21,7 +21,7 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                     {switch_type === "solenoid" ? (
                         <div className={styles.status}>
                             <StatusIndicator
-                                type={getStatusType1(feedback_value)}
+                                type={getOpenIndicator(feedback_value)}
                                 aria-label="status: offline"
                                 className="status-one"
                                 data-testid={"status " + name}
@@ -29,7 +29,7 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                                 Open
                             </StatusIndicator>
                             <StatusIndicator
-                                type={getStatusType2(feedback_value)}
+                                type={getClosedIndicator(feedback_value)}
                                 aria-label="status: available"
                             >
                                 Close

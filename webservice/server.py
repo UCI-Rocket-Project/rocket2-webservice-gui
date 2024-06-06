@@ -62,6 +62,7 @@ gse_state = {
     "solenoidCurrentMvasVent": 0,
     "solenoidCurrentMvas": 0,
     "solenoidCurrentLoxFill": 0,
+    "solenoidCurrentGn2Disconnect": 0,
     "solenoidCurrentLoxVent": 0,
     "solenoidCurrentLngFill": 0,
     "solenoidCurrentLngVent": 0,
@@ -71,6 +72,7 @@ gse_state = {
     "solenoidExpectedMvasVent": -1,
     "solenoidExpectedMvas": -1,
     "solenoidExpectedLoxFill": -1,
+    "solenoidExpectedGn2Disconnect": -1,
     "solenoidExpectedLoxVent": -1,
     "solenoidExpectedLngFill": -1,
     "solenoidExpectedLngVent": -1,
@@ -81,7 +83,9 @@ gse_state = {
 
 app = Flask(__name__)
 
-hostname = "host.docker.internal" if not sys.platform.startswith('linux') else "172.17.0.1" 
+hostname = (
+    "host.docker.internal" if not sys.platform.startswith("linux") else "172.17.0.1"
+)
 
 db_config = {
     "host": hostname,
@@ -278,7 +282,7 @@ if __name__ == "__main__":
             (gse_ip, gse_port),
             gse_connection_lock,
             GSE_DATA_LENGTH,
-            "<L???????????????ffffffffffffff",
+            "<L????????????????fffffffffffffff",
             handle_update_gse_state,
             "GSE",
         ),

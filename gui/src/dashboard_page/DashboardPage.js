@@ -112,6 +112,7 @@ export function DashboardPage() {
                             feedback_value={solenoids["LoxVent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LoxVent", event)}
                             enabled={keydown === TOGGLE_KEY}
+                            isNormallyOpen={true}
                         ></RocketSwitch>
                         <RocketSwitch
                             name="LNG Vent"
@@ -120,6 +121,7 @@ export function DashboardPage() {
                             feedback_value={solenoids["LngVent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LngVent", event)}
                             enabled={keydown === TOGGLE_KEY}
+                            isNormallyOpen={true}
                         ></RocketSwitch>
                         <RocketSwitch
                             name="MVAS Vent"
@@ -169,10 +171,18 @@ export function DashboardPage() {
                     <div className={styles.launchRow}>
                         <div>
                             <RocketSwitch
+                                name="Gn2 Disconnect"
+                                className="switches"
+                                expected_value={solenoids["Gn2Disconnect"]["expected"]}
+                                feedback_value={solenoids["Gn2Disconnect"]["current"]}
+                                onClick={(event) => handleToggleState("gse", "Gn2Disconnect", event)}
+                                enabled={keydown === TOGGLE_KEY}
+                            ></RocketSwitch>
+                            <RocketSwitch
                                 name="Alarm"
                                 className="switches"
-                                expected_value={igniters["0"]["expected"]}
-                                feedback_value={igniters["0"]["current"]}
+                                expected_value={-1}
+                                feedback_value={-1}
                                 onClick={(event) => handleToggleState("gse", "0", event)}
                                 enabled={keydown === TOGGLE_KEY}
                             ></RocketSwitch>
@@ -310,6 +320,7 @@ export function DashboardPage() {
                                     feedback_value={solenoids["Vent"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "Vent", event)}
                                     enabled={keydown === TOGGLE_KEY}
+                                    isNormallyOpen={true}
                                 />
                             </div>
                             <div className={styles.switchRow}>

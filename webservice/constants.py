@@ -1,4 +1,4 @@
-GSE_DATA_LENGTH = 79  # 4(time_recv) + 15(bool) + 4 * 14(floats) + 4(crc)
+GSE_DATA_LENGTH = 84  # 4(time_recv) + 16(bool) + 4 * 15(floats) + 4(crc)
 GSE_DATA_FORMAT = [
     "time_recv",
     "igniterArmed",
@@ -9,6 +9,7 @@ GSE_DATA_FORMAT = [
     "alarmInternalState",
     "solenoidInternalStateGn2Fill",
     "solenoidInternalStateGn2Vent",
+    "solenoidInternalStateGn2Disconnect",
     "solenoidInternalStateMvasFill",
     "solenoidInternalStateMvasVent",
     "solenoidInternalStateMvas",
@@ -20,6 +21,7 @@ GSE_DATA_FORMAT = [
     "supplyVoltage1",
     "solenoidCurrentGn2Fill",
     "solenoidCurrentGn2Vent",
+    "solenoidCurrentGn2Disconnect",
     "solenoidCurrentMvasFill",
     "solenoidCurrentMvasVent",
     "solenoidCurrentMvas",

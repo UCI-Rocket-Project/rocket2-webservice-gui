@@ -24,9 +24,9 @@ def handle_update_gse_state(data):
 
 def gse_command_handler(client_socket, stop_event):
     while not stop_event.is_set():
-        raw_data = client_socket.recv(16)
-        if len(raw_data) == 16:
-            list_data = struct.unpack("<????????????", raw_data[:-4])
+        raw_data = client_socket.recv(17)
+        if len(raw_data) == 17:
+            list_data = struct.unpack("<?????????????", raw_data[:-4])
             handle_update_gse_state(list_data)
     logging.info("gse Command handler stop event set")
 
@@ -41,7 +41,7 @@ def handle_update_ecu_state(data):
 def ecu_command_handler(client_socket, stop_event):
     while not stop_event.is_set():
         raw_data = client_socket.recv(8)
-        if len(raw_data) == 8:
+        if len(raw_data) == 9:
             handle_update_ecu_state(struct.unpack("<????", raw_data[:-4]))
     logging.info("ECU Command handler stop event set")
 
@@ -80,7 +80,7 @@ def start_server(
                     shared_state["pressureLng"] += random.randint(-1, 1)
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
                 else:
-                    data_format = "<L???????????????ffffffffffffff"
+                    data_format = "<L????????????????fffffffffffffff"
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
@@ -135,6 +135,7 @@ def main():
         "alarmInternalState": 0,
         "solenoidInternalStateGn2Fill": 0,
         "solenoidInternalStateGn2Vent": 0,
+        "solenoidInternalStateGn2Disconnect": 0,
         "solenoidInternalStateMvasFill": 0,
         "solenoidInternalStateMvasVent": 0,
         "solenoidInternalStateMvas": 0,
@@ -146,6 +147,7 @@ def main():
         "supplyVoltage1": 0,
         "solenoidCurrentGn2Fill": 0,
         "solenoidCurrentGn2Vent": 0,
+        "solenoidCurrentGn2Disconnect": 0,
         "solenoidCurrentMvasFill": 0,
         "solenoidCurrentMvasVent": 0,
         "solenoidCurrentMvas": 0,

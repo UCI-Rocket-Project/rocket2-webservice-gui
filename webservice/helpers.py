@@ -39,12 +39,13 @@ def dict_to_insert_statement(table_name, data, data_format):
 def _gen_gse_pack(gse_state):
     """Returns a byte string representing a GSE command packet"""
     pack = struct.pack(
-        "<????????????",
+        "<?????????????",
         gse_state["igniterExpected0"],  # igniter0Fire
         gse_state["igniterExpected1"],  # igniter1Fire
         False,  # alarm
         gse_state["solenoidExpectedGn2Fill"],
         gse_state["solenoidExpectedGn2Vent"],
+        gse_state["solenoidExpectedGn2Disconnect"],
         gse_state["solenoidExpectedMvasFill"],
         gse_state["solenoidExpectedMvasVent"],
         gse_state["solenoidExpectedMvas"],
