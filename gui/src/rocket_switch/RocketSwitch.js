@@ -5,12 +5,8 @@ import styles from "./RocketSwitch.module.css";
 import PropTypes from "prop-types";
 
 const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {}, enabled, switch_type = "solenoid", isNormallyOpen = false}) => {
-    const getClosedIndicator = (feedbackValue) => {
-        return isNormallyOpen ? (feedbackValue === 0 ? "offline" : "available") : feedbackValue === 0 ? "available" : "offline";
-    };
-
-    const getOpenIndicator = (feedbackValue) => {
-        return isNormallyOpen ? (feedbackValue === 0 ? "available" : "offline") : feedbackValue === 0 ? "offline" : "available";
+    const isOpen = (feedback_value) => {
+        return isNormallyOpen ? feedback_value === 0 : !(feedback_value === 0);
     };
 
     return (
@@ -21,19 +17,13 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                     {switch_type === "solenoid" ? (
                         <div className={styles.status}>
                             <StatusIndicator
-                                type={getOpenIndicator(feedback_value)}
-                                aria-label="status: offline"
+                                type={isOpen(feedback_value) ? "available" : "offline"}
                                 className="status-one"
                                 data-testid={"status " + name}
                             >
                                 Open
                             </StatusIndicator>
-                            <StatusIndicator
-                                type={getClosedIndicator(feedback_value)}
-                                aria-label="status: available"
-                            >
-                                Close
-                            </StatusIndicator>
+                            <StatusIndicator type={isOpen(feedback_value) ? "offline" : "available"}>Close</StatusIndicator>
                         </div>
                     ) : (
                         <div>
@@ -45,7 +35,7 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                         </div>
                     )}
                     <MuiSwitch
-                        checked={expected_value === 1 ? true : false}
+                        checked={isNormallyOpen ? expected_value !== 1 : expected_value === 1}
                         disabled={expected_value === -1 || enabled === false}
                         className={styles.rocketSwitch}
                         onChange={(event) => onClick(event.target.checked)}

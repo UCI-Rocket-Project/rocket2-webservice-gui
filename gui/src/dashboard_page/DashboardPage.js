@@ -112,7 +112,7 @@ export function DashboardPage() {
                             feedback_value={solenoids["LoxVent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LoxVent", event)}
                             enabled={keydown === TOGGLE_KEY}
-                            isNormallyOpen={true}
+                            isNormallyOpen={true} // figure ito ut
                         ></RocketSwitch>
                         <RocketSwitch
                             name="LNG Vent"
@@ -121,7 +121,7 @@ export function DashboardPage() {
                             feedback_value={solenoids["LngVent"]["current"]}
                             onClick={(event) => handleToggleState("gse", "LngVent", event)}
                             enabled={keydown === TOGGLE_KEY}
-                            isNormallyOpen={true}
+                            isNormallyOpen={true} // figure it out
                         ></RocketSwitch>
                         <RocketSwitch
                             name="MVAS Vent"
@@ -133,7 +133,7 @@ export function DashboardPage() {
                         ></RocketSwitch>
                     </div>
 
-                    {/* GSE bottom row swtiches */}
+                    {/* GSE bottom row switches */}
                     <div className={styles.switchRow}>
                         <RocketSwitch
                             name="GN2 Fill"
@@ -320,7 +320,6 @@ export function DashboardPage() {
                                     feedback_value={solenoids["Vent"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "Vent", event)}
                                     enabled={keydown === TOGGLE_KEY}
-                                    isNormallyOpen={true}
                                 />
                             </div>
                             <div className={styles.switchRow}>
@@ -339,6 +338,7 @@ export function DashboardPage() {
                                     feedback_value={solenoids["Pv2"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "Pv2", event)}
                                     enabled={keydown === TOGGLE_KEY}
+                                    isNormallyOpen={true}
                                 />
                             </div>
                             {/* battery */}
@@ -364,7 +364,7 @@ export function DashboardPage() {
                         {/* ECU gauges */}
                         <div>
                             <RocketGauge
-                                value={pts.Gn2}
+                                value={pts.Lng}
                                 minValue={0}
                                 maxValue={6000}
                                 name={"LNG PT"}
