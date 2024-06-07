@@ -39,7 +39,7 @@ def dict_to_insert_statement(table_name, data, data_format):
 def _gen_gse_pack(gse_state):
     """Returns a byte string representing a GSE command packet"""
     pack = struct.pack(
-        "<????????????",
+        "<????????????",  # Should match the one in fake_rocket.py
         gse_state["igniterExpected0"],  # igniter0Fire
         gse_state["igniterExpected1"],  # igniter1Fire
         False,  # alarm
@@ -60,7 +60,7 @@ def _gen_gse_pack(gse_state):
 def _gen_ecu_pack(ecu_state):
     """Returns a byte string representing an ECU command packet"""
     pack = struct.pack(
-        "<????",
+        "<????",  # Should match the one in fake_rocket.py
         ecu_state["solenoidExpectedCopvVent"],
         ecu_state["solenoidExpectedPv1"],
         ecu_state["solenoidExpectedPv2"],

@@ -42,7 +42,6 @@ export function DashboardPage() {
         console.log(value);
         updateRocket(systemName, solenoidName, value);
     };
-    console.log(igniters);
     return timestamp ? (
         <div className={styles.row}>
             <div className={styles.gseBox}>

@@ -280,7 +280,7 @@ if __name__ == "__main__":
             (gse_ip, gse_port),
             gse_connection_lock,
             GSE_DATA_LENGTH,
-            "<L???????????????ffffffffffffff",
+            "<L???????????????ffffffffffffff",  # Should match the one in fake_rocket.py
             handle_update_gse_state,
             "GSE",
         ),
@@ -294,7 +294,7 @@ if __name__ == "__main__":
             (ecu_ip, ecu_port),
             ecu_connection_lock,
             ECU_DATA_LENGTH,
-            "<Lff????fffffffffffffffffffffffffffffff",
+            "<Lff????fffffffffffffffffffffffffffffff",  # Should match the one in fake_rocket.py
             handle_update_ecu_state,
             "ECU",
         ),

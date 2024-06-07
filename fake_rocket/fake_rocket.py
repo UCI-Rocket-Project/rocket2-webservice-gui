@@ -24,9 +24,11 @@ def handle_update_gse_state(data):
 
 def gse_command_handler(client_socket, stop_event):
     while not stop_event.is_set():
-        raw_data = client_socket.recv(17)
-        if len(raw_data) == 17:
-            list_data = struct.unpack("<?????????????", raw_data[:-4])
+        raw_data = client_socket.recv(16)
+        if len(raw_data) == 16:
+            list_data = struct.unpack(
+                "<????????????", raw_data[:-4]
+            )  # Should match the one in helpers.py
             handle_update_gse_state(list_data)
     logging.info("gse Command handler stop event set")
 
@@ -41,8 +43,10 @@ def handle_update_ecu_state(data):
 def ecu_command_handler(client_socket, stop_event):
     while not stop_event.is_set():
         raw_data = client_socket.recv(8)
-        if len(raw_data) == 9:
-            handle_update_ecu_state(struct.unpack("<????", raw_data[:-4]))
+        if len(raw_data) == 8:
+            handle_update_ecu_state(
+                struct.unpack("<????", raw_data[:-4])
+            )  # Should match the one in helpers.py
     logging.info("ECU Command handler stop event set")
 
 
@@ -67,7 +71,7 @@ def start_server(
             while True:
                 packed_data = None
                 if system_name == "ECU":
-                    data_format = "<Lff????fffffffffffffffffffffffffffffff"
+                    data_format = "<Lff????fffffffffffffffffffffffffffffff"  # Should match the one in server.py
                     data_to_send = (shared_state[key] for key in ECU_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
@@ -80,7 +84,7 @@ def start_server(
                     shared_state["pressureLng"] += random.randint(-1, 1)
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
                 else:
-                    data_format = "<L????????????????fffffffffffffff"
+                    data_format = "<L???????????????ffffffffffffff"  # Should match the one in server.py
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
@@ -138,10 +142,9 @@ def main():
         "solenoidInternalStateGn2Disconnect": 0,
         "solenoidInternalStateMvasFill": 0,
         "solenoidInternalStateMvasVent": 0,
-        "solenoidInternalStateMvas": 0,
-        "solenoidInternalStateLoxFill": 0,
+        "solenoidInternalStateMvasOpen": 0,
+        "solenoidInternalStateMvasClose": 0,
         "solenoidInternalStateLoxVent": 0,
-        "solenoidInternalStateLngFill": 0,
         "solenoidInternalStateLngVent": 0,
         "supplyVoltage0": 0,
         "supplyVoltage1": 0,
@@ -150,7 +153,8 @@ def main():
         "solenoidCurrentGn2Disconnect": 0,
         "solenoidCurrentMvasFill": 0,
         "solenoidCurrentMvasVent": 0,
-        "solenoidCurrentMvas": 0,
+        "solenoidCurrentMvasOpen": 0,
+        "solenoidCurrentMvasClose": 0,
         "solenoidCurrentLoxFill": 0,
         "solenoidCurrentLoxVent": 0,
         "solenoidCurrentLngFill": 0,

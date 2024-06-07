@@ -20,10 +20,16 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                                 type={isOpen(feedback_value) ? "available" : "offline"}
                                 className="status-one"
                                 data-testid={"status " + name}
+                                aria-label="IsOpen"
                             >
                                 Open
                             </StatusIndicator>
-                            <StatusIndicator type={isOpen(feedback_value) ? "offline" : "available"}>Close</StatusIndicator>
+                            <StatusIndicator
+                                type={isOpen(feedback_value) ? "offline" : "available"}
+                                aria-label="IsClosed"
+                            >
+                                Close
+                            </StatusIndicator>
                         </div>
                     ) : (
                         <div>
@@ -38,7 +44,7 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                         checked={isNormallyOpen ? expected_value !== 1 : expected_value === 1}
                         disabled={expected_value === -1 || enabled === false}
                         className={styles.rocketSwitch}
-                        onChange={(event) => onClick(event.target.checked)}
+                        onChange={(event) => onClick(isNormallyOpen ? !event.target.checked : event.target.checked)}
                         data-testid={"switch " + name}
                     ></MuiSwitch>
                 </div>
