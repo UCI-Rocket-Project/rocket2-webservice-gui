@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 
-from helpers import send_solenoid_command, insert_into_db
+from helpers import send_solenoid_command, insert_into_db, get_pressure_from_voltage
 from constants import *
 
 ecu_ip = os.environ["ECU_IP"]
@@ -222,8 +222,8 @@ def handle_update_gse_state(new_state):
         for index, (key, val) in enumerate(zip(GSE_DATA_FORMAT, new_state)):
             if "InternalState" in key:
                 if not is_gse_initialized:
-                    gse_state[key.replace("InternalState", "Expected")] = val
-                elif gse_state[key.replace("InternalState", "Expected")] != val:
+                    gse_state[key.replace("InternalState", "Expected")] = int(val)
+                elif gse_state[key.replace("InternalState", "Expected")] != int(val):
                     logging.info(
                         f"GSE STATE for {key.replace('InternalState', 'Expected')} does not match "
                     )
@@ -235,7 +235,10 @@ def handle_update_gse_state(new_state):
                     gse_state[key] = -1
                     new_state[index] = -1
                 else:
-                    gse_state[key] = val
+                    if "pressure" in key:
+                        gse_state[key] = get_pressure_from_voltage(key, val)
+                    else:
+                        gse_state[key] = val
     db_thread = Thread(
         target=insert_into_db, args=(engine, new_state, "gse", GSE_DATA_FORMAT)
     )
@@ -253,8 +256,11 @@ def handle_update_ecu_state(new_state):
         for index, (key, val) in enumerate(zip(ECU_DATA_FORMAT, new_state)):
             if "InternalState" in key:  # If it is an internal state key
                 if not is_ecu_initialized:
-                    ecu_state[key.replace("InternalState", "Expected")] = val
-                elif ecu_state[key.replace("InternalState", "Expected")] != val:
+                    ecu_state[key.replace("InternalState", "Expected")] = int(val)
+                elif ecu_state[key.replace("InternalState", "Expected")] != int(val):
+                    logging.info(
+                        f"ECU STATE for {key.replace('InternalState', 'Expected')} does not match "
+                    )
                     state_missmatch = True
             else:
                 if type(val) == bool:
@@ -263,7 +269,10 @@ def handle_update_ecu_state(new_state):
                     ecu_state[key] = -1
                     new_state[index] = -1
                 else:
-                    ecu_state[key] = val
+                    if "pressure" in key:
+                        ecu_state[key] = get_pressure_from_voltage(key, val)
+                    else:
+                        ecu_state[key] = val
     db_thread = Thread(
         target=insert_into_db, args=(engine, new_state, "ecu", ECU_DATA_FORMAT)
     )

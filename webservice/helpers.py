@@ -5,6 +5,7 @@ import binascii
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from constants import PT_CALIBRATIONS
 
 logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 
@@ -83,3 +84,9 @@ def send_solenoid_command(state, connection, connection_lock, system_name):
         logging.error(f"Failed to set {system_name} Solenoid {e}")
         return {"error": str(e)}
     return {}
+
+
+def get_pressure_from_voltage(pt_name, voltage):
+    scaling, y_int = PT_CALIBRATIONS[pt_name]
+    val = (voltage * scaling) + y_int
+    return val if val > 0 else 0

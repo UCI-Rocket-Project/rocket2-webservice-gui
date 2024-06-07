@@ -45,17 +45,15 @@ Once this is done, restart your computer
 
 Open up Docker desktop and make sure you are still signed in
 
+## Startup
+
+Open up Docker Desktop and make sure you are still signed in
+
 Open up this git repo in a command line and run
 
 ```shell
 $ make build
 ```
-
-## Startup
-
-NOTE: If you are starting up the containers for the first time, POSTGRES might fail because it takes time to initialize. Just make run again
-
-Open up Docker Desktop and make sure you are still signed in
 
 Spin up the docker containers:
 
@@ -70,6 +68,8 @@ For prod environment which sends requests to 10.0.255.1 instead of fake_rocket
 ```shell
 $ make run_prod
 ```
+
+NOTE: If you are starting up the containers for the first time, POSTGRES might fail because it takes time to initialize. Just make run again
 
 ## Testing
 

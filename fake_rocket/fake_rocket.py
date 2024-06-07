@@ -79,9 +79,9 @@ def start_server(
                     shared_state["time_recv"] = int(
                         (datetime.now() - start_time).total_seconds()
                     )
-                    shared_state["pressureCopv"] += random.randint(-1, 1)
-                    shared_state["pressureLox"] += random.randint(-1, 1)
-                    shared_state["pressureLng"] += random.randint(-1, 1)
+                    shared_state["pressureCopv"] += random.randint(-1, 1) / 1000
+                    shared_state["pressureLox"] += random.randint(-1, 1) / 1000
+                    shared_state["pressureLng"] += random.randint(-1, 1) / 1000
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
                 else:
                     data_format = "<L???????????????ffffffffffffff"  # Should match the one in server.py
@@ -91,9 +91,9 @@ def start_server(
                     shared_state["time_recv"] = int(
                         (datetime.now() - start_time).total_seconds()
                     )
-                    shared_state["temperatureLox"] += random.randint(-1, 1)
-                    shared_state["temperatureLng"] += random.randint(-1, 1)
-                    shared_state["pressureGn2"] += random.randint(-1, 1)
+                    shared_state["temperatureLox"] += random.randint(-1, 1) / 1000
+                    shared_state["temperatureLng"] += random.randint(-1, 1) / 1000
+                    shared_state["pressureGn2"] += random.randint(-1, 1) / 1000
 
                 client_socket.sendall(packed_data + struct.pack("<L", crc32_value))
                 time.sleep(0.5)
@@ -161,7 +161,7 @@ def main():
         "solenoidCurrentLngVent": 0,
         "temperatureLox": -200,
         "temperatureLng": -200,
-        "pressureGn2": 4400,
+        "pressureGn2": 1.2,
     }
 
     ecu_manager = Manager()
@@ -180,9 +180,9 @@ def main():
         "solenoidCurrentPv2": 0,
         "solenoidCurrentVent": 0,
         "temperatureCopv": 0,
-        "pressureCopv": 4500,
-        "pressureLox": 450,
-        "pressureLng": 500,
+        "pressureCopv": 1.2,
+        "pressureLox": 1.1,
+        "pressureLng": 1.1,
         "pressureInjectorLox": 0,
         "pressureInjectorLng": 0,
         "angularVelocityX": 0,

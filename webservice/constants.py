@@ -76,3 +76,14 @@ ECU_DATA_FORMAT = [
     "ecefVelocityZ",
     "ecefVelocityAccuracy",
 ]
+
+PT_CALIBRATIONS = {
+    # "ptName": (scaling, y_int)
+    "pressureGn2": (1, 0),
+    "pressureLox": (235, -240),  # 500 Identical with LNGInjector
+    "pressureLng": (235, -240),  # 500 identical with LOX
+    "pressureCopv": (964, 37.2),
+    "pressureInjectorLox": (235, -240),  # 500 identical with LOX
+    "pressureInjectorLng": (235, -240)  # 500 identical with LOX
+    # "pressureInjectorLng":(954 ,-139)
+}
