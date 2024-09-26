@@ -1,21 +1,20 @@
 import React from "react";
 // import diagram from './diagram.png';
 import styles from "./DiagramPage.module.css";
-import {useSelector} from "react-redux";
-import {selectSolenoids, selectTimestamp} from "../redux/rocketSlice";
 import {updateRocket} from "../webservice";
 import ToggleButton from "../toggle_button/ToggleButton";
 
 export function DiagramPage() {
-    const solenoids = useSelector(selectSolenoids);
-    const timestamp = useSelector(selectTimestamp);
-
     const handleToggleSolenoid = (systemName, solenoidName, newState) => {
         console.log("toggling solenoid");
         console.log(newState);
         updateRocket(systemName, solenoidName, newState);
     };
-    return timestamp ? (
+    const solenoids = undefined;
+    const timestamp = undefined;
+    return 1 == 1 ? (
+        <div></div>
+    ) : timestamp ? (
         <div className={styles.container}>
             <div className={styles.testy}>
                 <img

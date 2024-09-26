@@ -4,7 +4,15 @@ import {MuiSwitch} from "./MuiSwitch.js";
 import styles from "./RocketSwitch.module.css";
 import PropTypes from "prop-types";
 
-const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {}, enabled, switch_type = "solenoid", isNormallyOpen = false}) => {
+const RocketSwitch = ({
+    name,
+    expected_value,
+    feedback_value,
+    onClick = () => {},
+    enabled,
+    switch_type = "solenoid",
+    isNormallyOpen = false
+}) => {
     const isOpen = (feedback_value) => {
         return isNormallyOpen ? feedback_value === 0 : !(feedback_value === 0);
     };
@@ -44,7 +52,9 @@ const RocketSwitch = ({name, expected_value, feedback_value, onClick = () => {},
                         checked={isNormallyOpen ? expected_value !== 1 : expected_value === 1}
                         disabled={expected_value === -1 || enabled === false}
                         className={styles.rocketSwitch}
-                        onChange={(event) => onClick(isNormallyOpen ? !event.target.checked : event.target.checked)}
+                        onChange={(event) =>
+                            onClick(isNormallyOpen ? !event.target.checked : event.target.checked)
+                        }
                         data-testid={"switch " + name}
                     ></MuiSwitch>
                 </div>
