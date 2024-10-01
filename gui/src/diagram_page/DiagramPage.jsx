@@ -1,20 +1,19 @@
-import React from "react";
+import React, {useContext} from "react";
 // import diagram from './diagram.png';
 import styles from "./DiagramPage.module.css";
 import {updateRocket} from "../webservice";
 import ToggleButton from "../toggle_button/ToggleButton";
-
+import {RocketState} from "../Context";
 export function DiagramPage() {
     const handleToggleSolenoid = (systemName, solenoidName, newState) => {
         console.log("toggling solenoid");
         console.log(newState);
         updateRocket(systemName, solenoidName, newState);
     };
-    const solenoids = undefined;
-    const timestamp = undefined;
-    return 1 == 1 ? (
-        <div></div>
-    ) : timestamp ? (
+
+    const {solenoids, timestamp} = useContext(RocketState);
+    console.log(timestamp, solenoids);
+    return timestamp ? (
         <div className={styles.container}>
             <div className={styles.testy}>
                 <img
@@ -82,11 +81,6 @@ export function DiagramPage() {
                 className={styles.mvasvent}
                 feedback_value={solenoids["MvasVent"]["expected"]}
                 customClick={(event) => handleToggleSolenoid("gse", "MvasVent", event)}
-            ></ToggleButton>
-            <ToggleButton
-                className={styles.mvas}
-                feedback_value={solenoids["Mvas"]["expected"]}
-                customClick={(event) => handleToggleSolenoid("gse", "Mvas", event)}
             ></ToggleButton>
         </div>
     ) : (

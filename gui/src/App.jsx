@@ -1,7 +1,11 @@
 import {useEffect, useRef, useState} from "react";
 import {RocketState} from "./Context";
-import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {getEcuState, getGseState, updateRocket} from "./webservice";
+import {DashboardPage} from "./dashboard_page/DashboardPage";
+import {TelemetryPage} from "./telemetry_page/TelemetryPage";
+import {DiagramPage} from "./diagram_page/DiagramPage";
+import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
+import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
 
 export function App() {
     const [solenoids, setSolenoids] = useState({});
@@ -119,7 +123,40 @@ export function App() {
                 handleToggleState
             }}
         >
-            <DashboardPage></DashboardPage>
+            <Router>
+                <div>
+                    <button>
+                        <Link to="/">Dashboard</Link>
+                    </button>
+                    <button>
+                        <Link to="/rocket">Rocket</Link>
+                    </button>
+                    <button>
+                        <Link to="/telemetry">Telemetry</Link>
+                    </button>
+                    <button>
+                        <Link to="/analytics">Analytics</Link>
+                    </button>
+                </div>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={<DashboardPage />}
+                    />
+                    <Route
+                        path="/rocket"
+                        element={<DiagramPage />}
+                    />
+                    <Route
+                        path="/telemetry"
+                        element={<TelemetryPage />}
+                    />
+                    <Route
+                        path="/analytics"
+                        element={<AnalyticsPage />}
+                    />
+                </Routes>
+            </Router>
         </RocketState.Provider>
     );
 }
