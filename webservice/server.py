@@ -1,6 +1,9 @@
 import logging
 import socket
 import time
+import json
+from datetime import datetime
+import csv
 import os
 import sys
 import math
@@ -100,30 +103,76 @@ logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 
 
 @app.route("/data/clear", methods=["DELETE"])
-def clear_data():
+def clear_data_from_db():
     with Session(engine) as session:
         session.execute(text("DELETE from ecu;"))
+        session.execute(text("DELETE from gse;"))
         session.commit()
     return "ok"
 
 
-@app.route("/data/<selected_keys>", methods=["GET"])
-def get_data(selected_keys):
+@app.route("/data/<system_name>/<selected_keys>", methods=["GET"])
+def get_data_from_db(system_name, selected_keys):
+    try:
+        connection = psycopg2.connect(**db_config)
+        cursor = connection.cursor()
+        key_str = "time_recv, "
+        for key in selected_keys.split(","):
+            key_str += f"{key}, "
+        key_str = key_str[:-2]
+        where_claus = ""
+        if request.args.get("startTime") or request.args.get("endTime"):
+            where_claus = f"WHERE time_recv > {request.args.get('startTime', 0)} \
+            AND time_recv < {request.args.get('endTime',200)}"
+
+        cursor.execute(
+            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY time_recv DESC;"
+        )
+        data = cursor.fetchall()
+        cursor.close()
+
+        # Reduce data points down to at most 500 points
+        while len(data) > 500:
+            reduced_data = []
+            for i, row in enumerate(data):
+                if i % 2 == 0:
+                    reduced_data.append(row)
+            data = reduced_data
+        return {"sensors": selected_keys.split(","), "data": data[::-1]}
+    except Exception:
+        return {}
+
+
+@app.route("/<system_name>/keys", methods=["GET"])
+def get_system_keys_from_db(system_name):
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
-    key_str = "time_recv, "
-    for key in selected_keys.split(","):
-        key_str += f"{key}, "
-    key_str = key_str[:-2]
-    where_claus = ""
-    if request.args.get("startTime") or request.args.get("endTime"):
-        where_claus = f"WHERE time_recv > {request.args.get('startTime', 0)} \
-        AND time_recv < {request.args.get('endTime',200)}"
-
-    cursor.execute(f"SELECT {key_str} FROM ecu {where_claus} ORDER BY time_recv DESC;")
+    cursor.execute(f"SELECT * FROM {system_name};")
     rows = cursor.fetchall()
-    cursor.close()
-    return {"sensors": selected_keys.split(","), "data": rows[::-1]}
+    column_names = [desc[0] for desc in cursor.description]
+    return column_names
+
+
+@app.route("/data/save", methods=["POST"])
+def save_db_to_files():
+    """Takes the contents of the ecu and gse tables and saves them into csv files"""
+    # Make sure the saves folder exists else create it
+    if not os.path.exists("saves"):
+        os.makedirs("saves")
+    connection = psycopg2.connect(**db_config)
+    cursor = connection.cursor()
+    for table_name in ["ecu", "gse"]:
+        cursor.execute(f"SELECT * FROM {table_name} ORDER BY time_recv DESC;")
+        rows = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        with open(
+            f'./saves/{table_name}_{str(datetime.now()).replace(":", "_")}.csv', "w"
+        ) as f:
+            f.write(str(column_names)[1:-1].replace("'", "") + "\n")
+            writer = csv.writer(f)
+            writer.writerows(rows)
+    clear_data_from_db()
+    return str(datetime.now())
 
 
 @app.route("/<system_name>/state", methods=["GET"])
@@ -219,7 +268,10 @@ def handle_update_gse_state(new_state):
     global is_gse_initialized
     state_missmatch = False
     with gse_lock:
+        # Take the voltage from the pressures and convert them using the calibration curves
         for index, (key, val) in enumerate(zip(GSE_DATA_FORMAT, new_state)):
+            if "pressure" in key:
+                new_state[index] = get_pressure_from_voltage(key, val)
             if "InternalState" in key:
                 if not is_gse_initialized:
                     gse_state[key.replace("InternalState", "Expected")] = int(val)
@@ -235,10 +287,7 @@ def handle_update_gse_state(new_state):
                     gse_state[key] = -1
                     new_state[index] = -1
                 else:
-                    if "pressure" in key:
-                        gse_state[key] = get_pressure_from_voltage(key, val)
-                    else:
-                        gse_state[key] = val
+                    gse_state[key] = val
     db_thread = Thread(
         target=insert_into_db, args=(engine, new_state, "gse", GSE_DATA_FORMAT)
     )
@@ -254,6 +303,9 @@ def handle_update_ecu_state(new_state):
     state_missmatch = False
     with ecu_lock:
         for index, (key, val) in enumerate(zip(ECU_DATA_FORMAT, new_state)):
+            # Take the voltage from the pressures and convert them using the calibration curves
+            if "pressure" in key:
+                new_state[index] = get_pressure_from_voltage(key, val)
             if "InternalState" in key:  # If it is an internal state key
                 if not is_ecu_initialized:
                     ecu_state[key.replace("InternalState", "Expected")] = int(val)

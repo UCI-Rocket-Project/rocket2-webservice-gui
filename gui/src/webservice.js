@@ -7,13 +7,23 @@ export const getEcuState = () => {
         console.log("error");
     });
 };
+
+export const getSystemKeys = (systemName) => {
+    /**
+     * Given the name of the avionics system, returns the keys that are in it's packet
+     */
+    return client.get(systemName + "/keys").catch(() => {
+        console.log("error");
+    });
+};
+
 export const getGseState = () => {
     return client.get("gse/state").catch(() => {
         console.log("error");
     });
 };
-export const getDatabase = (data_type, startTime, endTime) => {
-    console.log("GETTING DATABASE", data_type);
+
+export const getDatabase = (systemName, data_type, startTime, endTime) => {
     let params = null;
     if (startTime || endTime) {
         params = {
@@ -21,11 +31,15 @@ export const getDatabase = (data_type, startTime, endTime) => {
             endTime: endTime
         };
     }
-    console.log(params, "params");
-    return client.get("data/" + data_type, {params: params}).catch(() => {
+    return client.get("data/" + systemName + "/" + data_type, {params: params}).catch(() => {
         console.log("error");
     });
 };
+
+export const saveAndClearDatabase = () => {
+    return client.post("data/save");
+};
+
 export const updateRocket = (systemName, name, newState) => {
     //Ex: ecu/state/CopvVent/1
     const resp = client.post(systemName + "/state/" + name + "/" + (newState ? "1" : "0"));

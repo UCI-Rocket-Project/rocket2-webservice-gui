@@ -1,36 +1,40 @@
 import React, {useState, useEffect, useRef} from "react";
 import Chart from "chart.js/auto";
-import {getDatabase} from "../webservice";
+import {getDatabase, getSystemKeys, saveAndClearDatabase} from "../webservice";
 import styles from "./AnalyticsPage.module.css";
 import _ from "lodash";
 export function AnalyticsPage() {
     const [data, setData] = useState([]);
-    const [newKey, setNewKey] = useState("pressureLng");
-    const [selectedKeys, setSelectedKeys] = useState(["pressureCopv"]);
+    const [selectedKeys, setSelectedKeys] = useState([]);
+    const [startTime, setStartTime] = useState();
+    const [endTime, setEndTime] = useState();
+    const [systemName, setSystemName] = useState("ecu");
+    const [systemKeys, setSystemKeys] = useState([]);
     const chartRef = useRef(null);
-    const [startTime, setStartTime] = useState("0");
-    const [endTime, setEndTime] = useState("200");
-    const keys = ["pressureInjectorLox", "pressureInjectorLng", "pressureLox", "pressureLng"];
-    const fetchData = async (dataString) => {
-        console.log("start time", startTime, endTime);
-        const response = (await getDatabase(dataString, startTime, endTime)).data;
-        setData(response);
-    };
 
     useEffect(() => {
-        fetchData("pressureCopv");
-    }, []);
+        // update the graph
+        getDataForSelectedKeys(_.reduce(selectedKeys, (acc, key, _) => acc + key + ",", "").slice(0, -1));
+    }, [systemName, selectedKeys, startTime, endTime]);
+
+    useEffect(() => {
+        const updateSystemKeys = async () => {
+            const resp = (await getSystemKeys(systemName)).data;
+            setSystemKeys(resp);
+        };
+        updateSystemKeys();
+        setSelectedKeys([]);
+    }, [systemName]);
 
     useEffect(() => {
         if (data.data?.length > 0) {
             if (chartRef.current) {
                 chartRef.current.destroy(); // Destroy previous chart instance
             }
-
             let parsedSensors = _.fromPairs(_.map(data.sensors, (key) => [key, []]));
-            let time_data = [];
+            let x_values = [];
             for (let row of data.data) {
-                time_data.push(row[0]);
+                x_values.push(Math.floor(row[0] / 1000)); // divide by 1000 to change to seconds
                 for (let i = 0; i < data.sensors.length; i++) {
                     parsedSensors[data.sensors[i]].push(row[i + 1]);
                 }
@@ -40,7 +44,7 @@ export function AnalyticsPage() {
                 data: parsedSensors[key]
             }));
             const chartData = {
-                labels: time_data,
+                labels: x_values,
                 datasets: datasets
             };
 
@@ -59,38 +63,29 @@ export function AnalyticsPage() {
         }
     }, [data]);
 
-    const handleDropdownChange = (event) => {
-        console.log("dropdown change");
-        const newVal = event.target.value;
-        setNewKey(newVal);
+    const getDataForSelectedKeys = async (dataString) => {
+        if (dataString) {
+            const response = await getDatabase(systemName, dataString, startTime * 1000 || 0, endTime * 1000 || 100000000);
+            setData(response.data);
+        }
     };
 
-    const handleAddKey = () => {
-        if (newKey) {
-            setSelectedKeys(selectedKeys.concat(newKey));
-            setNewKey("");
-        }
+    const handleSelectKey = (event) => {
+        const newVal = event.target.value;
+        setSelectedKeys(selectedKeys.concat(newVal));
     };
 
     const handleDeleteKey = (index) => {
         setSelectedKeys(selectedKeys.filter((_, i) => i !== index));
     };
 
-    const generateGraph = () => {
-        fetchData(_.reduce(selectedKeys, (acc, key, _) => acc + key + ",", "").slice(0, -1));
-    };
     const convertDictToCsv = (dict) => {
         const {sensors, data} = dict;
         let csvContent = "time,";
-
-        // Add column headers
         csvContent += sensors.join(",") + "\n";
-
-        // Add rows
         data.forEach((row) => {
             csvContent += row.join(",") + "\n";
         });
-
         return csvContent;
     };
 
@@ -127,11 +122,11 @@ export function AnalyticsPage() {
                             </button>
                         </div>
                     ))}
-                    {keys.filter((item) => !selectedKeys.includes(item)).length > 0 ? (
+                    {systemKeys.filter((item) => !selectedKeys.includes(item)).length > 0 ? (
                         <div>
-                            <select onChange={handleDropdownChange}>
+                            <select onChange={handleSelectKey}>
                                 {_.map(
-                                    keys.filter((item) => !selectedKeys.includes(item)),
+                                    systemKeys.filter((item) => !selectedKeys.includes(item)),
                                     (key) => (
                                         <option
                                             key={key}
@@ -142,33 +137,57 @@ export function AnalyticsPage() {
                                     )
                                 )}
                             </select>
-                            <button onClick={handleAddKey}>+</button>
                         </div>
                     ) : (
                         <></>
                     )}
                 </div>
                 <div className={styles.graphBox}>
+                    <div style={{display: "flex", justifyContent: "space-between"}}>
+                        <div style={{display: "flex", justifyContent: "center"}}>
+                            <div>
+                                <input
+                                    type="text"
+                                    placeholder="Start Time"
+                                    value={startTime}
+                                    onChange={(e) => setStartTime(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    type="text"
+                                    placeholder="End Time"
+                                    value={endTime}
+                                    onChange={(e) => setEndTime(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div style={{display: "flex", justifyContent: "center"}}>
+                            <select
+                                value={systemName}
+                                onChange={(event) => setSystemName(event.target.value)}
+                            >
+                                <option value="ecu">ecu</option>
+                                <option value="gse">gse</option>
+                            </select>
+                        </div>
+                    </div>
                     <canvas
-                        style={{maxHeight: "800px", maxWidth: "100%"}}
+                        style={{height: "800px", width: "100%", maxHeight: "800px", maxWidth: "100%"}}
                         id="graph"
                     ></canvas>
+                    <div>
+                        <button onClick={downloadCsv}>Export to CSV</button>
+                        <button
+                            onClick={() => {
+                                saveAndClearDatabase();
+                            }}
+                        >
+                            Save and Clear
+                        </button>
+                    </div>
                 </div>
             </div>
-            <input
-                type="text"
-                placeholder="Start Time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-            />
-            <input
-                type="text"
-                placeholder="End Time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-            />
-            <button onClick={generateGraph}>Generate</button>
-            <button onClick={downloadCsv}>Export to CSV</button>
         </div>
     );
 }
