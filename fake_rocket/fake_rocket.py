@@ -76,8 +76,8 @@ def start_server(
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
 
-                    shared_state["time_recv"] = int(
-                        (datetime.now() - start_time).total_seconds()
+                    shared_state["time_recv"] = (
+                        int((datetime.now() - start_time).total_seconds()) * 1000
                     )
                     shared_state["pressureCopv"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLox"] += random.randint(-1, 1) / 1000
@@ -88,8 +88,8 @@ def start_server(
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
-                    shared_state["time_recv"] = int(
-                        (datetime.now() - start_time).total_seconds()
+                    shared_state["time_recv"] = (
+                        int((datetime.now() - start_time).total_seconds()) * 1000
                     )
                     shared_state["temperatureLox"] += random.randint(-1, 1) / 1000
                     shared_state["temperatureLng"] += random.randint(-1, 1) / 1000

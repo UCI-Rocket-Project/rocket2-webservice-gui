@@ -9,11 +9,13 @@
     width: 25%;
 }
 .graphBox {
-    width: 75%;
+    margin-left: 5%;
+    width: 70%;
 }
 .selectedKey {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 25px;
 }
 .keyTitle {
     margin: 0;
@@ -22,4 +24,19 @@
 }
 .keyButton {
     width: 10%;
+}
+select {
+    background-color: rgb(37, 35, 35);
+    width: 300px;
+    color: white;
+    font-size: 25px;
+    height: 50px;
+}
+input {
+    background-color: rgb(37, 35, 35);
+    width: 300px;
+    color: white;
+    font-size: 25px;
+    height: 50px;
+    margin-left: 20px;
 }

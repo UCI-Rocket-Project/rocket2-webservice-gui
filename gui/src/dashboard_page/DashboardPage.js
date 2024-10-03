@@ -319,6 +319,7 @@ export function DashboardPage() {
                                     feedback_value={solenoids["Vent"]["current"]}
                                     onClick={(event) => handleToggleState("ecu", "Vent", event)}
                                     enabled={keydown === TOGGLE_KEY}
+                                    isNormallyOpen={true}
                                 />
                             </div>
                             <div className={styles.switchRow}>
