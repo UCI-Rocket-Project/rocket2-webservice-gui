@@ -14,7 +14,8 @@ export function AnalyticsPage() {
 
     useEffect(() => {
         // update the graph
-        getDataForSelectedKeys(_.reduce(selectedKeys, (acc, key, _) => acc + key + ",", "").slice(0, -1));
+        const queryString = _.reduce(selectedKeys, (acc, key, _) => acc + key + ",", "").slice(0, -1);
+        getDataForSelectedKeys(queryString);
     }, [systemName, selectedKeys, startTime, endTime]);
 
     useEffect(() => {
@@ -27,16 +28,16 @@ export function AnalyticsPage() {
     }, [systemName]);
 
     useEffect(() => {
-        if (data.data?.length > 0) {
-            if (chartRef.current) {
-                chartRef.current.destroy(); // Destroy previous chart instance
-            }
-            let parsedSensors = _.fromPairs(_.map(data.sensors, (key) => [key, []]));
+        if (chartRef.current) {
+            chartRef.current.destroy(); // Destroy previous chart instance
+        }
+        if (data?.length > 0) {
+            let parsedSensors = _.fromPairs(_.map(selectedKeys, (key) => [key, []]));
             let x_values = [];
-            for (let row of data.data) {
+            for (let row of data) {
                 x_values.push(Math.floor(row[0] / 2000)); // divide by 2000 to change from half milliseconds to seconds
-                for (let i = 0; i < data.sensors.length; i++) {
-                    parsedSensors[data.sensors[i]].push(row[i + 1]);
+                for (let i = 0; i < selectedKeys.length; i++) {
+                    parsedSensors[selectedKeys[i]].push(row[i + 1]);
                 }
             }
             const datasets = Object.keys(parsedSensors).map((key) => ({
@@ -60,14 +61,19 @@ export function AnalyticsPage() {
                     }
                 }
             });
+        } else {
+            chartRef.current = null;
         }
     }, [data]);
 
     const getDataForSelectedKeys = async (dataString) => {
-        if (dataString) {
-            const response = await getDatabase(systemName, dataString, startTime * 2000 || 0, endTime * 2000 || 100000000);
-            setData(response.data);
+        if (!dataString) {
+            return;
         }
+
+        const response = await getDatabase(systemName, dataString, startTime * 2000 || 0, endTime * 2000 || 100000000);
+        const data = response.data;
+        setData(data);
     };
 
     const handleSelectKey = (event) => {
@@ -108,6 +114,7 @@ export function AnalyticsPage() {
             <h2>Analytics Page</h2>
             <div className={styles.row}>
                 <div className={styles.selectionBox}>
+                    <h1>Selected Keys</h1>
                     {_.map(selectedKeys, (selectedKey, index) => (
                         <div
                             key={selectedKey + index}
@@ -180,6 +187,8 @@ export function AnalyticsPage() {
                         <button onClick={downloadCsv}>Export to CSV</button>
                         <button
                             onClick={() => {
+                                setData([]);
+                                setSelectedKeys([]);
                                 saveAndClearDatabase();
                             }}
                         >
