@@ -8,6 +8,7 @@ export function DashboardPage() {
     const TOGGLE_KEY = "Control";
     const {solenoids, tcs, pts, igniters, misc, handleToggleState, timestamp} =
         useContext(RocketState);
+
     const [keydown, setKeydown] = useState();
     useEffect(() => {
         const handleKeyDown = (event) => {
