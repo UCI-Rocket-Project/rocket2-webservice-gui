@@ -36,7 +36,7 @@ export function DashboardPage() {
                     className={styles.boundingBox}
                     style={{height: "100%"}}
                 >
-                    <h2>Tooling</h2>
+                    <h2 className={styles.title} >Tooling</h2>
 
                     <div
                         className={styles.toolingBoundingBox}
