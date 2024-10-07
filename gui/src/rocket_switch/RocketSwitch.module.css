@@ -4,6 +4,7 @@
 }
 .switchRow {
     display: flex;
+    height: 50px;
     justify-content: space-evenly;
 }
 
@@ -16,8 +17,8 @@
     height: 50px;
 }
 .flame {
-    width: 50%;
-    margin-top: -20%;
+    height: 130%;
+    margin-top: -30%;
 }
 
 h2 {
@@ -29,6 +30,7 @@ h2 {
 .rocketSwitchParts {
     margin-bottom: 20px;
     padding-bottom: 15px;
+    width: 175px;
     margin-left: 40px;
     margin-right: 40px;
 }

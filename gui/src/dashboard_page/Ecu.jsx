@@ -10,7 +10,7 @@ export function Ecu({toggleKey, keydown}) {
     return (
         <div className={styles.ecuBox}>
             <div className={styles.boundingBox}>
-                <h2 data-testid="ecuPanel">ECU</h2>
+                <h2 className={styles.title} data-testid="ecuPanel">ECU</h2>
                 <div className={styles.ecuGaugeRow}>
                     <RocketGauge
                         value={tcs.Copv}

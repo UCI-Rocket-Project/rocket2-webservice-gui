@@ -40,7 +40,7 @@ const RocketSwitch = ({
                             </StatusIndicator>
                         </div>
                     ) : (
-                        <div>
+                        <div style={{width: 68, overflow: "visible"}}>
                             <img
                                 className={styles.flame}
                                 src={feedback_value ? "/flame.gif" : "/flame_off.png"}
