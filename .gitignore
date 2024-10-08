@@ -1,2 +1,4 @@
 **/__pycache__/
 webservice/saves
+*.venv
+*.DS_Store
