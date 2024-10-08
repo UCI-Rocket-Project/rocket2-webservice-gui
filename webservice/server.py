@@ -126,7 +126,7 @@ def get_data_from_db(system_name, selected_keys):
             AND time_recv < {request.args.get('endTime',200)}"
 
         cursor.execute(
-            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY time_recv DESC;"
+            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY time_recv ASC;"
         )
         data = cursor.fetchall()
         cursor.close()
@@ -138,7 +138,7 @@ def get_data_from_db(system_name, selected_keys):
                 if i % 2 == 0:
                     reduced_data.append(row)
             data = reduced_data
-        return {"sensors": selected_keys.split(","), "data": data[::-1]}
+        return data
     except Exception:
         return {}
 
