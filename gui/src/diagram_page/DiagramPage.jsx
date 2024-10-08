@@ -30,16 +30,6 @@ export function DiagramPage() {
                 feedback_value={solenoids["Gn2Vent"]["expected"]}
                 customClick={(event) => handleToggleState("gse", "Gn2Vent", event)}
             />
-            <ToggleButton
-                className={styles.loxvent}
-                feedback_value={solenoids["LoxVent"]["expected"]}
-                customClick={(event) => handleToggleState("gse", "LoxVent", event)}
-            />
-            <ToggleButton
-                className={styles.lngvent}
-                feedback_value={solenoids["LngVent"]["expected"]}
-                customClick={(event) => handleToggleState("gse", "LngVent", event)}
-            />
 
             <ToggleButton
                 className={styles.gn2fill}
@@ -57,24 +47,11 @@ export function DiagramPage() {
                 customClick={(event) => handleToggleState("ecu", "Pv2", event)}
             />
             <ToggleButton
-                className={styles.loxfill}
-                feedback_value={solenoids["LoxFill"]["expected"]}
-                customClick={(event) => handleToggleState("gse", "LoxFill", event)}
-            />
-            <ToggleButton
-                className={styles.lngfill}
-                feedback_value={solenoids["LngFill"]["expected"]}
-                customClick={(event) => handleToggleState("gse", "LngFill", event)}
-            />
-            <ToggleButton
-                className={styles.mvasfill}
-                feedback_value={solenoids["MvasFill"]["expected"]}
-                customClick={(event) => handleToggleState("gse", "MvasFill", event)}
-            />
-            <ToggleButton
-                className={styles.mvasvent}
-                feedback_value={solenoids["MvasVent"]["expected"]}
-                customClick={(event) => handleToggleState("gse", "MvasVent", event)}
+                className={styles.mvas}
+                feedback_value={solenoids["MvasOpen"]["expected"]}
+                customClick={(event) => {
+                    handleToggleState("ecu", "MvasOpen", event);
+                }}
             />
         </div>
     ) : (

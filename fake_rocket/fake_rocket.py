@@ -144,7 +144,6 @@ def main():
         "solenoidInternalStateMvasVent": 0,
         "solenoidInternalStateMvasOpen": 0,
         "solenoidInternalStateMvasClose": 0,
-        "solenoidInternalStateLoxFill": 0,
         "solenoidInternalStateLoxVent": 0,
         "solenoidInternalStateLngVent": 0,
         "supplyVoltage0": 0,

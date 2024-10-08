@@ -29,8 +29,7 @@ export function DashboardPage() {
             document.removeEventListener("keyup", handleKeyUp);
         };
     }, []); // Empty dependency array ensures this effect runs only once
-    // systemName: "gse" or "ecu"
-    console.log(solenoids);
+
     return timestamp ? (
         <div className={styles.row}>
             <div className={styles.gseBox}>
