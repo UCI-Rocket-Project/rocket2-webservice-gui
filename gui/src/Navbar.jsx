@@ -3,9 +3,10 @@ import {useContext} from "react";
 import {RocketState} from "./Context";
 
 export function Navbar() {
-    const {lastFetchTimestamp} = useContext(RocketState);
+    const {lastGseTimestamp, lastEcuTimestamp} = useContext(RocketState);
 
-    const timeSince = Date.now() - lastFetchTimestamp;
+    const gseTimeSince = Date.now() - lastGseTimestamp;
+    const ecuTimeSince = Date.now() - lastEcuTimestamp;
 
     return (
         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
@@ -24,9 +25,16 @@ export function Navbar() {
                 </button>
             </div>
 
-            <span style={{display: "flex", color: timeSince > 1000 ? "red" : null}}>
-                Time since last fetch: {timeSince}ms
-            </span>
+            <div style={{display: "flex", flexDirection: "row", gap: 8}}>
+                <span>Time since last packet:</span>
+
+                <span style={{display: "flex", color: gseTimeSince > 1000 ? "red" : null}}>
+                    GSE: <span style={{minWidth: 60, textAlign: "right"}}>{gseTimeSince}ms</span>
+                </span>
+                <span style={{display: "flex", color: ecuTimeSince > 1000 ? "red" : null}}>
+                    ECU: <span style={{minWidth: 60, textAlign: "right"}}>{ecuTimeSince}ms</span>
+                </span>
+            </div>
         </div>
     );
 }
