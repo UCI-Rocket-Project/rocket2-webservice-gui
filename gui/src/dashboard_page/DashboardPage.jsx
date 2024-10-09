@@ -6,7 +6,7 @@ import {RocketState} from "../Context";
 
 export function DashboardPage() {
     const TOGGLE_KEY = "Control";
-    const {solenoids, tcs, pts, igniters, misc, handleToggleState, timestamp} =
+    const {solenoids, tcs, pts, igniters, misc, handleToggleState, hasInitialized} =
         useContext(RocketState);
 
     const [keydown, setKeydown] = useState();
@@ -30,7 +30,11 @@ export function DashboardPage() {
         };
     }, []); // Empty dependency array ensures this effect runs only once
 
-    return timestamp ? (
+    if (!hasInitialized.current) {
+        return <> Loading data for dashboard page</>;
+    }
+
+    return (
         <div className={styles.row}>
             <div className={styles.gseBox}>
                 <div className={styles.boundingBox}>
@@ -397,7 +401,5 @@ export function DashboardPage() {
                 </div>
             </div>
         </div>
-    ) : (
-        <> Loading data for dashboard page</>
     );
 }
