@@ -5,7 +5,9 @@ import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 import {DiagramPage} from "./diagram_page/DiagramPage";
 import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
-import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import {Navbar} from "./Navbar";
+import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsContext";
 
 export function App() {
     const [solenoids, setSolenoids] = useState({});
@@ -19,7 +21,9 @@ export function App() {
     const currentPts = useRef();
     const currentIgniters = useRef();
     const currentMisc = useRef();
-    const [timestamp, setTimestamp] = useState();
+    const hasInitialized = useRef(false); // if copv vent and gn2 fill are within the solenoids object
+
+    const {updateTimestamps} = useRocketTimestampsContext();
 
     useEffect(() => {
         setInterval(fetchAndDispatchRocketState, 250);
@@ -49,22 +53,22 @@ export function App() {
 
     const fetchAndDispatchRocketState = async () => {
         try {
-            // Dispatch the async thunk to fetch the rocket state
             const ecuState = (await getEcuState()).data;
-            parseState(ecuState);
+            parseState(ecuState, "ecu");
             const gseState = (await getGseState()).data;
-            parseState(gseState);
+            parseState(gseState, "gse");
         } catch (error) {
             console.error("Error fetching rocket state:", error);
         }
     };
 
-    function parseState(state) {
+    function parseState(state, system) {
         let solenoids = {};
         let pts = {};
         let tcs = {};
         let igniters = {};
         let misc = {};
+
         for (const key in state) {
             if (key.includes("solenoid")) {
                 let solenoidType = key.includes("Expected") ? "expected" : "current";
@@ -98,16 +102,21 @@ export function App() {
                 misc[key] = state[key];
             }
         }
+
         setSolenoids({...currentSolenoids.current, ...solenoids});
         setTcs({...currentTcs.current, ...tcs});
         setPts({...currentPts.current, ...pts});
         setIgniters({...currentIgniters.current, ...igniters});
         setMisc({...currentMisc.current, ...misc});
+
+        const timeRecv = state.time_recv;
+        updateTimestamps(timeRecv, system);
+
         if (
             Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("CopvVent") != -1 &&
             Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("Gn2Fill") != -1
         ) {
-            setTimestamp(1);
+            hasInitialized.current = true;
         }
     }
 
@@ -119,27 +128,15 @@ export function App() {
                 pts,
                 igniters,
                 misc,
-                timestamp,
+                hasInitialized,
                 handleToggleState,
                 isAborted,
                 handleAbort
             }}
         >
             <Router>
-                <div>
-                    <button>
-                        <Link to="/">Dashboard</Link>
-                    </button>
-                    <button>
-                        <Link to="/rocket">Rocket</Link>
-                    </button>
-                    <button>
-                        <Link to="/telemetry">Telemetry</Link>
-                    </button>
-                    <button>
-                        <Link to="/analytics">Analytics</Link>
-                    </button>
-                </div>
+                <Navbar />
+
                 <Routes>
                     <Route
                         path="/"

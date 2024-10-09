@@ -5,9 +5,13 @@ import ToggleButton from "../toggle_button/ToggleButton";
 import {RocketState} from "../Context";
 
 export function DiagramPage() {
-    const {solenoids, timestamp, handleToggleState} = useContext(RocketState);
+    const {solenoids, hasInitialized, handleToggleState} = useContext(RocketState);
 
-    return timestamp ? (
+    if (!hasInitialized.current) {
+        return <>Loading data for diagram page</>;
+    }
+
+    return (
         <div className={styles.container}>
             <div className={styles.testy}>
                 <img
@@ -54,7 +58,5 @@ export function DiagramPage() {
                 }}
             />
         </div>
-    ) : (
-        <></>
     );
 }

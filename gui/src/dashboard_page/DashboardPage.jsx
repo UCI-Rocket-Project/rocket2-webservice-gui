@@ -14,7 +14,7 @@ if (navigator.platform.indexOf("Mac") !== -1 || navigator.userAgent.indexOf("Mac
 }
 
 export function DashboardPage() {
-    const {timestamp} = useContext(RocketState);
+    const {hasInitialized} = useContext(RocketState);
 
     const [keydown, setKeydown] = useState();
 
@@ -36,7 +36,11 @@ export function DashboardPage() {
         };
     }, []);
 
-    return timestamp ? (
+    if (!hasInitialized.current) {
+        return <> Loading data for dashboard page</>;
+    }
+
+    return (
         <div className={styles.row}>
             <div className={styles.tooling}>
                 <div
@@ -79,7 +83,5 @@ export function DashboardPage() {
                 keydown={keydown}
             />
         </div>
-    ) : (
-        <> Loading data for dashboard page</>
     );
 }
