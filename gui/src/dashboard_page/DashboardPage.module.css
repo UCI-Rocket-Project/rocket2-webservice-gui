@@ -15,15 +15,29 @@
     background-color: rgb(44, 45, 49);
 }
 
+.toolingBoundingBox {
+    filter: drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08));
+}
+
+.tooling {
+    width: 450px;
+    min-width: 450px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: "100%";
+}
+
 .gseBox {
     flex: 60%;
-    padding: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
     height: 300px; /* Should be removed. Only for demonstration */
 }
 
 .ecuBox {
     flex: 40%;
-    padding: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
     height: 300px; /* Should be removed. Only for demonstration */
 }
 
