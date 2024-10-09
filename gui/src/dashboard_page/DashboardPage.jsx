@@ -1,29 +1,22 @@
-import React, {useEffect} from "react";
-import {useSelector, useDispatch} from "react-redux";
-import {selectIgniters, selectKeydown, selectMisc, selectPts, selectSolenoids, selectTcs, selectTimestamp} from "../redux/rocketSlice";
-import {setKeydown} from "../redux/rocketSlice";
-import {updateRocket} from "../webservice";
+import React, {useContext, useEffect, useState} from "react";
 import styles from "./DashboardPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
 import RocketSwitch from "../rocket_switch/RocketSwitch";
+import {RocketState} from "../Context";
 
 export function DashboardPage() {
     const TOGGLE_KEY = "Control";
-    const pts = useSelector(selectPts);
-    const solenoids = useSelector(selectSolenoids);
-    const igniters = useSelector(selectIgniters);
-    const tcs = useSelector(selectTcs);
-    const misc = useSelector(selectMisc);
-    const timestamp = useSelector(selectTimestamp);
-    const dispatch = useDispatch();
-    const keydown = useSelector(selectKeydown);
+    const {solenoids, tcs, pts, igniters, misc, handleToggleState, timestamp} =
+        useContext(RocketState);
+
+    const [keydown, setKeydown] = useState();
     useEffect(() => {
         const handleKeyDown = (event) => {
-            dispatch(setKeydown(event.key));
+            setKeydown(event.key);
         };
 
         const handleKeyUp = () => {
-            dispatch(setKeydown(null));
+            setKeydown(null);
         };
 
         // Adding event listeners when component mounts
@@ -36,12 +29,7 @@ export function DashboardPage() {
             document.removeEventListener("keyup", handleKeyUp);
         };
     }, []); // Empty dependency array ensures this effect runs only once
-    // systemName: "gse" or "ecu"
-    const handleToggleState = (systemName, solenoidName, value) => {
-        console.log("toggling state");
-        console.log(value);
-        updateRocket(systemName, solenoidName, value);
-    };
+
     return timestamp ? (
         <div className={styles.row}>
             <div className={styles.gseBox}>
@@ -174,7 +162,9 @@ export function DashboardPage() {
                                 className="switches"
                                 expected_value={solenoids["Gn2Disconnect"]["expected"]}
                                 feedback_value={solenoids["Gn2Disconnect"]["current"]}
-                                onClick={(event) => handleToggleState("gse", "Gn2Disconnect", event)}
+                                onClick={(event) =>
+                                    handleToggleState("gse", "Gn2Disconnect", event)
+                                }
                                 enabled={keydown === TOGGLE_KEY}
                             ></RocketSwitch>
                             <RocketSwitch
