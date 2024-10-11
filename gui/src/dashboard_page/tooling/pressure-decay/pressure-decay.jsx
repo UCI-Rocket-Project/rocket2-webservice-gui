@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef, useContext} from "react";
-import {RocketState} from "../../Context";
+import {RocketState} from "../../../Context";
+import {PressureDecayChart} from "./pressure-decay-chart";
 
 const THREE_MINUTES_IN_MS = 3 * 60 * 1000;
 
@@ -25,14 +26,12 @@ export function PressureDecay() {
     const {pts} = useContext(RocketState);
 
     const ptsRef = useRef(pts);
-
-    useEffect(() => {
-        ptsRef.current = pts;
-    }, [pts]);
+    const intervalRef = useRef(null);
 
     const [running, setRunning] = useState(false);
     const [startTimestamp, setStartTimestamp] = useState(0);
     const [completedRun, setCompletedRun] = useState(false);
+    const [data, setData] = useState([]);
 
     const [startCopvPt, setStartCopvPt] = useState();
     const [startLoxPt, setStartLoxPt] = useState();
@@ -48,31 +47,55 @@ export function PressureDecay() {
         setStartCopvPt(parseFloat(pts.Copv.toFixed(2)));
         setStartLoxPt(parseFloat(pts.Lox.toFixed(2)));
         setStartLngPt(parseFloat(pts.Lng.toFixed(2)));
-        setStartTimestamp(Date.now());
 
-        setTimeout(
-            () => {
-                setEndCopvPt(parseFloat(ptsRef.current.Copv.toFixed(2)));
-                setEndLoxPt(parseFloat(ptsRef.current.Lox.toFixed(2)));
-                setEndLngPt(parseFloat(ptsRef.current.Lng.toFixed(2)));
+        const startTime = Date.now();
+        setStartTimestamp(startTime);
 
-                setRunning(false);
-                setCompletedRun(true);
-            },
-            // 5000
-            THREE_MINUTES_IN_MS
-        );
+        clearInterval(intervalRef.current);
+
+        intervalRef.current = setInterval(() => {
+            const elapsedSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
+
+            setData((prevData) => [
+                ...prevData,
+                {
+                    time: elapsedSeconds,
+                    Copv: ptsRef.current.Copv,
+                    Lox: ptsRef.current.Lox,
+                    Lng: ptsRef.current.Lng
+                }
+            ]);
+        }, 1000);
+
+        setTimeout(() => {
+            clearInterval(intervalRef.current);
+
+            setEndCopvPt(parseFloat(ptsRef.current.Copv.toFixed(2)));
+            setEndLoxPt(parseFloat(ptsRef.current.Lox.toFixed(2)));
+            setEndLngPt(parseFloat(ptsRef.current.Lng.toFixed(2)));
+
+            setRunning(false);
+            setCompletedRun(true);
+        }, THREE_MINUTES_IN_MS);
     };
 
     const handleRestart = () => {
+        handleClear();
+        handleStart();
+    };
+
+    const handleClear = () => {
         setStartCopvPt();
         setStartLoxPt();
         setStartLngPt();
         setStartTimestamp(0);
         setCompletedRun(false);
-
-        handleStart();
+        setData([]);
     };
+
+    useEffect(() => {
+        ptsRef.current = pts;
+    }, [pts]);
 
     return (
         <div
@@ -88,7 +111,7 @@ export function PressureDecay() {
             {!running && !completedRun ? (
                 <button
                     onClick={handleStart}
-                    style={{cursor: "pointer", fontSize: 16}}
+                    style={{cursor: "pointer", fontSize: 16, width: "100%"}}
                 >
                     Start Recording (3 min)
                 </button>
@@ -100,18 +123,26 @@ export function PressureDecay() {
                         <span>Initial LNG PT: {startLngPt}</span>
                     </div>
 
-                    <div
-                        style={{
-                            height: 1,
-                            width: "100%",
-                            backgroundColor: "aqua"
-                        }}
-                    />
+                    <div style={{height: 1, width: "100%", backgroundColor: "aqua"}} />
 
                     {running ? (
-                        <p style={{padding: 0, margin: 0}}>
-                            Time Remaining: {getFormattedTime(startTimestamp)}
-                        </p>
+                        <div style={{display: "flex", flexDirection: "column", gap: 12}}>
+                            <p style={{padding: 0, margin: 0}}>
+                                Time Remaining: {getFormattedTime(startTimestamp)}
+                            </p>
+
+                            <div>
+                                <div style={{display: "flex", flexDirection: "column"}}>
+                                    <span>COPV PT: {pts.Copv} </span>
+                                </div>
+                                <div style={{display: "flex", flexDirection: "column"}}>
+                                    <span>LOX PT: {pts.Lox} </span>
+                                </div>
+                                <div style={{display: "flex", flexDirection: "column"}}>
+                                    <span>LNG PT: {pts.Lng} </span>
+                                </div>
+                            </div>
+                        </div>
                     ) : (
                         <div>
                             <div style={{display: "flex", flexDirection: "column", gap: 12}}>
@@ -133,12 +164,22 @@ export function PressureDecay() {
                         </div>
                     )}
 
-                    <button
-                        onClick={handleRestart}
-                        style={{cursor: "pointer", fontSize: 16}}
-                    >
-                        Restart
-                    </button>
+                    <PressureDecayChart data={data} />
+
+                    <div style={{width: "100%", display: "flex", gap: 8}}>
+                        <button
+                            onClick={handleClear}
+                            style={{cursor: "pointer", fontSize: 16, width: "50%"}}
+                        >
+                            Clear
+                        </button>
+                        <button
+                            onClick={handleRestart}
+                            style={{cursor: "pointer", fontSize: 16, width: "50%"}}
+                        >
+                            Restart
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

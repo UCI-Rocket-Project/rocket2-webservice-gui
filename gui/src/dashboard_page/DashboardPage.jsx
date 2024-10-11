@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./DashboardPage.module.css";
 import {RocketState} from "../Context";
-import {PressureDecay} from "./tooling/pressure-decay";
+import {PressureDecay} from "./tooling/pressure-decay/pressure-decay";
 import {Gse} from "./Gse";
 import {Ecu} from "./Ecu";
 
