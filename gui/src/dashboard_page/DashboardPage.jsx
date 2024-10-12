@@ -5,8 +5,13 @@ import {PressureDecay} from "./tooling/pressure-decay/pressure-decay";
 import {Gse} from "./Gse";
 import {Ecu} from "./Ecu";
 
+let TOGGLE_KEY = "Control";
+
+if (navigator.platform.indexOf("Mac") !== -1 || navigator.userAgent.indexOf("Mac OS") !== -1) {
+    TOGGLE_KEY = "Meta";
+}
+
 export function DashboardPage() {
-    const TOGGLE_KEY = "Control";
     const {timestamp} = useContext(RocketState);
 
     const [keydown, setKeydown] = useState();
@@ -36,7 +41,7 @@ export function DashboardPage() {
                     className={styles.boundingBox}
                     style={{height: "100%"}}
                 >
-                    <h2 className={styles.title} >Tooling</h2>
+                    <h2 className={styles.title}>Tooling</h2>
 
                     <div
                         className={styles.toolingBoundingBox}
