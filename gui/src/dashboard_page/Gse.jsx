@@ -10,45 +10,22 @@ export function Gse({toggleKey, keydown}) {
     return (
         <div className={styles.gseBox}>
             <div className={styles.boundingBox}>
-                <h2 data-testid="gsePanel">GSE</h2>
+                <h2
+                    className={styles.title}
+                    data-testid="gsePanel"
+                >
+                    GSE
+                </h2>
                 <div className={styles.gseGaugeRow}>
                     <RocketGauge
                         value={pts.Gn2}
                         minValue={0}
                         maxValue={6000}
-                        units={"psi"}
+                        units={" psi"}
                         name={"GN2 PT"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
                             subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
-                            padding: 0.02,
-                            width: 0.3
-                        }}
-                    />
-
-                    <RocketGauge
-                        value={tcs.Lox}
-                        minValue={-200}
-                        maxValue={50}
-                        name={"LOX TC"}
-                        units={" °C"}
-                        arc={{
-                            colorArray: ["#5BE12C"],
-                            subArcs: [{limit: 50}],
-                            padding: 0.02,
-                            width: 0.3
-                        }}
-                    />
-
-                    <RocketGauge
-                        value={tcs.Lng}
-                        minValue={-200}
-                        maxValue={50}
-                        name={"LNG TC"}
-                        units={" °C"}
-                        arc={{
-                            colorArray: ["#5BE12C"],
-                            subArcs: [{limit: 50}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -64,37 +41,7 @@ export function Gse({toggleKey, keydown}) {
                         name="GN2 Vent"
                         className="switches"
                         enabled={keydown === toggleKey}
-                    />
-                    <RocketSwitch
-                        name="LOX Vent"
-                        className="switches"
-                        expected_value={solenoids["LoxVent"]["expected"]}
-                        feedback_value={solenoids["LoxVent"]["current"]}
-                        onClick={(event) => handleToggleState("gse", "LoxVent", event)}
-                        enabled={keydown === toggleKey}
-                        isNormallyOpen={true} // figure ito ut
-                    />
-                    <RocketSwitch
-                        name="LNG Vent"
-                        className="switches"
-                        expected_value={solenoids["LngVent"]["expected"]}
-                        feedback_value={solenoids["LngVent"]["current"]}
-                        onClick={(event) => handleToggleState("gse", "LngVent", event)}
-                        enabled={keydown === toggleKey}
-                        isNormallyOpen={true} // figure it out
-                    />
-                    <RocketSwitch
-                        name="MVAS Vent"
-                        className="switches"
-                        expected_value={solenoids["MvasVent"]["expected"]}
-                        feedback_value={solenoids["MvasVent"]["current"]}
-                        onClick={(event) => handleToggleState("gse", "MvasVent", event)}
-                        enabled={keydown === toggleKey}
-                    />
-                </div>
-
-                {/* GSE bottom row switches */}
-                <div className={styles.switchRow}>
+                    ></RocketSwitch>
                     <RocketSwitch
                         name="GN2 Fill"
                         className="switches"
@@ -102,113 +49,78 @@ export function Gse({toggleKey, keydown}) {
                         feedback_value={solenoids["Gn2Fill"]["current"]}
                         onClick={(event) => handleToggleState("gse", "Gn2Fill", event)}
                         enabled={keydown === toggleKey}
-                    />
+                    ></RocketSwitch>
                     <RocketSwitch
-                        name="MVAS Open"
+                        name="GN2 QD"
+                        className="switches"
+                        expected_value={solenoids["Gn2Disconnect"]["expected"]}
+                        feedback_value={solenoids["Gn2Disconnect"]["current"]}
+                        onClick={(event) => handleToggleState("gse", "Gn2Disconnect", event)}
+                        enabled={keydown === toggleKey}
+                    ></RocketSwitch>
+                </div>
+
+                {/* GSE bottom row switches */}
+
+                <div className={styles.switchRow}>
+                    <RocketSwitch
+                        name="Igniter 1"
+                        className="switches"
+                        expected_value={igniters["0"]["expected"]}
+                        feedback_value={igniters["0"]["current"]}
+                        onClick={(event) => handleToggleState("gse", "0", event)}
+                        enabled={keydown === toggleKey}
+                        switch_type="igniter"
+                    ></RocketSwitch>
+                    <div style={{width: 175}}></div>
+                    <RocketSwitch
+                        name="Alarm"
+                        className="switches"
+                        expected_value={-1}
+                        feedback_value={-1}
+                        onClick={(event) => handleToggleState("gse", "0", event)}
+                        enabled={keydown === toggleKey}
+                    ></RocketSwitch>
+                </div>
+                <div className={styles.switchRow}>
+                    <RocketSwitch
+                        name="Igniter 2"
+                        className="switches"
+                        expected_value={igniters["1"]["expected"]}
+                        feedback_value={igniters["1"]["current"]}
+                        onClick={(event) => handleToggleState("gse", "1", event)}
+                        enabled={keydown === toggleKey}
+                        switch_type="igniter"
+                    ></RocketSwitch>
+                    {igniters.armed ? (
+                        <img
+                            style={{width: "200px", height: "213px", marginTop: -50}}
+                            src="/key_armed.png"
+                            alt=""
+                        />
+                    ) : (
+                        <img
+                            style={{width: "200px", height: "213px"}}
+                            src="/key_unarmed.png"
+                            alt=""
+                        />
+                    )}
+                    <RocketSwitch
+                        name="MVAS"
                         className="switches"
                         expected_value={solenoids["MvasOpen"]["expected"]}
-                        feedback_value={solenoids["MvasOpen"]["current"]}
-                        onClick={(event) => handleToggleState("gse", "MvasOpen", event)}
+                        feedback_value={solenoids["MvasOpen"]["expected"]}
+                        onClick={(event) => {
+                            if (solenoids["MvasOpen"]["expected"] == 0) {
+                                handleToggleState("gse", "MvasClose", 0);
+                                handleToggleState("gse", "MvasOpen", 1);
+                            } else {
+                                handleToggleState("gse", "MvasOpen", 0);
+                                handleToggleState("gse", "MvasClose", 1);
+                            }
+                        }}
                         enabled={keydown === toggleKey}
-                    />
-                    <RocketSwitch
-                        name="MVAS Close"
-                        className="switches"
-                        expected_value={solenoids["MvasClose"]["expected"]}
-                        feedback_value={solenoids["MvasClose"]["current"]}
-                        onClick={(event) => handleToggleState("gse", "MvasClose", event)}
-                        enabled={keydown === toggleKey}
-                    />
-                    <RocketSwitch
-                        name="MVAS Fill"
-                        className="switches"
-                        expected_value={solenoids["MvasFill"]["expected"]}
-                        feedback_value={solenoids["MvasFill"]["current"]}
-                        onClick={(event) => handleToggleState("gse", "MvasFill", event)}
-                        enabled={keydown === toggleKey}
-                    />
-                </div>
-                <div className={styles.launchRow}>
-                    <div>
-                        <RocketSwitch
-                            name="Gn2 Disconnect"
-                            className="switches"
-                            expected_value={solenoids["Gn2Disconnect"]["expected"]}
-                            feedback_value={solenoids["Gn2Disconnect"]["current"]}
-                            onClick={(event) => handleToggleState("gse", "Gn2Disconnect", event)}
-                            enabled={keydown === toggleKey}
-                        />
-                        <RocketSwitch
-                            name="Alarm"
-                            className="switches"
-                            expected_value={-1}
-                            feedback_value={-1}
-                            onClick={(event) => handleToggleState("gse", "0", event)}
-                            enabled={keydown === toggleKey}
-                        />
-                    </div>
-                    <div style={{flex: 2}}></div>
-                    <div>
-                        <RocketSwitch
-                            name="Igniter 1"
-                            className="switches"
-                            expected_value={igniters["0"]["expected"]}
-                            feedback_value={igniters["0"]["current"]}
-                            onClick={(event) => handleToggleState("gse", "0", event)}
-                            enabled={keydown === toggleKey}
-                            switch_type="igniter"
-                        />
-                        <RocketSwitch
-                            name="Igniter 2"
-                            className="switches"
-                            expected_value={igniters["1"]["expected"]}
-                            feedback_value={igniters["1"]["current"]}
-                            onClick={(event) => handleToggleState("gse", "1", event)}
-                            enabled={keydown === toggleKey}
-                            switch_type="igniter"
-                        />
-                    </div>
-                    <div style={{flex: 1}}></div>
-                    <div className={styles.launchRowRight}>
-                        {igniters.armed ? (
-                            <img
-                                style={{width: "200px", height: "213px"}}
-                                src="/key_armed.png"
-                                alt=""
-                            />
-                        ) : (
-                            <img
-                                style={{width: "200px", height: "213px"}}
-                                src="/key_unarmed.png"
-                                alt=""
-                            />
-                        )}
-                        {keydown === toggleKey ? (
-                            solenoids["MvasOpen"]["expected"] ? (
-                                <img
-                                    onClick={(event) => handleToggleState("gse", "MvasOpen", 0)}
-                                    src="/button_on_open.png"
-                                    alt=""
-                                />
-                            ) : (
-                                <img
-                                    onClick={(event) => handleToggleState("gse", "MvasOpen", 1)}
-                                    src="/button_off_open.png"
-                                    alt=""
-                                />
-                            )
-                        ) : solenoids["MvasOpen"]["expected"] ? (
-                            <img
-                                src="/button_on_closed.png"
-                                alt=""
-                            />
-                        ) : (
-                            <img
-                                src="/button_off_closed.png"
-                                alt=""
-                            />
-                        )}
-                    </div>
+                    ></RocketSwitch>
                 </div>
             </div>
         </div>
