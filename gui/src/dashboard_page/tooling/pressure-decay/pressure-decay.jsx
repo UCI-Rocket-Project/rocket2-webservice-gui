@@ -89,6 +89,7 @@ export function PressureDecay() {
         setStartLoxPt();
         setStartLngPt();
         setStartTimestamp(0);
+        setRunning(false);
         setCompletedRun(false);
         setData([]);
     };
