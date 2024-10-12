@@ -7,7 +7,7 @@ import {Ecu} from "./Ecu";
 
 export function DashboardPage() {
     const TOGGLE_KEY = "Control";
-    const {timestamp} = useContext(RocketState);
+    const {hasInitialized} = useContext(RocketState);
 
     const [keydown, setKeydown] = useState();
 
@@ -29,7 +29,11 @@ export function DashboardPage() {
         };
     }, []);
 
-    return timestamp ? (
+    if (!hasInitialized.current) {
+        return <> Loading data for dashboard page</>;
+    }
+
+    return (
         <div className={styles.row}>
             <div className={styles.tooling}>
                 <div
@@ -46,6 +50,7 @@ export function DashboardPage() {
                     </div>
                 </div>
             </div>
+
             <Gse
                 toggleKey={TOGGLE_KEY}
                 keydown={keydown}
@@ -55,7 +60,5 @@ export function DashboardPage() {
                 keydown={keydown}
             />
         </div>
-    ) : (
-        <> Loading data for dashboard page</>
     );
 }
