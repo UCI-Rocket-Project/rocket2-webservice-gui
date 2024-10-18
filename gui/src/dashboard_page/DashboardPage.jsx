@@ -4,6 +4,7 @@ import {RocketState} from "../Context";
 import {PressureDecay} from "./tooling/pressure-decay/pressure-decay";
 import {Gse} from "./Gse";
 import {Ecu} from "./Ecu";
+import {Thermocouple} from "./tooling/tc/thermocouple";
 
 let TOGGLE_KEY = "Control";
 
@@ -45,9 +46,16 @@ export function DashboardPage() {
 
                     <div
                         className={styles.toolingBoundingBox}
-                        style={{paddingLeft: 12, paddingRight: 12}}
+                        style={{
+                            paddingLeft: 12,
+                            paddingRight: 12,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 16
+                        }}
                     >
                         <PressureDecay />
+                        <Thermocouple />
                     </div>
                 </div>
             </div>
