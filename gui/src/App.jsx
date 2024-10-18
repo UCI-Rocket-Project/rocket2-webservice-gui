@@ -13,6 +13,7 @@ export function App() {
     const [pts, setPts] = useState({});
     const [igniters, setIgniters] = useState({});
     const [misc, setMisc] = useState({});
+    const [isAborted, handleAbort] = useState(false);
     const currentSolenoids = useRef();
     const currentTcs = useRef();
     const currentPts = useRef();
@@ -119,7 +120,9 @@ export function App() {
                 igniters,
                 misc,
                 timestamp,
-                handleToggleState
+                handleToggleState,
+                isAborted,
+                handleAbort
             }}
         >
             <Router>

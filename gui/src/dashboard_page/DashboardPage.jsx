@@ -5,6 +5,7 @@ import {PressureDecay} from "./tooling/pressure-decay/pressure-decay";
 import {Gse} from "./Gse";
 import {Ecu} from "./Ecu";
 import {Thermocouple} from "./tooling/tc/thermocouple";
+import {AbortButton} from "../abort_button/AbortButton";
 
 let TOGGLE_KEY = "Control";
 
@@ -38,6 +39,16 @@ export function DashboardPage() {
     return timestamp ? (
         <div className={styles.row}>
             <div className={styles.tooling}>
+                <div
+                    className={styles.boundingBox}
+                    style={{width: 450}}
+                >
+                    <h2 className={styles.title}>ABORT</h2>
+                    <AbortButton
+                        toggleKey={TOGGLE_KEY}
+                        keydown={keydown}
+                    />
+                </div>
                 <div
                     className={styles.boundingBox}
                     style={{height: "100%"}}
