@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import {useState} from "react";
 
-export function PressureDecayChart({data}) {
+export function ThermocoupleChart({data}) {
     const [dataKey, setDatakey] = useState();
 
     const handleClick = (input) => {
@@ -38,18 +38,6 @@ export function PressureDecayChart({data}) {
                 >
                     Copv
                 </button>
-                <button
-                    style={{fontSize: 16, cursor: "pointer"}}
-                    onClick={() => handleClick("Lox")}
-                >
-                    Lox
-                </button>
-                <button
-                    style={{fontSize: 16, cursor: "pointer"}}
-                    onClick={() => handleClick("Lng")}
-                >
-                    Lng
-                </button>
             </div>
 
             <ResponsiveContainer
@@ -72,24 +60,6 @@ export function PressureDecayChart({data}) {
                             type="monotone"
                             dataKey="Copv"
                             stroke="#8884d8"
-                            dot={false}
-                            isAnimationActive={false}
-                        />
-                    ) : null}
-                    {dataKey === undefined || dataKey === "Lox" ? (
-                        <Line
-                            type="monotone"
-                            dataKey="Lox"
-                            stroke="#82ca9d"
-                            dot={false}
-                            isAnimationActive={false}
-                        />
-                    ) : null}
-                    {dataKey === undefined || dataKey === "Lng" ? (
-                        <Line
-                            type="monotone"
-                            dataKey="Lng"
-                            stroke="#ffc658"
                             dot={false}
                             isAnimationActive={false}
                         />
