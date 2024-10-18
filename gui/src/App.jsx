@@ -42,7 +42,7 @@ export function App() {
 
     const handleToggleState = (systemName, solenoidName, value) => {
         console.log("toggling state");
-        console.log(value);
+        console.log(systemName, solenoidName, value);
         updateRocket(systemName, solenoidName, value);
     };
 
@@ -50,12 +50,11 @@ export function App() {
         try {
             // Dispatch the async thunk to fetch the rocket state
             const ecuState = (await getEcuState()).data;
-            let newEcuState = parseState(ecuState);
+            parseState(ecuState);
             const gseState = (await getGseState()).data;
-            let newGseState = parseState(gseState);
+            parseState(gseState);
         } catch (error) {
             console.error("Error fetching rocket state:", error);
-            // Handle errors if needed
         }
     };
 

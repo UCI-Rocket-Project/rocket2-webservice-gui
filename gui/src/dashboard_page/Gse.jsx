@@ -5,7 +5,7 @@ import RocketSwitch from "../rocket_switch/RocketSwitch";
 import {RocketState} from "../Context";
 
 export function Gse({toggleKey, keydown}) {
-    const {solenoids, tcs, pts, igniters, handleToggleState} = useContext(RocketState);
+    const {solenoids, pts, igniters, misc, handleToggleState} = useContext(RocketState);
 
     return (
         <div className={styles.gseBox}>
@@ -76,11 +76,11 @@ export function Gse({toggleKey, keydown}) {
                     <RocketSwitch
                         name="Alarm"
                         className="switches"
-                        expected_value={-1}
-                        feedback_value={-1}
-                        onClick={(event) => handleToggleState("gse", "0", event)}
+                        expected_value={misc["alarmExpected"]}
+                        feedback_value={misc["alarmExpected"]}
+                        onClick={(event) => handleToggleState("gse", "alarmExpected", event)}
                         enabled={keydown === toggleKey}
-                    ></RocketSwitch>
+                    />
                 </div>
                 <div className={styles.switchRow}>
                     <RocketSwitch

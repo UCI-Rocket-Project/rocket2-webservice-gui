@@ -8,7 +8,7 @@ import {Ecu} from "./Ecu";
 let TOGGLE_KEY = "Control";
 
 if (navigator.platform.indexOf("Mac") !== -1 || navigator.userAgent.indexOf("Mac OS") !== -1) {
-    TOGGLE_KEY = "Meta";
+    TOGGLE_KEY = "x";
 }
 
 export function DashboardPage() {

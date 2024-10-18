@@ -189,9 +189,22 @@ def get_state(system_name):
 
 @app.route("/<system_name>/state/<switch_name>/<new_state>", methods=["POST"])
 def set_solenoid(system_name, switch_name, new_state):
-    """Used by the GUI to set a solenoid or igniter
-    Solenoid_name: just the name of the solenoid (EX: Lox(NOT solenoid_expected_lox))"""
-    if system_name == "ecu":
+    """
+    Used by the GUI to set a solenoid or igniter
+    Solenoid_name: just the name of the solenoid (EX: Lox(NOT solenoid_expected_lox))
+    """
+    
+    logging.info(system_name, switch_name, new_state)
+    logging.info(gse_state)
+    
+    if switch_name == "alarmExpected":
+        logging.info(f"ALARM TRIGGERED")
+        gse_state["alarmExpected"] = int(new_state)
+        
+        return send_solenoid_command(
+            gse_state, gse_connection, gse_connection_lock, "gse"
+        )
+    elif system_name == "ecu":
         logging.info(
             f"Old state {ecu_state['solenoidExpected' + switch_name]} new state {new_state} "
         )
