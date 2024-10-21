@@ -1,18 +1,37 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./DashboardPage.module.css";
 import {RocketState} from "../Context";
-import {PressureDecay} from "./tooling/pressure-decay/pressure-decay";
+import {PressureChartContainer} from "./pressure_graph/PressureChartContainer";
 import {Gse} from "./Gse";
 import {Ecu} from "./Ecu";
-import {Thermocouple} from "./tooling/tc/thermocouple";
-import {AbortButton} from "../abort_button/AbortButton";
+import {TcChartContainer} from "./tc_graph/TcChartContainer";
+import {PressureDecay} from "./tooling/pressure-decay/pressure-decay";
 
 let TOGGLE_KEY = "Control";
 
 if (navigator.platform.indexOf("Mac") !== -1 || navigator.userAgent.indexOf("Mac OS") !== -1) {
     TOGGLE_KEY = "x";
 }
-
+function ArrowIcon(props) {
+    return (
+        <svg
+            viewBox="0 0 64 64"
+            fill="currentColor"
+            height="50px"
+            width="50px"
+            {...props}
+        >
+            <path
+                fill="none"
+                stroke="currentColor"
+                strokeLinejoin="round"
+                strokeMiterlimit={10}
+                strokeWidth={5}
+                d="M15 24l17 17 17-17"
+            />
+        </svg>
+    );
+}
 export function DashboardPage() {
     const {hasInitialized} = useContext(RocketState);
 
@@ -42,42 +61,37 @@ export function DashboardPage() {
 
     return (
         <div className={styles.row}>
-            <div className={styles.tooling}>
-                <div
-                    className={styles.boundingBox}
-                    style={{width: 450}}
-                >
-                    <h2 className={styles.title}>ABORT</h2>
-                    <AbortButton
-                        toggleKey={TOGGLE_KEY}
-                        keydown={keydown}
-                    />
-                </div>
-                <div
-                    className={styles.boundingBox}
-                    style={{height: "100%"}}
-                >
-                    <h2 className={styles.title}>Tooling</h2>
-
-                    <div
-                        className={styles.toolingBoundingBox}
-                        style={{
-                            paddingLeft: 12,
-                            paddingRight: 12,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 16
-                        }}
-                    >
-                        <PressureDecay />
-                        <Thermocouple />
+            <div className={styles.dropdown}>
+                <div className={styles.dropdownContent}>
+                    <div className={styles.tooling}>
+                        <h2 className={styles.title}>Tooling</h2>
+                        <div
+                            className={styles.toolingBoundingBox}
+                            style={{
+                                paddingLeft: 12,
+                                paddingRight: 12,
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 16
+                            }}
+                        >
+                            <PressureDecay />
+                        </div>
                     </div>
+                </div>
+                <div style={{width: "100%", height: 50, fontSize: 30, textAlign: "center"}}>
+                    <ArrowIcon></ArrowIcon>
                 </div>
             </div>
             <Gse
                 toggleKey={TOGGLE_KEY}
                 keydown={keydown}
             />
+            <div className={styles.graphBox}>
+                {" "}
+                <TcChartContainer />
+                <PressureChartContainer />
+            </div>
             <Ecu
                 toggleKey={TOGGLE_KEY}
                 keydown={keydown}
