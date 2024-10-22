@@ -82,6 +82,9 @@ def start_server(
                     shared_state["pressureCopv"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLox"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLng"] += random.randint(-1, 1) / 1000
+                    shared_state["altitude"] += random.randint(-20, 20)
+                    shared_state["accelerationY"] += random.randint(-20, 20)
+
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
                     shared_state["altitude"] += random.randint(0, 1)
                 elif system_name == "GSE":
@@ -205,7 +208,7 @@ def main():
         "angularVelocityY": 0,
         "angularVelocityZ": 0,
         "accelerationX": 0,
-        "accelerationY": 500,
+        "accelerationY": 200,
         "accelerationZ": 0,
         "magneticFieldX": 0,
         "magneticFieldY": 0,
