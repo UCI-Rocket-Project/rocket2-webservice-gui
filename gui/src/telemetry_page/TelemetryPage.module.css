@@ -1,5 +1,24 @@
+.parent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
 .container {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    border-radius: 10px;
+    background-color: rgb(44, 45, 49);
+    width: 50%;
 }
+
+
+.GaugeCol {
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
+    flex-direction: column;
+}
+

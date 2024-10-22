@@ -16,6 +16,7 @@ export function App() {
     const [igniters, setIgniters] = useState({});
     const [misc, setMisc] = useState({});
     const [isAborted, handleAbort] = useState(false);
+    const [flight, setFlight] = useState({});
     const currentSolenoids = useRef();
     const currentTcs = useRef();
     const currentPts = useRef();
@@ -24,6 +25,7 @@ export function App() {
     const hasInitialized = useRef(false); // if copv vent and gn2 fill are within the solenoids object
 
     const {updateTimestamps} = useRocketTimestampsContext();
+    const currentFlight = useRef();
 
     useEffect(() => {
         setInterval(fetchAndDispatchRocketState, 250);
@@ -41,6 +43,9 @@ export function App() {
     useEffect(() => {
         currentIgniters.current = igniters;
     }, [igniters]);
+    useEffect(() => {
+        currentFlight.current = flight;
+    }, [flight]);
     useEffect(() => {
         currentMisc.current = misc;
     }, [misc]);
@@ -67,6 +72,7 @@ export function App() {
         let pts = {};
         let tcs = {};
         let igniters = {};
+        let flight = {};
         let misc = {};
 
         for (const key in state) {
@@ -98,6 +104,12 @@ export function App() {
                     }
                     igniters[igniterName][igniterType] = state[key];
                 }
+            } else if (key.includes("altitude")){
+                let key_name = key;
+                flight[key_name] = state[key]; 
+            } else if (key.includes("acceleration")){
+                let key_name = key;
+                flight[key_name] = state[key]; 
             } else {
                 misc[key] = state[key];
             }
@@ -107,6 +119,7 @@ export function App() {
         setTcs({...currentTcs.current, ...tcs});
         setPts({...currentPts.current, ...pts});
         setIgniters({...currentIgniters.current, ...igniters});
+        setFlight({...currentFlight.current, ...flight})
         setMisc({...currentMisc.current, ...misc});
 
         const timeRecv = state.time_recv;
@@ -131,7 +144,8 @@ export function App() {
                 hasInitialized,
                 handleToggleState,
                 isAborted,
-                handleAbort
+                handleAbort,
+                flight
             }}
         >
             <Router>
