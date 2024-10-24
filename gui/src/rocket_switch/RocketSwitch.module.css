@@ -31,8 +31,7 @@ h2 {
     margin-bottom: 20px;
     padding-bottom: 15px;
     width: 175px;
-    margin-left: 40px;
-    margin-right: 40px;
+    z-index: 2;
 }
 
 .components {

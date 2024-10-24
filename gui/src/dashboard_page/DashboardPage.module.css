@@ -3,6 +3,12 @@
     justify-content: space-between;
 }
 
+::-webkit-scrollbar-button {
+    display: none;
+    width: 50px;
+    height: 50px;
+}
+
 .title {
     text-align: center;
     margin-top: 1vh;
@@ -16,33 +22,39 @@
 }
 
 .toolingBoundingBox {
-    filter: drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08));
+    overflow: auto;
+    height: 500px;
 }
 
 .tooling {
-    width: 450px;
-    min-width: 450px;
-    padding-left: 5px;
-    padding-right: 5px;
+    width: 100%;
     height: "100%";
 }
 
 .gseBox {
-    flex: 40%;
+    min-width: 400px;
+    width: 500px; /* Don't know why this needs to be here */
     padding-left: 5px;
     padding-right: 5px;
-    height: 300px; /* Should be removed. Only for demonstration */
+    height: 300px;
 }
 
 .ecuBox {
-    flex: 40%;
+    width: 700px;
     padding-left: 5px;
     padding-right: 5px;
-    height: 300px; /* Should be removed. Only for demonstration */
+    height: 300px;
+}
+.graphBox {
+    width: 100%;
 }
 
 .ecuSwitchColumn {
     padding: 10px;
+}
+
+.switches {
+    z-index: 2;
 }
 
 .battery {
@@ -74,7 +86,7 @@
     display: inline-flex;
     flex-direction: row;
     border-radius: 10px;
-    justify-content: space-between;
+    justify-content: space-evenly;
     width: 100%;
 }
 .launchRow {
@@ -104,4 +116,35 @@
 .abort {
     display: flex;
     justify-content: center;
+}
+
+.dropdown {
+    transition: all 0.5s ease-in-out;
+    position: absolute;
+    top: -5px;
+    left: 30%;
+    z-index: 5;
+    border-radius: 10px;
+    background-color: rgb(24, 24, 27);
+    width: 40%;
+}
+.dropdownContent {
+    min-height: 0px;
+    height: 0px;
+    transition: all 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+.dropdown:hover .dropdownContent {
+    height: 600px;
+}
+
+.darkButton {
+    background-color: rgb(24, 24, 27);
+    border: none;
+    color: white;
+}
+
+.darkButton:hover {
+    background-color: rgb(41, 41, 46);
 }

@@ -3,6 +3,7 @@ import styles from "./DashboardPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
 import RocketSwitch from "../rocket_switch/RocketSwitch";
 import {RocketState} from "../Context";
+import {AbortButton} from "./abort_button/AbortButton";
 
 export function Ecu({toggleKey, keydown}) {
     const {solenoids, tcs, pts, igniters, handleToggleState} = useContext(RocketState);
@@ -10,7 +11,12 @@ export function Ecu({toggleKey, keydown}) {
     return (
         <div className={styles.ecuBox}>
             <div className={styles.boundingBox}>
-                <h2 className={styles.title} data-testid="ecuPanel">ECU</h2>
+                <h2
+                    className={styles.title}
+                    data-testid="ecuPanel"
+                >
+                    ECU
+                </h2>
                 <div className={styles.ecuGaugeRow}>
                     <RocketGauge
                         value={tcs.Copv}
@@ -52,9 +58,50 @@ export function Ecu({toggleKey, keydown}) {
                         }}
                     />
                 </div>
+                <div className={styles.ecuGaugeRow}>
+                    <RocketGauge
+                        value={pts.Lng}
+                        minValue={0}
+                        maxValue={6000}
+                        name={"LNG PT"}
+                        units={" psi"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                    <RocketGauge
+                        value={pts.InjectorLox}
+                        minValue={0}
+                        maxValue={6000}
+                        name={"LOX INJ PT"}
+                        units={" psi"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                    <RocketGauge
+                        value={pts.InjectorLng}
+                        minValue={0}
+                        maxValue={6000}
+                        name={"LNG INJ PT"}
+                        units={" psi"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                </div>
 
                 <div className={styles.row}>
-                    <div className={styles.ecuSwitchColumn}>
+                    <div>
                         <div className={styles.switchRow}>
                             <RocketSwitch
                                 name="COPV Vent"
@@ -93,10 +140,21 @@ export function Ecu({toggleKey, keydown}) {
                                 isNormallyOpen={true}
                             />
                         </div>
-                        {/* battery */}
-                        <div className={styles.switchRow}>
+                    </div>
+                    <div
+                        className={styles.boundingBox}
+                        style={{width: 450}}
+                    >
+                        <h2 className={styles.title}>ABORT</h2>
+                        <AbortButton
+                            toggleKey={toggleKey}
+                            keydown={keydown}
+                        />
+                    </div>
+                    {/* battery */}
+                    {/* <div className={styles.switchRow}>
                             <div className={styles.battery}>
-                                {/* battery headers */}
+
                                 <div className={styles.middleHeader}>
                                     <h3>Battery</h3>
                                     <div className={styles.supplyBattery}>
@@ -110,51 +168,7 @@ export function Ecu({toggleKey, keydown}) {
                                     <button>24.0V</button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* ECU gauges */}
-                    <div>
-                        <RocketGauge
-                            value={pts.Lng}
-                            minValue={0}
-                            maxValue={6000}
-                            name={"LNG PT"}
-                            units={" psi"}
-                            arc={{
-                                colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
-                                padding: 0.02,
-                                width: 0.3
-                            }}
-                        />
-                        <RocketGauge
-                            value={pts.InjectorLox}
-                            minValue={0}
-                            maxValue={6000}
-                            name={"LOX INJ PT"}
-                            units={" psi"}
-                            arc={{
-                                colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
-                                padding: 0.02,
-                                width: 0.3
-                            }}
-                        />
-                        <RocketGauge
-                            value={pts.InjectorLng}
-                            minValue={0}
-                            maxValue={6000}
-                            name={"LNG INJ PT"}
-                            units={" psi"}
-                            arc={{
-                                colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                                subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
-                                padding: 0.02,
-                                width: 0.3
-                            }}
-                        />
-                    </div>
+                        </div> */}
                 </div>
             </div>
         </div>

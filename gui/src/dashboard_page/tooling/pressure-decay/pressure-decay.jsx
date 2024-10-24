@@ -101,7 +101,6 @@ export function PressureDecay() {
     return (
         <div
             style={{
-                backgroundColor: "rgb(50, 51, 56)",
                 borderRadius: 10,
                 padding: 12,
                 fontSize: 24
@@ -164,8 +163,6 @@ export function PressureDecay() {
                             </div>
                         </div>
                     )}
-
-                    <PressureDecayChart data={data} />
 
                     <div style={{width: "100%", display: "flex", gap: 8}}>
                         <button
