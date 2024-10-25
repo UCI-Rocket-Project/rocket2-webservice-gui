@@ -184,7 +184,7 @@ export function AnalyticsPage() {
                         id="graph"
                     ></canvas>
                     <div>
-                        <button onClick={downloadCsv}>Export to CSV</button>
+                        {/* <button onClick={downloadCsv}>Export to CSV</button> */}
                         <button
                             onClick={() => {
                                 setData([]);
