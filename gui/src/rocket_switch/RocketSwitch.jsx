@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 
 const RocketSwitch = ({
     name,
+    className = "",
     expected_value,
     feedback_value,
     onClick = () => {},
