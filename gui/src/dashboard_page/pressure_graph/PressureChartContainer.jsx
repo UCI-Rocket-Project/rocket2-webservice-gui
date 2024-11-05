@@ -2,7 +2,7 @@ import {useState, useEffect, useRef, useContext} from "react";
 import {RocketState} from "../../Context";
 import {PressureChart} from "./PressureChart";
 
-const THREE_MINUTES_IN_MS = 3 * 60 * 1000;
+const FIVE_MINUTES_IN_SECONDS = 5 * 60;
 export function PressureChartContainer() {
     const {pts} = useContext(RocketState);
 
@@ -12,31 +12,27 @@ export function PressureChartContainer() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        handleStart();
-    }, []);
-    const handleStart = () => {
         const startTime = Date.now();
-
-        clearInterval(intervalRef.current);
-
         intervalRef.current = setInterval(() => {
             const elapsedSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
 
-            setData((prevData) => [
-                ...prevData,
-                {
-                    time: elapsedSeconds,
-                    Copv: ptsRef.current.Copv,
-                    Lox: ptsRef.current.Lox,
-                    Lng: ptsRef.current.Lng
-                }
-            ]);
-        }, 1000);
+            setData((prevData) => {
+                const newData = [
+                    ...prevData,
+                    {
+                        time: elapsedSeconds,
+                        Copv: ptsRef.current.Copv,
+                        Lox: ptsRef.current.Lox,
+                        Lng: ptsRef.current.Lng
+                    }
+                ];
 
-        setTimeout(() => {
-            clearInterval(intervalRef.current);
-        }, THREE_MINUTES_IN_MS);
-    };
+                return newData.filter(
+                    (d) => d.time && d.time >= elapsedSeconds - FIVE_MINUTES_IN_SECONDS
+                );
+            });
+        }, 1000);
+    }, []);
 
     useEffect(() => {
         ptsRef.current = pts;

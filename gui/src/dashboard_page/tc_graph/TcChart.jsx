@@ -22,7 +22,9 @@ export function TcChart({data}) {
                     <XAxis
                         dataKey="time"
                         type="number"
-                        domain={["auto"]}
+                        domain={
+                            data.length > 2 ? [data[0].time, data[data.length - 1].time] : ["auto"]
+                        }
                     />
                     <YAxis domain={["auto"]} />
                     <Tooltip />
