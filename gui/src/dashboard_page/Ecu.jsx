@@ -6,7 +6,7 @@ import {RocketState} from "../Context";
 import {AbortButton} from "./abort_button/AbortButton";
 
 export function Ecu({toggleKey, keydown}) {
-    const {solenoids, tcs, pts, igniters, handleToggleState} = useContext(RocketState);
+    const {solenoids, tcs, pts, igniters, handleToggleState, isAborted} = useContext(RocketState);
 
     return (
         <div className={styles.ecuBox}>
@@ -109,7 +109,7 @@ export function Ecu({toggleKey, keydown}) {
                                 expected_value={solenoids["CopvVent"]["expected"]}
                                 feedback_value={solenoids["CopvVent"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "CopvVent", event)}
-                                enabled={keydown === toggleKey}
+                                enabled={keydown === toggleKey && !isAborted}
                             />
                             <RocketSwitch
                                 name="Vent"
@@ -117,7 +117,7 @@ export function Ecu({toggleKey, keydown}) {
                                 expected_value={solenoids["Vent"]["expected"]}
                                 feedback_value={solenoids["Vent"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "Vent", event)}
-                                enabled={keydown === toggleKey}
+                                enabled={keydown === toggleKey && !isAborted}
                                 isNormallyOpen={true}
                             />
                         </div>
@@ -128,7 +128,7 @@ export function Ecu({toggleKey, keydown}) {
                                 expected_value={solenoids["Pv1"]["expected"]}
                                 feedback_value={solenoids["Pv1"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "Pv1", event)}
-                                enabled={keydown === toggleKey}
+                                enabled={keydown === toggleKey && !isAborted}
                             />
                             <RocketSwitch
                                 name="PV2"
@@ -136,7 +136,7 @@ export function Ecu({toggleKey, keydown}) {
                                 expected_value={solenoids["Pv2"]["expected"]}
                                 feedback_value={solenoids["Pv2"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "Pv2", event)}
-                                enabled={keydown === toggleKey}
+                                enabled={keydown === toggleKey && !isAborted}
                                 isNormallyOpen={true}
                             />
                         </div>
