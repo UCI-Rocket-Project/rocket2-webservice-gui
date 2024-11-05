@@ -5,7 +5,7 @@ import RocketSwitch from "../rocket_switch/RocketSwitch";
 import {RocketState} from "../Context";
 
 export function Gse({toggleKey, keydown}) {
-    const {solenoids, pts, igniters, misc, handleToggleState} = useContext(RocketState);
+    const {solenoids, pts, igniters, misc, handleToggleState, isAborted} = useContext(RocketState);
 
     return (
         <div className={styles.gseBox}>
@@ -38,14 +38,14 @@ export function Gse({toggleKey, keydown}) {
                         feedback_value={solenoids["Gn2Vent"]["current"]}
                         onClick={(event) => handleToggleState("gse", "Gn2Vent", event)}
                         name="GN2 Vent"
-                        enabled={keydown === toggleKey}
+                        enabled={keydown === toggleKey && !isAborted}
                     />
                     <RocketSwitch
                         name="GN2 Fill"
                         expected_value={solenoids["Gn2Fill"]["expected"]}
                         feedback_value={solenoids["Gn2Fill"]["current"]}
                         onClick={(event) => handleToggleState("gse", "Gn2Fill", event)}
-                        enabled={keydown === toggleKey}
+                        enabled={keydown === toggleKey && !isAborted}
                     />
                 </div>
                 <div className={styles.switchRow}>
@@ -54,7 +54,7 @@ export function Gse({toggleKey, keydown}) {
                         expected_value={solenoids["Gn2Disconnect"]["expected"]}
                         feedback_value={solenoids["Gn2Disconnect"]["current"]}
                         onClick={(event) => handleToggleState("gse", "Gn2Disconnect", event)}
-                        enabled={keydown === toggleKey}
+                        enabled={keydown === toggleKey && !isAborted}
                     />
                     <RocketSwitch
                         name="MVAS"
@@ -69,7 +69,7 @@ export function Gse({toggleKey, keydown}) {
                                 handleToggleState("gse", "MvasClose", 1);
                             }
                         }}
-                        enabled={keydown === toggleKey}
+                        enabled={keydown === toggleKey && !isAborted}
                     />
                 </div>
                 <div className={styles.switchRow}>
@@ -78,7 +78,7 @@ export function Gse({toggleKey, keydown}) {
                         expected_value={igniters["0"]["expected"]}
                         feedback_value={igniters["0"]["current"]}
                         onClick={(event) => handleToggleState("gse", "0", event)}
-                        enabled={keydown === toggleKey}
+                        enabled={keydown === toggleKey && !isAborted}
                         switch_type="igniter"
                     />
 
@@ -87,7 +87,7 @@ export function Gse({toggleKey, keydown}) {
                         expected_value={igniters["1"]["expected"]}
                         feedback_value={igniters["1"]["current"]}
                         onClick={(event) => handleToggleState("gse", "1", event)}
-                        enabled={keydown === toggleKey}
+                        enabled={keydown === toggleKey && !isAborted}
                         switch_type="igniter"
                     />
                 </div>
@@ -98,7 +98,7 @@ export function Gse({toggleKey, keydown}) {
                         expected_value={misc["alarmExpected"]}
                         feedback_value={misc["alarmExpected"]}
                         onClick={(event) => handleToggleState("gse", "alarmExpected", event)}
-                        enabled={keydown === toggleKey}
+                        enabled={keydown === toggleKey && !isAborted}
                     />
                     {igniters.armed ? (
                         <img
