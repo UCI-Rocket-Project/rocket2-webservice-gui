@@ -106,7 +106,7 @@ export function Ecu({toggleKey, keydown}) {
                             <RocketSwitch
                                 name="COPV Vent"
                                 className="switches"
-                                expected_value={solenoids["CopvVent"]["expected"]}
+                                expected_value={solenoids["CopvVent"]?.["expected"]}
                                 feedback_value={solenoids["CopvVent"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "CopvVent", event)}
                                 enabled={keydown === toggleKey && !isAborted}
@@ -114,7 +114,7 @@ export function Ecu({toggleKey, keydown}) {
                             <RocketSwitch
                                 name="Vent"
                                 className="switches"
-                                expected_value={solenoids["Vent"]["expected"]}
+                                expected_value={solenoids["Vent"]?.["expected"]}
                                 feedback_value={solenoids["Vent"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "Vent", event)}
                                 enabled={keydown === toggleKey && !isAborted}
@@ -125,7 +125,7 @@ export function Ecu({toggleKey, keydown}) {
                             <RocketSwitch
                                 name="PV1"
                                 className="switches"
-                                expected_value={solenoids["Pv1"]["expected"]}
+                                expected_value={solenoids["Pv1"]?.["expected"]}
                                 feedback_value={solenoids["Pv1"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "Pv1", event)}
                                 enabled={keydown === toggleKey && !isAborted}
@@ -133,7 +133,7 @@ export function Ecu({toggleKey, keydown}) {
                             <RocketSwitch
                                 name="PV2"
                                 className="switches"
-                                expected_value={solenoids["Pv2"]["expected"]}
+                                expected_value={solenoids["Pv2"]?.["expected"]}
                                 feedback_value={solenoids["Pv2"]["current"]}
                                 onClick={(event) => handleToggleState("ecu", "Pv2", event)}
                                 enabled={keydown === toggleKey && !isAborted}

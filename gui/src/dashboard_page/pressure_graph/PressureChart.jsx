@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import {useState} from "react";
 import styles from "../DashboardPage.module.css";
+
 export function PressureChart({data}) {
     const [dataKey, setDatakey] = useState();
 
@@ -62,7 +63,20 @@ export function PressureChart({data}) {
                         }
                     />
                     <YAxis domain={["auto"]} />
-                    <Tooltip />
+                    <Tooltip
+                        contentStyle={{fontSize: 24}}
+                        labelStyle={{color: "black", paddingLeft: 0}}
+                        labelFormatter={(label) => (
+                            <p
+                                style={{
+                                    padding: 0,
+                                    margin: 0
+                                }}
+                            >
+                                Time: {label}
+                            </p>
+                        )}
+                    />
                     <Legend />
                     {dataKey === undefined || dataKey === "Copv" ? (
                         <Line

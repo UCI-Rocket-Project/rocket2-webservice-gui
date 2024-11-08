@@ -8,7 +8,6 @@ import {
     Legend,
     ResponsiveContainer
 } from "recharts";
-import {useState} from "react";
 
 export function TcChart({data}) {
     return (
@@ -27,7 +26,20 @@ export function TcChart({data}) {
                         }
                     />
                     <YAxis domain={["auto"]} />
-                    <Tooltip />
+                    <Tooltip
+                        contentStyle={{fontSize: 24}}
+                        labelStyle={{color: "black", paddingLeft: 0}}
+                        labelFormatter={(label) => (
+                            <p
+                                style={{
+                                    padding: 0,
+                                    margin: 0
+                                }}
+                            >
+                                Time: {label}
+                            </p>
+                        )}
+                    />
                     <Legend />
 
                     <Line
