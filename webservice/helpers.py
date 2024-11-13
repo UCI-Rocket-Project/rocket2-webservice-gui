@@ -43,7 +43,7 @@ def _gen_gse_pack(gse_state):
         "<????????????",  # Should match the one in fake_rocket.py
         gse_state["igniterExpected0"],  # igniter0Fire
         gse_state["igniterExpected1"],  # igniter1Fire
-        gse_state['alarmExpected'],  # alarm
+        gse_state["alarmExpected"],  # alarm
         gse_state["solenoidExpectedGn2Fill"],
         gse_state["solenoidExpectedGn2Vent"],
         gse_state["solenoidExpectedGn2Disconnect"],
@@ -73,7 +73,6 @@ def _gen_ecu_pack(ecu_state):
 
 def send_solenoid_command(state, connection, connection_lock, system_name):
     """Attempts to update the given solenoid on the gse"""
-    logging.info("SENDING SOLENOID COMMAND")
     try:
         with connection_lock:
             if system_name == "ecu":
