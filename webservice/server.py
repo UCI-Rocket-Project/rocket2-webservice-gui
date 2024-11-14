@@ -193,33 +193,27 @@ def set_solenoid(system_name, switch_name, new_state):
     Used by the GUI to set a solenoid or igniter
     Solenoid_name: just the name of the solenoid (EX: Lox(NOT solenoid_expected_lox))
     """
-    
-    logging.info(system_name, switch_name, new_state)
-    logging.info(gse_state)
-    
+
     if switch_name == "alarmExpected":
-        logging.info(f"ALARM TRIGGERED")
         gse_state["alarmExpected"] = int(new_state)
-        
+        logging.info("Setting alarm state for GSE")
         return send_solenoid_command(
             gse_state, gse_connection, gse_connection_lock, "gse"
         )
     elif system_name == "ecu":
-        logging.info(
-            f"Old state {ecu_state['solenoidExpected' + switch_name]} new state {new_state} "
-        )
+        logging.info(f"Setting solenoid state for ECU: {switch_name} {new_state} ")
         ecu_state["solenoidExpected" + switch_name] = int(new_state)
         return send_solenoid_command(
             ecu_state, ecu_connection, ecu_connection_lock, "ecu"
         )
     elif system_name == "gse":
         if len(switch_name) != 1:  # If it is a solenoid name
-            logging.info(
-                f"Old state {gse_state['solenoidExpected' + switch_name]} new state {new_state} "
-            )
+            logging.info(f"Setting solenoid state for GSE: {switch_name} {new_state} ")
             gse_state["solenoidExpected" + switch_name] = int(new_state)
         else:
-            logging.info("IGNITER SWITCHED")
+            logging.info(
+                f"Setting ignitor state for GSE: Ignitor{switch_name} {new_state} "
+            )
             gse_state["igniterExpected" + switch_name] = int(new_state)
         return send_solenoid_command(
             gse_state, gse_connection, gse_connection_lock, "gse"
@@ -290,7 +284,7 @@ def handle_update_gse_state(new_state):
                     gse_state[key.replace("InternalState", "Expected")] = int(val)
                 elif gse_state[key.replace("InternalState", "Expected")] != int(val):
                     logging.info(
-                        f"GSE STATE for {key.replace('InternalState', 'Expected')} does not match "
+                        f"GSE state for {key.replace('InternalState', 'Expected')} does not match "
                     )
                     state_missmatch = True
             else:
@@ -324,7 +318,7 @@ def handle_update_ecu_state(new_state):
                     ecu_state[key.replace("InternalState", "Expected")] = int(val)
                 elif ecu_state[key.replace("InternalState", "Expected")] != int(val):
                     logging.info(
-                        f"ECU STATE for {key.replace('InternalState', 'Expected')} does not match "
+                        f"ECU state for {key.replace('InternalState', 'Expected')} does not match "
                     )
                     state_missmatch = True
             else:
