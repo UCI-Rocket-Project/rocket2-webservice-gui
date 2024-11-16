@@ -419,7 +419,7 @@ if __name__ == "__main__":
             (load_cell_ip, load_cell_port),
             load_cell_connection_lock,
             LOAD_CELL_DATA_LENGTH,
-            "<Lfff",  # Should match the one in fake_rocket.py
+            "<Lff",  # Should match the one in fake_rocket.py
             handle_update_load_cell_state,
             "LOAD_CELL",
         ),

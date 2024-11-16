@@ -89,12 +89,10 @@ PT_CALIBRATIONS = {
 }
 
 LOAD_CELL_DATA_LENGTH = (
-    20  # 4(time_recv) + 4 * 3(floats) + 4(crc) + \r\n
+    12  # 4(time_recv) + 4 * 1(floats) + 4(crc) + \r\n
 )
 
 LOAD_CELL_DATA_FORMAT = [
     "time_recv",
-    "packetRssi",
-    "packetLoss",
     "force"
 ]
