@@ -20,6 +20,8 @@ services:
             - ECU_PORT=10004
             - GSE_IP=fake_rocket
             - GSE_PORT=10002
+            - LOAD_CELL_IP=fake_rocket
+            - LOAD_CELL_PORT=10069
         volumes:
             - ./webservice:/app
         healthcheck:

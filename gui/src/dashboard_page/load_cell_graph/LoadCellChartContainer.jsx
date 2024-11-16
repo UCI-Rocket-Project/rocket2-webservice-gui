@@ -1,13 +1,12 @@
 import {useState, useEffect, useRef, useContext} from "react";
 import {RocketState} from "../../Context";
-import {TcChart} from "./TcChart";
+import {LoadCellChart} from "./LoadCellChart";
 
 const FIVE_MINUTES_IN_SECONDS = 5 * 60;
+export function LoadCellChartContainer() {
+    const {misc} = useContext(RocketState);
 
-export function TcChartContainer() {
-    const {tcs} = useContext(RocketState);
-
-    const tcsRef = useRef(tcs);
+    const miscRef = useRef(misc);
     const intervalRef = useRef(null);
 
     const [data, setData] = useState([]);
@@ -22,7 +21,7 @@ export function TcChartContainer() {
                     ...prevData,
                     {
                         time: elapsedSeconds,
-                        Copv: tcsRef.current?.Copv
+                        force: miscRef.current.force
                     }
                 ];
 
@@ -31,11 +30,11 @@ export function TcChartContainer() {
                 );
             });
         }, 1000);
-    }, []);
+    }, [misc]);
 
     useEffect(() => {
-        tcsRef.current = tcs;
-    }, [tcs]);
+        miscRef.current = misc;
+    }, [misc]);
 
     return (
         <div
@@ -45,10 +44,9 @@ export function TcChartContainer() {
                 fontSize: 24
             }}
         >
-            <h4 style={{margin: 0}}>COPV TC</h4>
-            <div style={{display: "flex", flexDirection: "column", fontSize: 20, gap: 12}}>
-                <TcChart data={data} />
-            </div>
+            <h4 style={{margin: 0}}>Load Cell Force: {miscRef.current.force}</h4>
+
+            <LoadCellChart data={data} />
         </div>
     );
 }

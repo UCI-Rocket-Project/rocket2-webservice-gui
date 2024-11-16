@@ -23,6 +23,12 @@ export const getGseState = () => {
     });
 };
 
+export const getLoadCellState = () => {
+    return client.get("load_cell/state").catch(() => {
+        console.log("error");
+    });
+};
+
 export const getDatabase = (systemName, data_type, startTime, endTime) => {
     let params = null;
     if (startTime || endTime) {

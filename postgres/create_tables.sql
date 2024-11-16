@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS ecu (
     ecefVelocityZ FLOAT,
     ecefVelocityAccuracy FLOAT
 );
+
 CREATE TABLE IF NOT EXISTS gse (
     time_recv INTEGER,
     igniterArmed BOOLEAN,
@@ -81,4 +82,9 @@ CREATE TABLE IF NOT EXISTS gse (
     temperatureLox FLOAT,
     temperatureLng FLOAT,
     pressureGn2 FLOAT
+);
+
+CREATE TABLE IF NOT EXISTS load_cell (
+    time_recv INTEGER,
+    total_force FLOAT
 );

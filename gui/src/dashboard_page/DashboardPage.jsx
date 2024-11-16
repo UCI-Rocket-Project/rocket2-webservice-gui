@@ -6,6 +6,7 @@ import {Gse} from "./Gse";
 import {Ecu} from "./Ecu";
 import {TcChartContainer} from "./tc_graph/TcChartContainer";
 import {PressureDecay} from "./tooling/pressure-decay/pressure-decay";
+import {LoadCellChartContainer} from "./load_cell_graph/LoadCellChartContainer";
 
 let TOGGLE_KEY = "Control";
 
@@ -87,10 +88,13 @@ export function DashboardPage() {
                 toggleKey={TOGGLE_KEY}
                 keydown={keydown}
             />
-            <div className={styles.graphBox}>
-                {" "}
+            <div
+                className={styles.graphBox}
+                style={{overflowY:"auto", height: "95vh"}}
+            >
                 <TcChartContainer />
                 <PressureChartContainer />
+                {/* <LoadCellChartContainer /> */ /**NEED TO STOP IT FROM INFINITELY SAVING DATA */} 
             </div>
             <Ecu
                 toggleKey={TOGGLE_KEY}

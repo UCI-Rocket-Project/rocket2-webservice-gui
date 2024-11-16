@@ -82,6 +82,18 @@ gse_state = {
     "pressureGn2": 0,
 }
 
+load_cell_ip = os.environ["LOAD_CELL_IP"]
+load_cell_port = int(os.environ["LOAD_CELL_PORT"])
+load_cell_connection = None
+is_load_cell_initialized = False
+load_cell_lock = Lock()
+load_cell_connection_lock = Lock()
+
+load_cell_state = {
+    "time_recv": 0,
+    "force": 0,
+}
+
 app = Flask(__name__)
 
 hostname = (
@@ -107,6 +119,7 @@ def clear_data_from_db():
     with Session(engine) as session:
         session.execute(text("DELETE from ecu;"))
         session.execute(text("DELETE from gse;"))
+        session.execute(text("DELETE from load_cell;"))
         session.commit()
     return "ok"
 
@@ -161,7 +174,7 @@ def save_db_to_files():
         os.makedirs("saves")
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
-    for table_name in ["ecu", "gse"]:
+    for table_name in ["ecu", "gse", "load_cell"]:
         cursor.execute(f"SELECT * FROM {table_name} ORDER BY time_recv DESC;")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
@@ -184,6 +197,9 @@ def get_state(system_name):
     elif system_name == "gse":
         with gse_lock:
             return gse_state
+    elif system_name == "load_cell":
+        with load_cell_lock:
+            return load_cell_state
     return {"error": "No system"}
 
 
@@ -230,7 +246,7 @@ def start_system_listening(
     update_handler,
     system_name,
 ):
-    global ecu_connection, gse_connection
+    global ecu_connection, gse_connection, load_cell_connection
     while True:
         try:
             logging.info(f"Attempting to connect to {system_name}")
@@ -239,18 +255,24 @@ def start_system_listening(
                 ecu_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 ecu_connection.connect(connection_info)
                 connection = ecu_connection
-            else:
+            elif system_name == "GSE":
                 gse_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 gse_connection.connect(connection_info)
                 connection = gse_connection
+            else:
+                load_cell_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                load_cell_connection.connect(connection_info)
+                connection = load_cell_connection
             failed_attempts = 0
             while True:
                 with connection_lock:
                     raw_data = connection.recv(package_length)
                 if len(raw_data) == package_length:
                     list_data = struct.unpack("<L", raw_data[-4:])[0]
-                    if binascii.crc32(raw_data[:-4]) == list_data:
-                        list_data = list(struct.unpack(package_format, raw_data[:-4]))
+                    
+                    # ! load cell has no validation for cyclic redundancy check
+                    if system_name == 'LOAD_CELL' or binascii.crc32(raw_data[:-4]) == list_data:                        
+                        list_data = list(struct.unpack(package_format, raw_data if system_name == 'LOAD_CELL' else raw_data[:-4]))
                         update_handler(list_data)
                     # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
@@ -340,6 +362,27 @@ def handle_update_ecu_state(new_state):
         send_solenoid_command(ecu_state, ecu_connection, ecu_connection_lock, "ecu")
     is_ecu_initialized = True
 
+def handle_update_load_cell_state(new_state):
+    global is_load_cell_initialized
+    
+    with load_cell_lock:
+        for index, (key, val) in enumerate(zip(LOAD_CELL_DATA_FORMAT, new_state)):
+            if type(val) == bool:
+                load_cell_state[key] = int(val)
+            elif math.isnan(val):
+                load_cell_state[key] = -1
+                new_state[index] = -1
+            else:
+                load_cell_state[key] = val
+                        
+    # db_thread = Thread(
+    #     target=insert_into_db, args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT)
+    # )
+    
+    # db_thread.start()
+    
+    is_load_cell_initialized = True
+
 
 if __name__ == "__main__":
     gse_listening_thread = Thread(
@@ -369,6 +412,21 @@ if __name__ == "__main__":
     )
     ecu_listening_thread.daemon = True
     ecu_listening_thread.start()
+    
+    load_cell_listening_thread = Thread(
+        target=start_system_listening,
+        args=(
+            (load_cell_ip, load_cell_port),
+            load_cell_connection_lock,
+            LOAD_CELL_DATA_LENGTH,
+            "<Lf",
+            handle_update_load_cell_state,
+            "LOAD_CELL",
+        ),
+    )
+    load_cell_listening_thread.daemon = True
+    load_cell_listening_thread.start()
+    
     app.run(
         host="0.0.0.0", port=8000
     )  # DO NOT TURN ON DEBUG MODE OR IT WILL SHIT BRICKS
