@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {RocketState} from "./Context";
-import {getEcuState, getGseState, updateRocket} from "./webservice";
+import {getEcuState, getGseState, getLoadCellState, updateRocket} from "./webservice";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 import {DiagramPage} from "./diagram_page/DiagramPage";
@@ -62,6 +62,8 @@ export function App() {
             parseState(ecuState, "ecu");
             const gseState = (await getGseState()).data;
             parseState(gseState, "gse");
+            const loadCellState = (await getLoadCellState()).data;
+            parseState(loadCellState, "loadCell");
         } catch (error) {
             console.error("Error fetching rocket state:", error);
         }
@@ -122,6 +124,7 @@ export function App() {
         setFlight({...currentFlight.current, ...flight});
         setMisc({...currentMisc.current, ...misc});
 
+        // TODO: Handle loadCell
         const timeRecv = state.time_recv;
         updateTimestamps(timeRecv, system);
 

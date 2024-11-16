@@ -87,3 +87,14 @@ PT_CALIBRATIONS = {
     "pressureInjectorLng": (235, -240)  # 500 identical with LOX
     # "pressureInjectorLng":(954 ,-139)
 }
+
+LOAD_CELL_DATA_LENGTH = (
+    20  # 4(time_recv) + 4 * 3(floats) + 4(crc) + \r\n
+)
+
+LOAD_CELL_DATA_FORMAT = [
+    "time_recv",
+    "packetRssi",
+    "packetLoss",
+    "force"
+]
