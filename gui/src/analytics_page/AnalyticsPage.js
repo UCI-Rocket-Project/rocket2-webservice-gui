@@ -14,7 +14,10 @@ export function AnalyticsPage() {
 
     useEffect(() => {
         // update the graph
-        const queryString = _.reduce(selectedKeys, (acc, key, _) => acc + key + ",", "").slice(0, -1);
+        const queryString = _.reduce(selectedKeys, (acc, key, _) => acc + key + ",", "").slice(
+            0,
+            -1
+        );
         getDataForSelectedKeys(queryString);
     }, [systemName, selectedKeys, startTime, endTime]);
 
@@ -71,7 +74,12 @@ export function AnalyticsPage() {
             return;
         }
 
-        const response = await getDatabase(systemName, dataString, startTime * 2000 || 0, endTime * 2000 || 100000000);
+        const response = await getDatabase(
+            systemName,
+            dataString,
+            startTime * 2000 || 0,
+            endTime * 2000 || 100000000
+        );
         const data = response.data;
         setData(data);
     };
@@ -85,13 +93,13 @@ export function AnalyticsPage() {
         setSelectedKeys(selectedKeys.filter((_, i) => i !== index));
     };
 
-    const convertDictToCsv = (dict) => {
-        const {sensors, data} = dict;
-        let csvContent = "time,";
-        csvContent += sensors.join(",") + "\n";
-        data.forEach((row) => {
+    const convertDictToCsv = (datalist) => {
+        let csvContent = "time," + selectedKeys.join(",") + "\n";
+        for (let i = 0; i < datalist.length; i++) {
+            datalist[i][0] = datalist[i][0] / 2000;
+            let row = datalist[i];
             csvContent += row.join(",") + "\n";
-        });
+        }
         return csvContent;
     };
 
@@ -180,7 +188,12 @@ export function AnalyticsPage() {
                         </div>
                     </div>
                     <canvas
-                        style={{height: "800px", width: "100%", maxHeight: "800px", maxWidth: "100%"}}
+                        style={{
+                            height: "800px",
+                            width: "100%",
+                            maxHeight: "800px",
+                            maxWidth: "100%"
+                        }}
                         id="graph"
                     ></canvas>
                     <div>
