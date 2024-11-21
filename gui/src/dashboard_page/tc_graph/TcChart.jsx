@@ -29,16 +29,7 @@ export function TcChart({data}) {
                     <Tooltip
                         contentStyle={{fontSize: 24}}
                         labelStyle={{color: "black", paddingLeft: 0}}
-                        labelFormatter={(label) => (
-                            <p
-                                style={{
-                                    padding: 0,
-                                    margin: 0
-                                }}
-                            >
-                                Time: {label}
-                            </p>
-                        )}
+                        labelFormatter={(label) => <>Time: {label}</>}
                     />
                     <Legend />
 
