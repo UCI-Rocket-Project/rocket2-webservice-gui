@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {RocketState} from "./Context";
-import {getEcuState, getGseState, updateRocket} from "./webservice";
+import {getEcuState, getGseState, getLoadCellState, updateRocket} from "./webservice";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 import {DiagramPage} from "./diagram_page/DiagramPage";
@@ -59,15 +59,21 @@ export function App() {
     const fetchAndDispatchRocketState = async () => {
         try {
             const ecuState = (await getEcuState()).data;
-            parseState(ecuState, "ecu");
             const gseState = (await getGseState()).data;
-            parseState(gseState, "gse");
+            const loadCellState = (await getLoadCellState()).data;
+
+            const timestamps = {
+                ecu: ecuState.time_recv,
+                gse: gseState.time_recv,
+                load_cell: loadCellState.time_recv
+            };
+            parseState({...gseState, ...ecuState, ...loadCellState}, timestamps);
         } catch (error) {
             console.error("Error fetching rocket state:", error);
         }
     };
 
-    function parseState(state, system) {
+    function parseState(state, timestamps) {
         let solenoids = {};
         let pts = {};
         let tcs = {};
@@ -87,10 +93,10 @@ export function App() {
                 solenoids[solenoidName][solenoidType] = state[key];
             } else if (key.includes("temperature")) {
                 let key_name = key.substring(11, key.length);
-                tcs[key_name] = (tcs[key_name] || 0 + state[key]) / 2; // Take average of previous states
+                tcs[key_name] = state[key];
             } else if (key.includes("pressure")) {
                 let key_name = key.substring(8, key.length);
-                pts[key_name] = (pts[key_name] || 0 + state[key]) / 2; // Take average of previous states
+                pts[key_name] = state[key];
             } else if (key.includes("igniter")) {
                 if (key.includes("Armed")) {
                     igniters.armed = state[key];
@@ -122,8 +128,10 @@ export function App() {
         setFlight({...currentFlight.current, ...flight});
         setMisc({...currentMisc.current, ...misc});
 
-        const timeRecv = state.time_recv;
-        updateTimestamps(timeRecv, system);
+        // Update all of the timestamps
+        for (let system in timestamps) {
+            updateTimestamps(timestamps[system], system);
+        }
 
         if (
             Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("CopvVent") != -1 &&

@@ -7,6 +7,9 @@ export function useRocketTimestamps() {
     const [lastEcuTimeRecv, setLastEcuTimeRecv] = useState(0);
     const [lastEcuTimestamp, setLastEcuTimestamp] = useState(0);
 
+    const [lastLoadCellTimeRecv, setLastLoadCellTimeRecv] = useState(0);
+    const [lastLoadCellTimestamp, setLastLoadCellTimestamp] = useState(0);
+
     const updateTimestamps = (timeRecv, system) => {
         if (system === "gse" && timeRecv !== lastGseTimeRecv) {
             const now = Date.now();
@@ -33,11 +36,25 @@ export function useRocketTimestamps() {
                 }
             });
         }
+
+        if (system === "load_cell" && timeRecv !== lastLoadCellTimeRecv) {
+            const now = Date.now();
+            setLastLoadCellTimeRecv((prev) => {
+                if (prev !== timeRecv) {
+                    setLastLoadCellTimestamp(now);
+
+                    return timeRecv;
+                } else {
+                    return prev;
+                }
+            });
+        }
     };
 
     return {
         lastGseTimestamp,
         lastEcuTimestamp,
+        lastLoadCellTimestamp,
         updateTimestamps
     };
 }
