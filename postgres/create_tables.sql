@@ -49,36 +49,7 @@ CREATE TABLE IF NOT EXISTS ecu (
     ecefVelocityZ FLOAT,
     ecefVelocityAccuracy FLOAT
 );
-CREATE TABLE IF NOT EXISTS gse (
+CREATE TABLE IF NOT EXISTS load_cell (
     time_recv INTEGER,
-    igniterArmed BOOLEAN,
-    igniterCurrent0 BOOLEAN,
-    igniterCurrent1 BOOLEAN,
-    igniterInternalState0 BOOLEAN,
-    igniterInternalState1 BOOLEAN,
-    alarmInternalState BOOLEAN,
-    solenoidInternalStateGn2Fill BOOLEAN,
-    solenoidInternalStateGn2Vent BOOLEAN,
-    solenoidInternalStateGn2Disconnect BOOLEAN,
-    solenoidInternalStateMvasFill BOOLEAN,
-    solenoidInternalStateMvasVent BOOLEAN,
-    solenoidInternalStateMvasOpen BOOLEAN,
-    solenoidInternalStateMvasClose BOOLEAN,
-    solenoidInternalStateLoxVent BOOLEAN,
-    solenoidInternalStateLngVent BOOLEAN,
-    supplyVoltage0 FLOAT,
-    supplyVoltage1 FLOAT,
-    supplyVoltage FLOAT,
-    solenoidCurrentGn2Fill FLOAT,
-    solenoidCurrentGn2Vent FLOAT,
-    solenoidCurrentGn2Disconnect FLOAT,
-    solenoidCurrentMvasFill FLOAT,
-    solenoidCurrentMvasVent FLOAT,
-    solenoidCurrentMvasOpen FLOAT,
-    solenoidCurrentMvasClose FLOAT,
-    solenoidCurrentLoxVent FLOAT,
-    solenoidCurrentLngVent FLOAT,
-    temperatureLox FLOAT,
-    temperatureLng FLOAT,
-    pressureGn2 FLOAT
+    force FLOAT
 );

@@ -119,6 +119,7 @@ def clear_data_from_db():
     with Session(engine) as session:
         session.execute(text("DELETE from ecu;"))
         session.execute(text("DELETE from gse;"))
+        session.execute(text("DELETE from load_cell;"))
         session.commit()
     return "ok"
 
@@ -173,7 +174,7 @@ def save_db_to_files():
         os.makedirs("saves")
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
-    for table_name in ["ecu", "gse"]:
+    for table_name in ["ecu", "gse", "load_cell"]:
         cursor.execute(f"SELECT * FROM {table_name} ORDER BY time_recv DESC;")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
@@ -272,6 +273,11 @@ def start_system_listening(
                     # ! load cell has no validation for cyclic redundancy check
                     if system_name == 'LOAD_CELL' or binascii.crc32(raw_data[:-4]) == list_data:                        
                         list_data = list(struct.unpack(package_format, raw_data if system_name == 'LOAD_CELL' else raw_data[:-4]))
+                        
+                        if system_name == "LOAD_CELL":
+                            logging.info('data')
+                            logging.info(list_data)
+                        
                         update_handler(list_data)
                     # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
