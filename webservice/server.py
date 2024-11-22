@@ -245,7 +245,7 @@ def start_system_listening(
     update_handler,
     system_name,
 ):
-    global ecu_connection, gse_connection
+    global ecu_connection, gse_connection, load_cell_connection
     while True:
         try:
             logging.info(f"Attempting to connect to {system_name}")
@@ -268,8 +268,10 @@ def start_system_listening(
                     raw_data = connection.recv(package_length)
                 if len(raw_data) == package_length:
                     list_data = struct.unpack("<L", raw_data[-4:])[0]
-                    if binascii.crc32(raw_data[:-4]) == list_data:
-                        list_data = list(struct.unpack(package_format, raw_data[:-4]))
+                    
+                    # ! load cell has no validation for cyclic redundancy check
+                    if system_name == 'LOAD_CELL' or binascii.crc32(raw_data[:-4]) == list_data:                        
+                        list_data = list(struct.unpack(package_format, raw_data if system_name == 'LOAD_CELL' else raw_data[:-4]))
                         update_handler(list_data)
                     # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
@@ -361,7 +363,6 @@ def handle_update_ecu_state(new_state):
 
 def handle_update_load_cell_state(new_state):
     global is_load_cell_initialized
-    state_mismatch = False
     
     with load_cell_lock:
         for index, (key, val) in enumerate(zip(LOAD_CELL_DATA_FORMAT, new_state)):
@@ -379,8 +380,6 @@ def handle_update_load_cell_state(new_state):
     
     # db_thread.start()
     
-    if state_mismatch and is_load_cell_initialized:
-        send_solenoid_command(load_cell_state, load_cell_connection, load_cell_connection_lock, "load_cell")
     is_load_cell_initialized = True
 
 
@@ -419,7 +418,7 @@ if __name__ == "__main__":
             (load_cell_ip, load_cell_port),
             load_cell_connection_lock,
             LOAD_CELL_DATA_LENGTH,
-            "<Lff",  # Should match the one in fake_rocket.py
+            "<Lf",
             handle_update_load_cell_state,
             "LOAD_CELL",
         ),

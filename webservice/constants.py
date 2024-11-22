@@ -89,7 +89,7 @@ PT_CALIBRATIONS = {
 }
 
 LOAD_CELL_DATA_LENGTH = (
-    12  # 4(time_recv) + 4 * 1(floats) + 4(crc) + \r\n
+    8  # 4(time_recv) + 4 * 1(floats) + \r\n
 )
 
 LOAD_CELL_DATA_FORMAT = [

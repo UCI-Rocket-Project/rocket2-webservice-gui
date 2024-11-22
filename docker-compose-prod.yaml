@@ -20,6 +20,8 @@ services:
             - ECU_PORT=10001
             - GSE_IP=10.0.2.0
             - GSE_PORT=10001
+            - LOAD_CELL_IP=10.0.255.2
+            - LOAD_CELL_PORT=10069
         volumes:
             - ./webservice:/app
         healthcheck:
@@ -37,7 +39,7 @@ services:
         volumes:
             - ./postgres:/docker-entrypoint-initdb.d
         ports:
-            - 5432:5432
+            - 5433:5432
         networks:
             - basic_net
     adminer:
