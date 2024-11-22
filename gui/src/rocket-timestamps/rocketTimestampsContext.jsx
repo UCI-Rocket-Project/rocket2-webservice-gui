@@ -4,16 +4,10 @@ import {useRocketTimestamps} from "./useRocketTimestamps";
 const RocketTimestampsContext = createContext(undefined);
 
 export const RocketTimestampsContextProvider = ({children}) => {
-    const {lastGseTimestamp, lastEcuTimestamp, updateTimestamps} = useRocketTimestamps();
+    const timestamps = useRocketTimestamps();
 
     return (
-        <RocketTimestampsContext.Provider
-            value={{
-                lastGseTimestamp,
-                lastEcuTimestamp,
-                updateTimestamps
-            }}
-        >
+        <RocketTimestampsContext.Provider value={timestamps}>
             {children}
         </RocketTimestampsContext.Provider>
     );

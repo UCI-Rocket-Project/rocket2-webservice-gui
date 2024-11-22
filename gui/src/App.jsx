@@ -63,7 +63,7 @@ export function App() {
             const gseState = (await getGseState()).data;
             parseState(gseState, "gse");
             const loadCellState = (await getLoadCellState()).data;
-            parseState(loadCellState, "loadCell");
+            parseState(loadCellState, "load_cell");
         } catch (error) {
             console.error("Error fetching rocket state:", error);
         }
