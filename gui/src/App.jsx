@@ -87,10 +87,10 @@ export function App() {
                 solenoids[solenoidName][solenoidType] = state[key];
             } else if (key.includes("temperature")) {
                 let key_name = key.substring(11, key.length);
-                tcs[key_name] = state[key];
+                tcs[key_name] = (tcs[key_name] || 0 + state[key]) / 2; // Take average of previous states
             } else if (key.includes("pressure")) {
                 let key_name = key.substring(8, key.length);
-                pts[key_name] = state[key];
+                pts[key_name] = (pts[key_name] || 0 + state[key]) / 2; // Take average of previous states
             } else if (key.includes("igniter")) {
                 if (key.includes("Armed")) {
                     igniters.armed = state[key];
@@ -104,12 +104,12 @@ export function App() {
                     }
                     igniters[igniterName][igniterType] = state[key];
                 }
-            } else if (key.includes("altitude")){
+            } else if (key.includes("altitude")) {
                 let key_name = key;
-                flight[key_name] = state[key]; 
-            } else if (key.includes("acceleration")){
+                flight[key_name] = state[key];
+            } else if (key.includes("acceleration")) {
                 let key_name = key;
-                flight[key_name] = state[key]; 
+                flight[key_name] = state[key];
             } else {
                 misc[key] = state[key];
             }
@@ -119,7 +119,7 @@ export function App() {
         setTcs({...currentTcs.current, ...tcs});
         setPts({...currentPts.current, ...pts});
         setIgniters({...currentIgniters.current, ...igniters});
-        setFlight({...currentFlight.current, ...flight})
+        setFlight({...currentFlight.current, ...flight});
         setMisc({...currentMisc.current, ...misc});
 
         const timeRecv = state.time_recv;
