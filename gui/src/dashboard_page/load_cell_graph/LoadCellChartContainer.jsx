@@ -38,8 +38,6 @@ export function LoadCellChartContainer() {
         miscRef.current = misc;
     }, [misc]);
 
-    console.log(data);
-
     return (
         <div
             style={{
