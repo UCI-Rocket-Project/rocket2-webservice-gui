@@ -90,11 +90,11 @@ export function DashboardPage() {
             />
             <div
                 className={styles.graphBox}
-                style={{overflowY:"auto", height: "95vh"}}
+                style={{overflowY: "auto", height: "95vh"}}
             >
                 <TcChartContainer />
                 <PressureChartContainer />
-                {/* <LoadCellChartContainer /> */ /**NEED TO STOP IT FROM INFINITELY SAVING DATA */} 
+                <LoadCellChartContainer />
             </div>
             <Ecu
                 toggleKey={TOGGLE_KEY}

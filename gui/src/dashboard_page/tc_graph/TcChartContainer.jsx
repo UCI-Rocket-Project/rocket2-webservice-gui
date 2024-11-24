@@ -8,13 +8,13 @@ export function TcChartContainer() {
     const {tcs} = useContext(RocketState);
 
     const tcsRef = useRef(tcs);
-    const intervalRef = useRef(null);
 
     const [data, setData] = useState([]);
 
     useEffect(() => {
         const startTime = Date.now();
-        intervalRef.current = setInterval(() => {
+
+        const intervalId = setInterval(() => {
             const elapsedSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
 
             setData((prevData) => {
@@ -31,6 +31,8 @@ export function TcChartContainer() {
                 );
             });
         }, 1000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {

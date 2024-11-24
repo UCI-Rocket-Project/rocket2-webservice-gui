@@ -7,13 +7,13 @@ export function LoadCellChartContainer() {
     const {misc} = useContext(RocketState);
 
     const miscRef = useRef(misc);
-    const intervalRef = useRef(null);
 
     const [data, setData] = useState([]);
 
     useEffect(() => {
         const startTime = Date.now();
-        intervalRef.current = setInterval(() => {
+
+        const intervalId = setInterval(() => {
             const elapsedSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
 
             setData((prevData) => {
@@ -21,7 +21,7 @@ export function LoadCellChartContainer() {
                     ...prevData,
                     {
                         time: elapsedSeconds,
-                        force: miscRef.current.force
+                        force: miscRef.current.total_force
                     }
                 ];
 
@@ -30,11 +30,15 @@ export function LoadCellChartContainer() {
                 );
             });
         }, 1000);
-    }, [misc]);
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     useEffect(() => {
         miscRef.current = misc;
     }, [misc]);
+
+    console.log(data);
 
     return (
         <div

@@ -7,13 +7,13 @@ export function PressureChartContainer() {
     const {pts} = useContext(RocketState);
 
     const ptsRef = useRef(pts);
-    const intervalRef = useRef(null);
 
     const [data, setData] = useState([]);
 
     useEffect(() => {
         const startTime = Date.now();
-        intervalRef.current = setInterval(() => {
+
+        const intervalId = setInterval(() => {
             const elapsedSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
 
             setData((prevData) => {
@@ -32,6 +32,8 @@ export function PressureChartContainer() {
                 );
             });
         }, 1000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {

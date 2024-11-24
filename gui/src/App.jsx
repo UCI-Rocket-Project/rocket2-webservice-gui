@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState, useCallback} from "react";
 import {RocketState} from "./Context";
 import {getEcuState, getGseState, getLoadCellState, updateRocket} from "./webservice";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
@@ -28,10 +28,6 @@ export function App() {
     const currentFlight = useRef();
 
     useEffect(() => {
-        setInterval(fetchAndDispatchRocketState, 250);
-    }, []);
-
-    useEffect(() => {
         currentSolenoids.current = solenoids;
     }, [solenoids]);
     useEffect(() => {
@@ -56,7 +52,79 @@ export function App() {
         updateRocket(systemName, solenoidName, value);
     };
 
-    const fetchAndDispatchRocketState = async () => {
+    const parseState = useCallback(
+        (state, timestamps) => {
+            let solenoids = {};
+            let pts = {};
+            let tcs = {};
+            let igniters = {};
+            let flight = {};
+            let misc = {};
+
+            for (const key in state) {
+                if (key.includes("solenoid")) {
+                    let solenoidType = key.includes("Expected") ? "expected" : "current";
+                    let solenoidName = key.includes("Expected")
+                        ? key.split("Expected")[1]
+                        : key.split("Current")[1];
+                    if (!Object.keys(solenoids).includes(solenoidName)) {
+                        solenoids[solenoidName] = {expected: 0, current: 0};
+                    }
+                    solenoids[solenoidName][solenoidType] = state[key];
+                } else if (key.includes("temperature")) {
+                    let key_name = key.substring(11, key.length);
+                    tcs[key_name] = state[key];
+                } else if (key.includes("pressure")) {
+                    let key_name = key.substring(8, key.length);
+                    pts[key_name] = state[key];
+                } else if (key.includes("igniter")) {
+                    if (key.includes("Armed")) {
+                        igniters.armed = state[key];
+                    } else {
+                        let igniterType = key.includes("Expected") ? "expected" : "current";
+                        let igniterName = key.includes("Expected")
+                            ? key.split("Expected")[1]
+                            : key.split("Current")[1];
+                        if (!Object.keys(igniters).includes(igniterName)) {
+                            igniters[igniterName] = {expected: 0, current: 0};
+                        }
+                        igniters[igniterName][igniterType] = state[key];
+                    }
+                } else if (key.includes("altitude")) {
+                    let key_name = key;
+                    flight[key_name] = state[key];
+                } else if (key.includes("acceleration")) {
+                    let key_name = key;
+                    flight[key_name] = state[key];
+                } else {
+                    misc[key] = state[key];
+                }
+            }
+
+            setSolenoids({...currentSolenoids.current, ...solenoids});
+            setTcs({...currentTcs.current, ...tcs});
+            setPts({...currentPts.current, ...pts});
+            setIgniters({...currentIgniters.current, ...igniters});
+            setFlight({...currentFlight.current, ...flight});
+            setMisc({...currentMisc.current, ...misc});
+
+            // Update all of the timestamps
+            for (let system in timestamps) {
+                updateTimestamps(timestamps[system], system);
+            }
+
+            if (
+                Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("CopvVent") !==
+                    -1 &&
+                Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("Gn2Fill") !== -1
+            ) {
+                hasInitialized.current = true;
+            }
+        },
+        [updateTimestamps]
+    );
+
+    const fetchAndDispatchRocketState = useCallback(async () => {
         try {
             const ecuState = (await getEcuState()).data;
             const gseState = (await getGseState()).data;
@@ -71,75 +139,15 @@ export function App() {
         } catch (error) {
             console.error("Error fetching rocket state:", error);
         }
-    };
+    }, [parseState]);
 
-    function parseState(state, timestamps) {
-        let solenoids = {};
-        let pts = {};
-        let tcs = {};
-        let igniters = {};
-        let flight = {};
-        let misc = {};
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            fetchAndDispatchRocketState();
+        }, 250);
 
-        for (const key in state) {
-            if (key.includes("solenoid")) {
-                let solenoidType = key.includes("Expected") ? "expected" : "current";
-                let solenoidName = key.includes("Expected")
-                    ? key.split("Expected")[1]
-                    : key.split("Current")[1];
-                if (!Object.keys(solenoids).includes(solenoidName)) {
-                    solenoids[solenoidName] = {expected: 0, current: 0};
-                }
-                solenoids[solenoidName][solenoidType] = state[key];
-            } else if (key.includes("temperature")) {
-                let key_name = key.substring(11, key.length);
-                tcs[key_name] = state[key];
-            } else if (key.includes("pressure")) {
-                let key_name = key.substring(8, key.length);
-                pts[key_name] = state[key];
-            } else if (key.includes("igniter")) {
-                if (key.includes("Armed")) {
-                    igniters.armed = state[key];
-                } else {
-                    let igniterType = key.includes("Expected") ? "expected" : "current";
-                    let igniterName = key.includes("Expected")
-                        ? key.split("Expected")[1]
-                        : key.split("Current")[1];
-                    if (!Object.keys(igniters).includes(igniterName)) {
-                        igniters[igniterName] = {expected: 0, current: 0};
-                    }
-                    igniters[igniterName][igniterType] = state[key];
-                }
-            } else if (key.includes("altitude")) {
-                let key_name = key;
-                flight[key_name] = state[key];
-            } else if (key.includes("acceleration")) {
-                let key_name = key;
-                flight[key_name] = state[key];
-            } else {
-                misc[key] = state[key];
-            }
-        }
-
-        setSolenoids({...currentSolenoids.current, ...solenoids});
-        setTcs({...currentTcs.current, ...tcs});
-        setPts({...currentPts.current, ...pts});
-        setIgniters({...currentIgniters.current, ...igniters});
-        setFlight({...currentFlight.current, ...flight});
-        setMisc({...currentMisc.current, ...misc});
-
-        // Update all of the timestamps
-        for (let system in timestamps) {
-            updateTimestamps(timestamps[system], system);
-        }
-
-        if (
-            Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("CopvVent") != -1 &&
-            Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("Gn2Fill") != -1
-        ) {
-            hasInitialized.current = true;
-        }
-    }
+        return () => clearInterval(intervalId);
+    }, [fetchAndDispatchRocketState]);
 
     return (
         <RocketState.Provider

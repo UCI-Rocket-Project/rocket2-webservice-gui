@@ -1,4 +1,5 @@
 import logging
+import random
 import socket
 import time
 import json
@@ -91,7 +92,7 @@ load_cell_connection_lock = Lock()
 
 load_cell_state = {
     "time_recv": 0,
-    "force": 0,
+    "total_force": 0,
 }
 
 app = Flask(__name__)
