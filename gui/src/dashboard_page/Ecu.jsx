@@ -20,13 +20,13 @@ export function Ecu({toggleKey, keydown}) {
                 <div className={styles.ecuGaugeRow}>
                     <RocketGauge
                         value={tcs.Copv}
-                        minValue={15}
-                        maxValue={75}
+                        minValue={0}
+                        maxValue={35}
                         name={"COPV TC"}
                         units={" °C"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 50}, {limit: 65}, {limit: 75}],
+                            subArcs: [{limit: 22}, {limit: 27}, {limit: 35}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -34,12 +34,12 @@ export function Ecu({toggleKey, keydown}) {
                     <RocketGauge
                         value={pts.Copv}
                         minValue={0}
-                        maxValue={6000}
+                        maxValue={5000}
                         name={"COPV PT"}
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{limit: 4200}, {limit: 4500}, {limit: 5000}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -47,12 +47,12 @@ export function Ecu({toggleKey, keydown}) {
                     <RocketGauge
                         value={pts.Lox}
                         minValue={0}
-                        maxValue={6000}
+                        maxValue={700}
                         name={"LOX PT"}
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{limit: 500}, {limit: 600}, {limit: 650}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -62,12 +62,12 @@ export function Ecu({toggleKey, keydown}) {
                     <RocketGauge
                         value={pts.Lng}
                         minValue={0}
-                        maxValue={6000}
+                        maxValue={700}
                         name={"LNG PT"}
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{limit: 480}, {limit: 600}, {limit: 650}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -75,12 +75,12 @@ export function Ecu({toggleKey, keydown}) {
                     <RocketGauge
                         value={pts.InjectorLox}
                         minValue={0}
-                        maxValue={6000}
+                        maxValue={500}
                         name={"LOX INJ PT"}
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -88,12 +88,12 @@ export function Ecu({toggleKey, keydown}) {
                     <RocketGauge
                         value={pts.InjectorLng}
                         minValue={0}
-                        maxValue={6000}
+                        maxValue={500}
                         name={"LNG INJ PT"}
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
                             padding: 0.02,
                             width: 0.3
                         }}

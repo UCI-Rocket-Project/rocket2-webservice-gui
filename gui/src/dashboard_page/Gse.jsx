@@ -5,8 +5,8 @@ import RocketSwitch from "../rocket_switch/RocketSwitch";
 import {RocketState} from "../Context";
 
 export function Gse({toggleKey, keydown}) {
-    const {solenoids, pts, igniters, misc, handleToggleState, isAborted} = useContext(RocketState);
-
+    const {solenoids, pts, tcs, igniters, misc, handleToggleState, isAborted} =
+        useContext(RocketState);
     return (
         <div className={styles.gseBox}>
             <div className={styles.boundingBox}>
@@ -18,14 +18,27 @@ export function Gse({toggleKey, keydown}) {
                 </h2>
                 <div className={styles.gseGaugeRow}>
                     <RocketGauge
-                        value={pts.Gn2}
+                        value={tcs.Engine1}
                         minValue={0}
-                        maxValue={6000}
+                        maxValue={120}
                         units={" psi"}
-                        name={"GN2 PT"}
+                        name={"Engine TC 1"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                    <RocketGauge
+                        value={tcs.Engine2}
+                        minValue={0}
+                        maxValue={120}
+                        units={" psi"}
+                        name={"Engine TC 2"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
                             padding: 0.02,
                             width: 0.3
                         }}

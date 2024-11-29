@@ -27,8 +27,8 @@ GSE_DATA_FORMAT = [
     "solenoidCurrentMvasClose",
     "solenoidCurrentLoxVent",
     "solenoidCurrentLngVent",
-    "temperatureLox",
-    "temperatureLng",
+    "temperatureEngine1",
+    "temperatureEngine2",
     "pressureGn2",
 ]
 
@@ -88,11 +88,6 @@ PT_CALIBRATIONS = {
     # "pressureInjectorLng":(954 ,-139)
 }
 
-LOAD_CELL_DATA_LENGTH = (
-    8  # 4(time_recv) + 4 * 1(floats) + \r\n
-)
+LOAD_CELL_DATA_LENGTH = 8  # 4(time_recv) + 4 * 1(floats) + \r\n
 
-LOAD_CELL_DATA_FORMAT = [
-    "time_recv",
-    "total_force"
-]
+LOAD_CELL_DATA_FORMAT = ["time_recv", "total_force"]
