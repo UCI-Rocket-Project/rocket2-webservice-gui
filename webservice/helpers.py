@@ -1,7 +1,7 @@
 import logging
 import struct
 import binascii
-
+import time
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -13,7 +13,8 @@ logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 def insert_into_db(engine, data, table_name, data_format):
     """Inserts a new row of data into the given table"""
     try:
-        insert_statement = dict_to_insert_statement(table_name, data, data_format)
+        time_recv = time.time()
+        insert_statement = dict_to_insert_statement(table_name, [time_recv, *data], ["time_recv", *data_format])
         with Session(engine) as session:
             session.execute(text(insert_statement))
             session.commit()

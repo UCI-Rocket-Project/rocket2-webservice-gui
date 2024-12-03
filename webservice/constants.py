@@ -1,6 +1,6 @@
-GSE_DATA_LENGTH = 79  # 4(time_recv) + 15(bool) + 4 * 14(floats) + 4(crc)
+GSE_DATA_LENGTH = 79  # 4(packet_time) + 15(bool) + 4 * 14(floats) + 4(crc)
 GSE_DATA_FORMAT = [
-    "time_recv",
+    "packet_time",
     "igniterArmed",
     "igniterCurrent0",
     "igniterCurrent1",
@@ -33,11 +33,11 @@ GSE_DATA_FORMAT = [
 ]
 
 ECU_DATA_LENGTH = (
-    144  # 4(time_recv) + 4 * 2(floats) + 4(bool) + 4 * 31(floats) + 4(crc) + \r\n
+    144  # 4(packet_time) + 4 * 2(floats) + 4(bool) + 4 * 31(floats) + 4(crc) + \r\n
 )
 
 ECU_DATA_FORMAT = [
-    "time_recv",
+    "packet_time",
     "packetRssi",
     "packetLoss",
     "solenoidInternalStateCopvVent",
@@ -88,6 +88,6 @@ PT_CALIBRATIONS = {
     # "pressureInjectorLng":(954 ,-139)
 }
 
-LOAD_CELL_DATA_LENGTH = 8  # 4(time_recv) + 4 * 1(floats) + \r\n
+LOAD_CELL_DATA_LENGTH = 8  # 4(packet_time) + 4 * 1(floats) + \r\n
 
-LOAD_CELL_DATA_FORMAT = ["time_recv", "total_force"]
+LOAD_CELL_DATA_FORMAT = ["packet_time", "total_force"]

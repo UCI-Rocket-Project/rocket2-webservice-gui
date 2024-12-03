@@ -131,9 +131,9 @@ export function App() {
             const loadCellState = (await getLoadCellState()).data;
 
             const timestamps = {
-                ecu: ecuState.time_recv,
-                gse: gseState.time_recv,
-                load_cell: loadCellState.time_recv
+                ecu: ecuState.packet_time,
+                gse: gseState.packet_time,
+                load_cell: loadCellState.packet_time
             };
             parseState({...gseState, ...ecuState, ...loadCellState}, timestamps);
         } catch (error) {

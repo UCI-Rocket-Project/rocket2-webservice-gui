@@ -13,7 +13,7 @@ db_params = {
 def retrieve_gse_data(connection, keys):
     try:
         cursor = connection.cursor()
-        key_str = "time_recv, "
+        key_str = "packet_time, "
         for key in keys:
             key_str += f"{key}, "
         key_str = key_str[:-2]

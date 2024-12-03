@@ -31,7 +31,7 @@ ecu_lock = Lock()
 ecu_connection_lock = Lock()
 
 ecu_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "solenoidCurrentCopvVent": 0,
     "solenoidCurrentPv1": 0,
     "solenoidCurrentPv2": 0,
@@ -54,7 +54,7 @@ gse_lock = Lock()
 gse_connection_lock = Lock()
 
 gse_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "igniterExpected0": 0,
     "igniterExpected1": 0,
     "igniterCurrent0": 0,
@@ -91,7 +91,7 @@ load_cell_lock = Lock()
 load_cell_connection_lock = Lock()
 
 load_cell_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "total_force": 0,
 }
 
@@ -130,17 +130,17 @@ def get_data_from_db(system_name, selected_keys):
     try:
         connection = psycopg2.connect(**db_config)
         cursor = connection.cursor()
-        key_str = "time_recv, "
+        key_str = "packet_time, "
         for key in selected_keys.split(","):
             key_str += f"{key}, "
         key_str = key_str[:-2]
         where_claus = ""
         if request.args.get("startTime") or request.args.get("endTime"):
-            where_claus = f"WHERE time_recv > {request.args.get('startTime', 0)} \
-            AND time_recv < {request.args.get('endTime',200)}"
+            where_claus = f"WHERE packet_time > {request.args.get('startTime', 0)} \
+            AND packet_time < {request.args.get('endTime',200)}"
 
         cursor.execute(
-            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY time_recv ASC;"
+            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY packet_time ASC;"
         )
         data = cursor.fetchall()
         cursor.close()
@@ -176,7 +176,7 @@ def save_db_to_files():
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
     for table_name in ["ecu", "gse", "load_cell"]:
-        cursor.execute(f"SELECT * FROM {table_name} ORDER BY time_recv DESC;")
+        cursor.execute(f"SELECT * FROM {table_name} ORDER BY packet_time DESC;")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
         with open(
