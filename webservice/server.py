@@ -387,11 +387,11 @@ def handle_update_load_cell_state(new_state):
             else:
                 load_cell_state[key] = val
 
-    # db_thread = Thread(
-    #     target=insert_into_db, args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT)
-    # )
+    db_thread = Thread(
+        target=insert_into_db, args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT)
+    )
 
-    # db_thread.start()
+    db_thread.start()
 
     is_load_cell_initialized = True
 
