@@ -43,7 +43,7 @@
     width: 700px;
     padding-left: 5px;
     padding-right: 5px;
-    height: 300px;
+    height: 600px;
 }
 .graphBox {
     width: 100%;
@@ -58,15 +58,15 @@
 }
 
 .battery {
-    padding: 30px;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
     background-color: rgb(65, 66, 73);
     border-radius: 5px;
     text-align: center;
     border-color: white;
     border-width: 3px;
-    width: 80%;
+    width: 100%;
 }
 
 .gseGaugeRow {
