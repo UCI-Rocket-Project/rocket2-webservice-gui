@@ -1,12 +1,13 @@
-import {useContext} from "react";
+import { useContext } from "react";
 import styles from "./DashboardPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
+import BatteryG from "../battery_gauge/BatteryGauge";
 import RocketSwitch from "../rocket_switch/RocketSwitch";
-import {RocketState} from "../Context";
-import {AbortButton} from "./abort_button/AbortButton";
+import { RocketState } from "../Context";
+import { AbortButton } from "./abort_button/AbortButton";
 
-export function Ecu({toggleKey, keydown}) {
-    const {solenoids, tcs, pts, igniters, handleToggleState, isAborted} = useContext(RocketState);
+export function Ecu({ toggleKey, keydown }) {
+    const { solenoids, tcs, pts, igniters, handleToggleState, isAborted } = useContext(RocketState);
 
     return (
         <div className={styles.ecuBox}>
@@ -26,7 +27,7 @@ export function Ecu({toggleKey, keydown}) {
                         units={" °C"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 50}, {limit: 65}, {limit: 75}],
+                            subArcs: [{ limit: 50 }, { limit: 65 }, { limit: 75 }],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -39,7 +40,7 @@ export function Ecu({toggleKey, keydown}) {
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -52,7 +53,7 @@ export function Ecu({toggleKey, keydown}) {
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -67,7 +68,7 @@ export function Ecu({toggleKey, keydown}) {
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -80,7 +81,7 @@ export function Ecu({toggleKey, keydown}) {
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -93,7 +94,7 @@ export function Ecu({toggleKey, keydown}) {
                         units={" psi"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{ limit: 4000 }, { limit: 5000 }, { limit: 6000 }],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -143,7 +144,7 @@ export function Ecu({toggleKey, keydown}) {
                     </div>
                     <div
                         className={styles.boundingBox}
-                        style={{width: 450}}
+                        style={{ width: 450 }}
                     >
                         <h2 className={styles.title}>ABORT</h2>
                         <AbortButton
@@ -169,6 +170,19 @@ export function Ecu({toggleKey, keydown}) {
                                 </div>
                             </div>
                         </div> */}
+
+                </div>
+                <div className={styles.row}>
+                    <div>
+                        <div className={styles.battery}>
+                            <BatteryG val={70} name = {"Battery 1"} />
+                        </div>
+                    </div>
+                    <div>
+                        <div className={styles.battery}>
+                            <BatteryG val={50}  name = {"Battery 2"}  />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
