@@ -1,5 +1,5 @@
 GSE_DATA_FORMAT = [
-    "time_recv",
+    "packet_time",
     "igniterArmed",
     "igniter0Continuity",
     "igniter1Continuity",
@@ -26,13 +26,13 @@ GSE_DATA_FORMAT = [
     "solenoidCurrentMvasClose",
     "solenoidCurrentLoxVent",
     "solenoidCurrentLngVent",
-    "temperatureLox",
-    "temperatureLng",
+    "temperatureEngine1",
+    "temperatureEngine2",
     "pressureGn2",
 ]
 
 ECU_DATA_FORMAT = [
-    "time_recv",
+    "packet_time",
     "packetRssi",
     "packetLoss",
     "solenoidInternalStateCopvVent",
@@ -72,6 +72,7 @@ ECU_DATA_FORMAT = [
     "ecefVelocityAccuracy",
 ]
 
+LOAD_CELL_DATA_FORMAT = ["packet_time", "total_force"]
 GSE_COMMAND_FORMAT = [
     ("igniterInternalState0", "igniter0Continuity"),
     ("igniterInternalState1", "igniter1Continuity"),
