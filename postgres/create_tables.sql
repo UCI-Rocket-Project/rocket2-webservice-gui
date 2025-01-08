@@ -10,7 +10,8 @@
 -- Create the ecu table
 
 CREATE TABLE IF NOT EXISTS ecu (
-    time_recv INTEGER,
+    time_recv FLOAT,
+    packet_time INTEGER,
     packetRssi FLOAT,
     packetLoss FLOAT,
     solenoidInternalStateCopvVent BOOLEAN,
@@ -51,7 +52,8 @@ CREATE TABLE IF NOT EXISTS ecu (
 );
 
 CREATE TABLE IF NOT EXISTS gse (
-    time_recv INTEGER,
+    time_recv FLOAT,
+    packet_time INTEGER,
     igniterArmed BOOLEAN,
     igniterCurrent0 BOOLEAN,
     igniterCurrent1 BOOLEAN,
@@ -79,12 +81,13 @@ CREATE TABLE IF NOT EXISTS gse (
     solenoidCurrentMvasClose FLOAT,
     solenoidCurrentLoxVent FLOAT,
     solenoidCurrentLngVent FLOAT,
-    temperatureLox FLOAT,
-    temperatureLng FLOAT,
+    temperatureengine1 FLOAT,
+    temperatureengine2 FLOAT,
     pressureGn2 FLOAT
 );
 
 CREATE TABLE IF NOT EXISTS load_cell (
-    time_recv INTEGER,
+    time_recv FLOAT,
+    packet_time INTEGER,
     total_force FLOAT
 );

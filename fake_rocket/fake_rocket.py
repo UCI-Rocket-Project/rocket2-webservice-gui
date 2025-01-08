@@ -76,7 +76,7 @@ def start_server(
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
 
-                    shared_state["time_recv"] = (
+                    shared_state["packet_time"] = (
                         int((datetime.now() - start_time).total_seconds()) * 1000
                     )
                     shared_state["pressureCopv"] += random.randint(-1, 1) / 1000
@@ -88,7 +88,7 @@ def start_server(
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
-                    shared_state["time_recv"] = (
+                    shared_state["packet_time"] = (
                         int((datetime.now() - start_time).total_seconds()) * 1000
                     )
                     shared_state["temperatureLox"] += random.randint(-1, 1) / 1000
@@ -130,7 +130,7 @@ def main():
     ecu_port = 10004
     gse_manager = Manager()
     initial_gse_state = {
-        "time_recv": 10,
+        "packet_time": 10,
         "igniterArmed": 0,
         "igniter0Continuity": 0,
         "igniter1Continuity": 0,
@@ -166,7 +166,7 @@ def main():
 
     ecu_manager = Manager()
     initial_ecu_state = {
-        "time_recv": 10,
+        "packet_time": 10,
         "packetRssi": 0,
         "packetLoss": 0,
         "solenoidInternalStateCopvVent": 0,

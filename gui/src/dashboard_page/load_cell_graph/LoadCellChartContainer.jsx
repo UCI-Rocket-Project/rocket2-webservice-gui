@@ -38,8 +38,6 @@ export function LoadCellChartContainer() {
         miscRef.current = misc;
     }, [misc]);
 
-    console.log(data);
-
     return (
         <div
             style={{
@@ -48,7 +46,7 @@ export function LoadCellChartContainer() {
                 fontSize: 24
             }}
         >
-            <h4 style={{margin: 0}}>Load Cell Force: {miscRef.current.force}</h4>
+            <h4 style={{margin: 0}}>Load Cell{miscRef.current.force}</h4>
 
             <LoadCellChart data={data} />
         </div>

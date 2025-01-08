@@ -31,7 +31,7 @@ ecu_lock = Lock()
 ecu_connection_lock = Lock()
 
 ecu_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "solenoidCurrentCopvVent": 0,
     "solenoidCurrentPv1": 0,
     "solenoidCurrentPv2": 0,
@@ -54,7 +54,7 @@ gse_lock = Lock()
 gse_connection_lock = Lock()
 
 gse_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "igniterExpected0": 0,
     "igniterExpected1": 0,
     "igniterCurrent0": 0,
@@ -78,8 +78,8 @@ gse_state = {
     "solenoidExpectedLoxVent": -1,
     "solenoidExpectedMvasClose": -1,
     "solenoidExpectedLngVent": -1,
-    "temperatureLox": 0,
-    "temperatureLng": 0,
+    "temperatureEngine1": 0,
+    "temperatureEngine2": 0,
     "pressureGn2": 0,
 }
 
@@ -91,7 +91,7 @@ load_cell_lock = Lock()
 load_cell_connection_lock = Lock()
 
 load_cell_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "total_force": 0,
 }
 
@@ -130,17 +130,17 @@ def get_data_from_db(system_name, selected_keys):
     try:
         connection = psycopg2.connect(**db_config)
         cursor = connection.cursor()
-        key_str = "time_recv, "
+        key_str = "packet_time, "
         for key in selected_keys.split(","):
             key_str += f"{key}, "
         key_str = key_str[:-2]
         where_claus = ""
         if request.args.get("startTime") or request.args.get("endTime"):
-            where_claus = f"WHERE time_recv > {request.args.get('startTime', 0)} \
-            AND time_recv < {request.args.get('endTime',200)}"
+            where_claus = f"WHERE packet_time > {request.args.get('startTime', 0)} \
+            AND packet_time < {request.args.get('endTime',200)}"
 
         cursor.execute(
-            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY time_recv ASC;"
+            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY packet_time ASC;"
         )
         data = cursor.fetchall()
         cursor.close()
@@ -176,7 +176,7 @@ def save_db_to_files():
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
     for table_name in ["ecu", "gse", "load_cell"]:
-        cursor.execute(f"SELECT * FROM {table_name} ORDER BY time_recv DESC;")
+        cursor.execute(f"SELECT * FROM {table_name} ORDER BY packet_time DESC;")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
         with open(
@@ -251,7 +251,7 @@ def start_system_listening(
     while True:
         try:
             logging.info(f"Attempting to connect to {system_name}")
-            connection = ecu_connection
+            connection = None
             if system_name == "ECU":
                 ecu_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 ecu_connection.connect(connection_info)
@@ -270,10 +270,20 @@ def start_system_listening(
                     raw_data = connection.recv(package_length)
                 if len(raw_data) == package_length:
                     list_data = struct.unpack("<L", raw_data[-4:])[0]
-                    
+
                     # ! load cell has no validation for cyclic redundancy check
-                    if system_name == 'LOAD_CELL' or binascii.crc32(raw_data[:-4]) == list_data:                        
-                        list_data = list(struct.unpack(package_format, raw_data if system_name == 'LOAD_CELL' else raw_data[:-4]))
+                    if (
+                        system_name == "LOAD_CELL"
+                        or binascii.crc32(raw_data[:-4]) == list_data
+                    ):
+                        list_data = list(
+                            struct.unpack(
+                                package_format,
+                                raw_data
+                                if system_name == "LOAD_CELL"
+                                else raw_data[:-4],
+                            )
+                        )
                         update_handler(list_data)
                     # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
@@ -363,9 +373,10 @@ def handle_update_ecu_state(new_state):
         send_solenoid_command(ecu_state, ecu_connection, ecu_connection_lock, "ecu")
     is_ecu_initialized = True
 
+
 def handle_update_load_cell_state(new_state):
     global is_load_cell_initialized
-    
+
     with load_cell_lock:
         for index, (key, val) in enumerate(zip(LOAD_CELL_DATA_FORMAT, new_state)):
             if type(val) == bool:
@@ -375,13 +386,13 @@ def handle_update_load_cell_state(new_state):
                 new_state[index] = -1
             else:
                 load_cell_state[key] = val
-                        
-    # db_thread = Thread(
-    #     target=insert_into_db, args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT)
-    # )
-    
-    # db_thread.start()
-    
+
+    db_thread = Thread(
+        target=insert_into_db, args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT)
+    )
+
+    db_thread.start()
+
     is_load_cell_initialized = True
 
 
@@ -413,7 +424,7 @@ if __name__ == "__main__":
     )
     ecu_listening_thread.daemon = True
     ecu_listening_thread.start()
-    
+
     load_cell_listening_thread = Thread(
         target=start_system_listening,
         args=(
@@ -427,7 +438,7 @@ if __name__ == "__main__":
     )
     load_cell_listening_thread.daemon = True
     load_cell_listening_thread.start()
-    
+
     app.run(
         host="0.0.0.0", port=8000
     )  # DO NOT TURN ON DEBUG MODE OR IT WILL SHIT BRICKS

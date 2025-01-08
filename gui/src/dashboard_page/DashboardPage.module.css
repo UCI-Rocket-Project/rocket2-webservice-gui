@@ -32,8 +32,8 @@
 }
 
 .gseBox {
-    min-width: 400px;
-    width: 500px; /* Don't know why this needs to be here */
+    min-width: 500px;
+    width: 700px; /* Don't know why this needs to be here */
     padding-left: 5px;
     padding-right: 5px;
     height: 300px;
