@@ -261,9 +261,11 @@ def start_system_listening(
                 gse_connection.connect(connection_info)
                 connection = gse_connection
             else:
+                print("LOAD CEll", flush=True)
                 load_cell_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 load_cell_connection.connect(connection_info)
                 connection = load_cell_connection
+                print("LOAD CEll CONNECTED", flush=True)
             failed_attempts = 0
             while True:
                 with connection_lock:
@@ -388,7 +390,8 @@ def handle_update_load_cell_state(new_state):
                 load_cell_state[key] = val
 
     db_thread = Thread(
-        target=insert_into_db, args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT)
+        target=insert_into_db,
+        args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT),
     )
 
     db_thread.start()

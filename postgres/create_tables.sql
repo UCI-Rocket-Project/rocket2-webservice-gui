@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS gse (
     solenoidCurrentMvasClose FLOAT,
     solenoidCurrentLoxVent FLOAT,
     solenoidCurrentLngVent FLOAT,
-    temperatureengine1 FLOAT,
-    temperatureengine2 FLOAT,
+    temperatureEngine1 FLOAT,
+    temperatureEngine2 FLOAT,
     pressureGn2 FLOAT
 );
 

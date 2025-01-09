@@ -36,7 +36,6 @@ def retrieve_gse_data(connection, keys):
 # Connect to the PostgreSQL database
 try:
     connection = psycopg2.connect(**db_params)
-    retrieve_gse_data(connection, ["temperatureLox", "temperatureLng"])
 
 except psycopg2.Error as e:
     print(f"Unable to connect to the database. Error: {e}")

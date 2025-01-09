@@ -72,7 +72,7 @@ def start_server(
                 packed_data = None
                 if system_name == "ECU":
                     data_format = "<Lff????fffffffffffffffffffffffffffffff"  # Should match the one in server.py
-                    data_to_send = (shared_state[key] for key in ECU_DATA_FORMAT)
+                    data_to_send = [shared_state[key] for key in ECU_DATA_FORMAT]
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
 
@@ -83,7 +83,7 @@ def start_server(
                     shared_state["pressureLox"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLng"] += random.randint(-1, 1) / 1000
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
-                else:
+                elif system_name == "GSE":
                     data_format = "<L???????????????ffffffffffffff"  # Should match the one in server.py
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
@@ -91,11 +91,24 @@ def start_server(
                     shared_state["packet_time"] = (
                         int((datetime.now() - start_time).total_seconds()) * 1000
                     )
-                    shared_state["temperatureLox"] += random.randint(-1, 1) / 1000
-                    shared_state["temperatureLng"] += random.randint(-1, 1) / 1000
+                    shared_state["temperatureEngine1"] += random.randint(-1, 1) / 1000
+                    shared_state["temperatureEngine2"] += random.randint(-1, 1) / 1000
                     shared_state["pressureGn2"] += random.randint(-1, 1) / 1000
+                else:
+                    data_format = "<Lf"
+                    data_to_send = (shared_state[key] for key in LOAD_CELL_DATA_FORMAT)
+                    packed_data = struct.pack(data_format, *data_to_send)
+                    shared_state["packet_time"] = (
+                        int((datetime.now() - start_time).total_seconds()) * 1000
+                    )
+                    shared_state["total_force"] += 1.0
+                    crc32_value = None
 
-                client_socket.sendall(packed_data + struct.pack("<L", crc32_value))
+                client_socket.sendall(
+                    (packed_data + struct.pack("<L", crc32_value))
+                    if crc32_value
+                    else packed_data
+                )
                 time.sleep(0.5)
         except BrokenPipeError:
             logging.warning(f"{system_name} lost connection to webservice. Restarting")
@@ -128,6 +141,7 @@ def main():
     global gse_state, ecu_state
     gse_port = 10002
     ecu_port = 10004
+    load_cell_port = 10069
     gse_manager = Manager()
     initial_gse_state = {
         "packet_time": 10,
@@ -159,8 +173,8 @@ def main():
         "solenoidCurrentLoxVent": 0,
         "solenoidCurrentLngFill": 0,
         "solenoidCurrentLngVent": 0,
-        "temperatureLox": -200,
-        "temperatureLng": -200,
+        "temperatureEngine1": -200,
+        "temperatureEngine2": -200,
         "pressureGn2": 1.2,
     }
 
@@ -205,6 +219,11 @@ def main():
         "ecefVelocityZ": 0,
         "ecefVelocityAccuracy": 0,
     }
+    load_cell_manager = Manager()
+    initial_load_cell_state = {
+        "packet_time": 10,
+        "total_force": 123,
+    }
 
     ecu_state = ecu_manager.dict(initial_ecu_state)
     ecu_server_thread = threading.Thread(
@@ -221,6 +240,15 @@ def main():
         daemon=True,
     )
     gse_server_thread.start()
+
+    load_cell_state = load_cell_manager.dict(initial_load_cell_state)
+    load_cell_server_thread = threading.Thread(
+        target=start_server,
+        args=("LOAD_CELL", load_cell_port, load_cell_state, None),
+        daemon=True,
+    )
+    load_cell_server_thread.start()
+
     try:
         # Keep the main thread running
         while True:
