@@ -130,7 +130,7 @@
 }
 .dropdownContent {
     min-height: 0px;
-    height: 0px;
+    height: 600px;
     transition: all 0.5s ease-in-out;
     overflow: hidden;
 }
