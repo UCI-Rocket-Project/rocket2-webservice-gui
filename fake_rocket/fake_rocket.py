@@ -83,6 +83,7 @@ def start_server(
                     shared_state["pressureLox"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLng"] += random.randint(-1, 1) / 1000
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
+                    shared_state["altitude"] += random.randint(0, 1)
                 elif system_name == "GSE":
                     data_format = "<L???????????????ffffffffffffff"  # Should match the one in server.py
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
@@ -94,6 +95,7 @@ def start_server(
                     shared_state["temperatureEngine1"] += random.randint(-1, 1) / 1000
                     shared_state["temperatureEngine2"] += random.randint(-1, 1) / 1000
                     shared_state["pressureGn2"] += random.randint(-1, 1) / 1000
+                    
                 else:
                     data_format = "<Lf"
                     data_to_send = (shared_state[key] for key in LOAD_CELL_DATA_FORMAT)
@@ -209,7 +211,7 @@ def main():
         "magneticFieldY": 0,
         "magneticFieldZ": 0,
         "temperature": 0,
-        "altitude": 90,
+        "altitude": 0,
         "ecefPositionX": 0,
         "ecefPositionY": 0,
         "ecefPositionZ": 0,

@@ -1,12 +1,16 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useContext, useState} from "react";
 import * as THREE from "three";
 import {OBJLoader} from "three/addons/loaders/OBJLoader";
+import {RocketState} from "../Context";
 
 const RocketSim = () => {
     let scene, camera, renderer, rocketModel, hemisphereLight, ground;
-
+    const {flight} = useContext(RocketState);
+    const [currentFlight] = useState({});
     const loader = new OBJLoader();
-
+    useEffect(() => {
+        currentFlight.current = flight;
+    }, [flight]);
     useEffect(() => {
         // Create a scene
         scene = new THREE.Scene();
@@ -37,8 +41,8 @@ const RocketSim = () => {
                 rocketModel.rotation.x = Math.PI / 2;
 
                 // Shrink the rocket model
-                rocketModel.scale.set(0.1, 0.1, 0.1); // Adjust the scale as needed
-                rocketModel.position.y = 2;
+                rocketModel.scale.set(0.37, 0.37, 0.37); // Adjust the scale as needed
+                rocketModel.position.y = 9;
                 scene.add(rocketModel);
             },
             function (xhr) {
@@ -82,10 +86,10 @@ const RocketSim = () => {
             const time = performance.now() * 0.001; // Convert milliseconds to seconds
             const rotationSpeed = 0.1; // Degrees per second
             if (rocketModel) {
-                rocketModel.position.y = rocketModel.position.y + 0.1;
-                camera.position.x = 8 * Math.cos(time * rotationSpeed);
-                camera.position.z = 8 * Math.sin(time * rotationSpeed);
-                camera.position.y = rocketModel.position.y + 5;
+                rocketModel.position.y = currentFlight.current?.altitude;
+                camera.position.x = 20 * Math.cos(time * rotationSpeed);
+                camera.position.z = 20 * Math.sin(time * rotationSpeed);
+                camera.position.y = rocketModel.position.y + 10;
                 camera.lookAt(rocketModel.position);
             }
 
