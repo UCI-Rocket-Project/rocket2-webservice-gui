@@ -1,13 +1,15 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./TelemetryPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
+import BatteryG from "../battery_gauge/BatteryGauge";
+
 import RocketSim from "../rocket_sim/RocketSim";
 import {RocketState} from "../Context";
 
 
 export function TelemetryPage() {
 
-    const {flight}=
+    const {flight, misc}=
     useContext(RocketState);
 
     return (
@@ -60,6 +62,18 @@ export function TelemetryPage() {
                 <div className={styles.GaugeCol}>
                     <div>
                         <RocketSim color={"#ff0000"}></RocketSim>
+                    </div>
+                </div>
+                <div className={styles.row}>
+                    <div>
+                        <div className={styles.battery}>
+                            <BatteryG val={misc.batteryVoltage} name = {"Battery 1"} />
+                        </div>
+                    </div>
+                    <div>
+                        <div className={styles.battery}>
+                            <BatteryG val={misc.supplyVoltage}  name = {"Battery 2"}  />
+                        </div>
                     </div>
                 </div>
             </div>
