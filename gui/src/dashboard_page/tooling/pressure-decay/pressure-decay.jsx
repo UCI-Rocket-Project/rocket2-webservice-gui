@@ -23,13 +23,12 @@ function calculateChange(startValue, endValue) {
     return parseFloat(changePerMinute.toFixed(2));
 }
 
-export function PressureDecay() {
+export function PressureDecay({running, setRunning}) {
     const {pts} = useContext(RocketState);
 
     const ptsRef = useRef(pts);
     const intervalRef = useRef(null);
 
-    const [running, setRunning] = useState(false);
     const [startTimestamp, setStartTimestamp] = useState(0);
     const [completedRun, setCompletedRun] = useState(false);
     const [data, setData] = useState([]);

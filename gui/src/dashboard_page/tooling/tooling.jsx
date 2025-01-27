@@ -1,30 +1,13 @@
 import styles from "./tooling.module.css";
-
+import {ArrowDownward, ArrowUpward, ExpandMore} from "@mui/icons-material";
+import {useState} from "react";
 import {PressureDecay} from "./pressure-decay/pressure-decay";
 import {PressureFill} from "./pressure-fill/pressure-fill";
 
-function ArrowIcon(props) {
-    return (
-        <svg
-            viewBox="0 0 64 64"
-            fill="currentColor"
-            height="50px"
-            width="50px"
-            {...props}
-        >
-            <path
-                fill="none"
-                stroke="currentColor"
-                strokeLinejoin="round"
-                strokeMiterlimit={10}
-                strokeWidth={5}
-                d="M15 24l17 17 17-17"
-            />
-        </svg>
-    );
-}
-
 export function Tooling() {
+    const [decayRunning, setDecayRunning] = useState(false);
+    const [fillRunning, setFillRunning] = useState(false);
+
     return (
         <div className={styles.dropdown}>
             <div className={styles.dropdownContent}>
@@ -40,17 +23,44 @@ export function Tooling() {
                             gap: 16
                         }}
                     >
-                        <PressureDecay />
+                        <PressureDecay
+                            running={decayRunning}
+                            setRunning={setDecayRunning}
+                        />
 
-                        <PressureFill />
+                        <PressureFill
+                            running={fillRunning}
+                            setRunning={setFillRunning}
+                        />
                     </div>
                 </div>
             </div>
 
-            <div style={{width: "100%", height: 50, fontSize: 30, textAlign: "center"}}>
-                <ArrowIcon />
+            <div
+                style={{
+                    position: "relative",
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: 50
+                }}
+            >
+                <ExpandMore style={{width: 36, height: 36, aspectRatio: 1 / 1}} />
 
-                <div />
+                <div
+                    style={{
+                        position: "absolute",
+                        right: 16,
+                        display: "flex",
+                        alignItems: "center",
+                        height: "100%",
+                        gap: 4
+                    }}
+                >
+                    {decayRunning ? <ArrowDownward /> : null}
+                    {fillRunning ? <ArrowUpward style={{color: "red"}} /> : null}
+                </div>
             </div>
         </div>
     );
