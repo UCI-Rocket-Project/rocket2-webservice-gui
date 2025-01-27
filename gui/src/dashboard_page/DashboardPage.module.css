@@ -21,16 +21,6 @@
     background-color: rgb(44, 45, 49);
 }
 
-.toolingBoundingBox {
-    overflow: auto;
-    height: 500px;
-}
-
-.tooling {
-    width: 100%;
-    height: "100%";
-}
-
 .gseBox {
     min-width: 500px;
     width: 700px; /* Don't know why this needs to be here */
@@ -116,27 +106,6 @@
 .abort {
     display: flex;
     justify-content: center;
-}
-
-.dropdown {
-    transition: all 0.5s ease-in-out;
-    position: absolute;
-    top: -5px;
-    left: 30%;
-    z-index: 5;
-    border-radius: 10px;
-    background-color: rgb(24, 24, 27);
-    width: 40%;
-}
-.dropdownContent {
-    min-height: 0px;
-    height: 600px;
-    transition: all 0.5s ease-in-out;
-    overflow: hidden;
-}
-
-.dropdown:hover .dropdownContent {
-    height: 600px;
 }
 
 .darkButton {
