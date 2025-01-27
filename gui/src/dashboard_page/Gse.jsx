@@ -3,10 +3,14 @@ import styles from "./DashboardPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
 import RocketSwitch from "../rocket_switch/RocketSwitch";
 import {RocketState} from "../Context";
+import {useToolingContext} from "./tooling/tooling-context/tooling-context";
 
 export function Gse({toggleKey, keydown}) {
     const {solenoids, pts, tcs, igniters, misc, handleToggleState, isAborted} =
         useContext(RocketState);
+
+    const {handleStopPressureFill} = useToolingContext();
+
     return (
         <div className={styles.gseBox}>
             <div className={styles.boundingBox}>
@@ -57,7 +61,13 @@ export function Gse({toggleKey, keydown}) {
                         name="GN2 Fill"
                         expected_value={solenoids["Gn2Fill"]?.expected}
                         feedback_value={solenoids["Gn2Fill"]?.current}
-                        onClick={(event) => handleToggleState("gse", "Gn2Fill", event)}
+                        onClick={(event) => {
+                            handleToggleState("gse", "Gn2Fill", event);
+
+                            if (!event) {
+                                handleStopPressureFill();
+                            }
+                        }}
                         enabled={keydown === toggleKey && !isAborted}
                     />
                 </div>

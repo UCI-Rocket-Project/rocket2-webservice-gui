@@ -3,10 +3,11 @@ import {ArrowDownward, ArrowUpward, ExpandMore} from "@mui/icons-material";
 import {useState} from "react";
 import {PressureDecay} from "./pressure-decay/pressure-decay";
 import {PressureFill} from "./pressure-fill/pressure-fill";
+import {useToolingContext} from "./tooling-context/tooling-context";
 
 export function Tooling() {
+    const {fillRunning} = useToolingContext();
     const [decayRunning, setDecayRunning] = useState(false);
-    const [fillRunning, setFillRunning] = useState(false);
 
     return (
         <div className={styles.dropdown}>
@@ -28,10 +29,7 @@ export function Tooling() {
                             setRunning={setDecayRunning}
                         />
 
-                        <PressureFill
-                            running={fillRunning}
-                            setRunning={setFillRunning}
-                        />
+                        <PressureFill />
                     </div>
                 </div>
             </div>
@@ -58,7 +56,7 @@ export function Tooling() {
                         gap: 4
                     }}
                 >
-                    {decayRunning ? <ArrowDownward /> : null}
+                    {decayRunning ? <ArrowDownward style={{color: "aqua"}} /> : null}
                     {fillRunning ? <ArrowUpward style={{color: "red"}} /> : null}
                 </div>
             </div>

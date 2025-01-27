@@ -1,30 +1,41 @@
-import {useState, useContext} from "react";
+import {useState, useEffect, useCallback, useRef, useContext, useMemo} from "react";
 import {ArrowUpward} from "@mui/icons-material";
 import {RocketState} from "../../../Context";
+import {useToolingContext} from "../tooling-context/tooling-context";
 
-export function PressureFill({running, setRunning}) {
-    const {handleToggleState, isAborted} = useContext(RocketState);
+export function PressureFill() {
+    const {pts, solenoids, handleToggleState, isAborted} = useContext(RocketState);
+    const {
+        fillPsi,
+        setFillPsi,
+        fillRunning: running,
+        setFillRunning: setRunning,
+        handleStopPressureFill: handleStop
+    } = useToolingContext();
 
-    const [fillPsi, setFillPsi] = useState();
     const [inputValue, setInputValue] = useState();
 
     const valid = Number(inputValue) && inputValue >= 100 && inputValue <= 5000;
+    const copvPt = pts.Copv;
 
-    const handleStart = () => {
+    const handleStart = useCallback(() => {
         if (isAborted) {
+            return;
+        }
+
+        if (copvPt >= fillPsi) {
             return;
         }
 
         setRunning(true);
         setFillPsi(inputValue);
-        setInputValue(undefined);
+        setInputValue("");
         handleToggleState("gse", "Gn2Fill", true);
-        return;
-    };
+    }, [copvPt, fillPsi, handleToggleState, inputValue, isAborted, setFillPsi, setRunning]);
 
-    const handleChange = (e) => {
+    const handleChange = useCallback((e) => {
         setInputValue(e.currentTarget.value);
-    };
+    }, []);
 
     // https://stackoverflow.com/a/69497807
     const numberInputOnWheelPreventChange = (e) => {
@@ -33,6 +44,35 @@ export function PressureFill({running, setRunning}) {
             e.target.focus();
         }, 0);
     };
+
+    /**
+     * Create a shallow copy of solenoids and filter out 'Gn2Fill'
+     *
+     * If any controls are triggered during automated fill, we will close Gn2Fill and "abort" automated fill
+     */
+    const filteredSolenoids = useMemo(() => {
+        const newSolenoids = {...solenoids};
+        delete newSolenoids.Gn2Fill;
+        return newSolenoids;
+    }, [solenoids]);
+
+    const jsonSolenoids = JSON.stringify(filteredSolenoids);
+    const prevJsonSolenoidsRef = useRef(jsonSolenoids);
+
+    useEffect(() => {
+        if (prevJsonSolenoidsRef.current !== jsonSolenoids) {
+            console.log("Solenoids (other than Gn2Fill) changed:", jsonSolenoids);
+
+            handleStop();
+            prevJsonSolenoidsRef.current = jsonSolenoids;
+        }
+    }, [handleStop, jsonSolenoids]);
+
+    useEffect(() => {
+        if (copvPt >= fillPsi && running) {
+            handleStop();
+        }
+    }, [copvPt, fillPsi, handleStop, running]);
 
     return (
         <div

@@ -17,17 +17,15 @@ export function AbortButton({keydown, toggleKey}) {
                 ) : (
                     <img
                         onClick={(event) => {
-                            {
-                                handleAbort(true);
-                                handleToggleState("ecu", "Vent", 0);
-                                handleToggleState("ecu", "Pv1", 0);
-                                handleToggleState("ecu", "Pv2", 0);
-                                handleToggleState("ecu", "CopvVent", 1);
-                                handleToggleState("gse", "Gn2Fill", 0);
-                                handleToggleState("gse", "Gn2Vent", 1);
-                                handleToggleState("gse", "MvasClose", 0);
-                                handleToggleState("gse", "MvasOpen", 1);
-                            }
+                            handleAbort(true);
+                            handleToggleState("ecu", "Vent", 0);
+                            handleToggleState("ecu", "Pv1", 0);
+                            handleToggleState("ecu", "Pv2", 0);
+                            handleToggleState("ecu", "CopvVent", 1);
+                            handleToggleState("gse", "Gn2Fill", 0);
+                            handleToggleState("gse", "Gn2Vent", 1);
+                            handleToggleState("gse", "MvasClose", 0);
+                            handleToggleState("gse", "MvasOpen", 1);
                         }}
                         src="/button_off_open.png"
                         style={{width: 300}}
