@@ -96,7 +96,7 @@ def start_server(
                         shared_state["accelerationY"] = 0
                         shared_state["ecefVelocityY"] = 0
 
-                    shared_state["accelerationY"] += random.randint(0, 5)
+                    shared_state["accelerationY"] = 1
                     shared_state["ecefVelocityY"] += shared_state["accelerationY"]
                     shared_state["altitude"] += (
                         shared_state["ecefVelocityY"]
