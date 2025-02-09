@@ -82,8 +82,18 @@ def start_server(
                     shared_state["pressureCopv"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLox"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLng"] += random.randint(-1, 1) / 1000
-                    shared_state["altitude"] += random.randint(-20, 20)
-                    shared_state["accelerationY"] += random.randint(-20, 20)
+
+                    shared_state["batteryVoltage"] += random.randint(-1, 1)
+                    shared_state["supplyVoltage"] += random.randint(-1, 1)
+                    
+                    if (int((datetime.now() - start_time).total_seconds())) % 20 < 1:
+                        shared_state["altitude"] = 40
+                        shared_state["accelerationY"] = 0
+                        shared_state["ecefVelocityY"] = 0
+                    
+                    shared_state["accelerationY"] += random.randint(0, 5)
+                    shared_state["ecefVelocityY"] += shared_state["accelerationY"]
+                    shared_state["altitude"] += shared_state["ecefVelocityY"] + 0.5*shared_state["accelerationY"]
 
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
                     shared_state["altitude"] += random.randint(0, 1)
@@ -192,8 +202,8 @@ def main():
         "solenoidInternalStatePv1": 0,
         "solenoidInternalStatePv2": 0,
         "solenoidInternalStateVent": 0,
-        "supplyVoltage": 0,
-        "batteryVoltage": 0,
+        "supplyVoltage": 30,
+        "batteryVoltage": 40,
         "solenoidCurrentCopvVent": 0,
         "solenoidCurrentPv1": 0,
         "solenoidCurrentPv2": 0,
@@ -214,7 +224,7 @@ def main():
         "magneticFieldY": 0,
         "magneticFieldZ": 0,
         "temperature": 0,
-        "altitude": 0,
+        "altitude": 40,
         "ecefPositionX": 0,
         "ecefPositionY": 0,
         "ecefPositionZ": 0,

@@ -22,3 +22,10 @@
     flex-direction: column;
 }
 
+.Battery{
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
+    flex-direction: column;
+}
+
