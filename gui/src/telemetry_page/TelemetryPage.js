@@ -1,8 +1,7 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import styles from "./TelemetryPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
 import BatteryG from "../battery_gauge/BatteryGauge";
-
 import RocketSim from "../rocket_sim/RocketSim";
 import {RocketState} from "../Context";
 
@@ -33,7 +32,7 @@ export function TelemetryPage() {
                         }}
                     />
                     <RocketGauge
-                        value={1000}
+                        value={flight.ecefVelocityY}
                         minValue={0}
                         maxValue={500}
                         name={"Speed"}
@@ -67,12 +66,14 @@ export function TelemetryPage() {
                 <div className={styles.row}>
                     <div>
                         <div className={styles.battery}>
-                            <BatteryG val={misc.batteryVoltage} name = {"Battery 1"} />
+                            Battery Voltage
+                            <BatteryG val={misc.supplyVoltage} />
                         </div>
                     </div>
                     <div>
                         <div className={styles.battery}>
-                            <BatteryG val={misc.supplyVoltage}  name = {"Battery 2"}  />
+                            Supply Voltage
+                            <BatteryG val={misc.batteryVoltage}  />
                         </div>
                     </div>
                 </div>
