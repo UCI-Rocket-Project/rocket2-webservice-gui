@@ -73,10 +73,20 @@ export function App() {
                     solenoids[solenoidName][solenoidType] = state[key];
                 } else if (key.includes("temperature")) {
                     let key_name = key.substring(11, key.length);
-                    tcs[key_name] = state[key];
+                    if (state[key] === 0) {
+                        tcs[key_name] = 0;
+                        console.log(key, "is 0");
+                    } else {
+                        tcs[key_name] = ((currentTcs.current[key_name] || 0) + state[key]) / 2.0;
+                    }
                 } else if (key.includes("pressure")) {
                     let key_name = key.substring(8, key.length);
-                    pts[key_name] = state[key];
+                    if (state[key] === 0) {
+                        pts[key_name] = 0;
+                        console.log(key, "is 0");
+                    } else {
+                        pts[key_name] = ((currentPts.current[key_name] || 0) + state[key]) / 2.0;
+                    }
                 } else if (key.includes("igniter")) {
                     if (key.includes("Armed")) {
                         igniters.armed = state[key];
