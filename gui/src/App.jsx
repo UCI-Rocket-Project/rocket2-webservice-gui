@@ -100,10 +100,7 @@ export function App() {
                         }
                         igniters[igniterName][igniterType] = state[key];
                     }
-                } else if (key.includes("altitude")) {
-                    let key_name = key;
-                    flight[key_name] = state[key];
-                } else if (key.includes("acceleration")) {
+                } else if (key.includes("altitude") || key.includes("acceleration") || key.includes("ecefVelocityY")) {
                     let key_name = key;
                     flight[key_name] = state[key];
                 } else {
