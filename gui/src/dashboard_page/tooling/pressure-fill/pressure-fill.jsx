@@ -4,7 +4,7 @@ import {RocketState} from "../../../Context";
 import {useToolingContext} from "../tooling-context/tooling-context";
 
 export function PressureFill() {
-    const {pts, solenoids, handleToggleState, isAborted} = useContext(RocketState);
+    const {pts, solenoids, tcs, handleToggleState, isAborted} = useContext(RocketState);
     const {
         fillPsi,
         setFillPsi,
@@ -17,6 +17,8 @@ export function PressureFill() {
 
     const valid = Number(inputValue) && inputValue >= 100 && inputValue <= 5000;
     const copvPt = pts.Copv;
+    const copvTc = tcs.Copv;
+    const MAX_COPV_TEMP = 28;
 
     const handleStart = useCallback(() => {
         if (isAborted) {
@@ -24,6 +26,9 @@ export function PressureFill() {
         }
 
         if (copvPt >= fillPsi) {
+            return;
+        }
+        if (copvTc >= MAX_COPV_TEMP) {
             return;
         }
 
@@ -69,7 +74,7 @@ export function PressureFill() {
     }, [handleStop, jsonSolenoids]);
 
     useEffect(() => {
-        if (copvPt >= fillPsi && running) {
+        if ((copvPt >= fillPsi || copvTc >= MAX_COPV_TEMP) && running) {
             handleStop();
         }
     }, [copvPt, fillPsi, handleStop, running]);
