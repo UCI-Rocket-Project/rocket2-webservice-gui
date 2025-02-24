@@ -1,6 +1,7 @@
 import {useState, useEffect, useRef, useContext} from "react";
 import {RocketState} from "../../../Context";
 import {PressureDecayChart} from "./pressure-decay-chart";
+import {ArrowDownward} from "@mui/icons-material";
 
 const THREE_MINUTES_IN_MS = 3 * 60 * 1000;
 
@@ -22,13 +23,12 @@ function calculateChange(startValue, endValue) {
     return parseFloat(changePerMinute.toFixed(2));
 }
 
-export function PressureDecay() {
+export function PressureDecay({running, setRunning}) {
     const {pts} = useContext(RocketState);
 
     const ptsRef = useRef(pts);
     const intervalRef = useRef(null);
 
-    const [running, setRunning] = useState(false);
     const [startTimestamp, setStartTimestamp] = useState(0);
     const [completedRun, setCompletedRun] = useState(false);
     const [data, setData] = useState([]);
@@ -106,7 +106,9 @@ export function PressureDecay() {
                 fontSize: 24
             }}
         >
-            <h4 style={{margin: 0}}>Automated Pressure Decay</h4>
+            <h4 style={{margin: 0, display: "flex", alignItems: "center", gap: 8}}>
+                <ArrowDownward /> <span>Automated Pressure Decay</span>
+            </h4>
 
             {!running && !completedRun ? (
                 <button

@@ -8,6 +8,7 @@ import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {Navbar} from "./Navbar";
 import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsContext";
+import {ToolingContextProvider} from "./dashboard_page/tooling/tooling-context/tooling-context";
 
 export function App() {
     const [solenoids, setSolenoids] = useState({});
@@ -171,28 +172,30 @@ export function App() {
                 flight
             }}
         >
-            <Router>
-                <Navbar />
+            <ToolingContextProvider>
+                <Router>
+                    <Navbar />
 
-                <Routes>
-                    <Route
-                        path="/"
-                        element={<DashboardPage />}
-                    />
-                    <Route
-                        path="/rocket"
-                        element={<DiagramPage />}
-                    />
-                    <Route
-                        path="/telemetry"
-                        element={<TelemetryPage />}
-                    />
-                    <Route
-                        path="/analytics"
-                        element={<AnalyticsPage />}
-                    />
-                </Routes>
-            </Router>
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={<DashboardPage />}
+                        />
+                        <Route
+                            path="/rocket"
+                            element={<DiagramPage />}
+                        />
+                        <Route
+                            path="/telemetry"
+                            element={<TelemetryPage />}
+                        />
+                        <Route
+                            path="/analytics"
+                            element={<AnalyticsPage />}
+                        />
+                    </Routes>
+                </Router>
+            </ToolingContextProvider>
         </RocketState.Provider>
     );
 }
