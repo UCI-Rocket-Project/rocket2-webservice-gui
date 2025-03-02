@@ -86,11 +86,18 @@ def start_server(
                     shared_state["batteryVoltage"] += random.randint(-1, 1)
                     shared_state["supplyVoltage"] += random.randint(-1, 1)
                     
+<<<<<<< HEAD
                     if (int((datetime.now() - start_time).total_seconds())) % 10 < 1:
                         shared_state["altitude"] = 40
                         shared_state["accelerationY"] = 0
                         shared_state["ecefVelocityY"] = 0
                         shared_state["pressureCopv"] = 0
+=======
+                    if (int((datetime.now() - start_time).total_seconds())) % 20 < 1:
+                        shared_state["altitude"] = 40
+                        shared_state["accelerationY"] = 0
+                        shared_state["ecefVelocityY"] = 0
+>>>>>>> 730d036c61c2d8463410a4107f1aaf4ff53b52d2
                     
                     shared_state["accelerationY"] += random.randint(0, 5)
                     shared_state["ecefVelocityY"] += shared_state["accelerationY"]
