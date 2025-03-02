@@ -86,10 +86,11 @@ def start_server(
                     shared_state["batteryVoltage"] += random.randint(-1, 1)
                     shared_state["supplyVoltage"] += random.randint(-1, 1)
                     
-                    if (int((datetime.now() - start_time).total_seconds())) % 20 < 1:
+                    if (int((datetime.now() - start_time).total_seconds())) % 10 < 1:
                         shared_state["altitude"] = 40
                         shared_state["accelerationY"] = 0
                         shared_state["ecefVelocityY"] = 0
+                        shared_state["pressureCopv"] = 0
                     
                     shared_state["accelerationY"] += random.randint(0, 5)
                     shared_state["ecefVelocityY"] += shared_state["accelerationY"]

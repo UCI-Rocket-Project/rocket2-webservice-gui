@@ -5,6 +5,7 @@ import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 import {DiagramPage} from "./diagram_page/DiagramPage";
 import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
+import {PlumbingPage} from "./plumbing_page/PlumbingPage";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {Navbar} from "./Navbar";
 import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsContext";
@@ -180,6 +181,10 @@ export function App() {
                     <Route
                         path="/analytics"
                         element={<AnalyticsPage />}
+                    />
+                    <Route
+                        path="/plumbing"
+                        element={<PlumbingPage />}
                     />
                 </Routes>
             </Router>
