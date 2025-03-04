@@ -193,6 +193,10 @@ export function App() {
                             path="/analytics"
                             element={<AnalyticsPage />}
                         />
+                         <Route
+                            path="/view"
+                            element={<DashboardPage viewOnly={true}/>}
+                        />
                     </Routes>
                 </Router>
             </ToolingContextProvider>
