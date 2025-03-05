@@ -81,6 +81,7 @@ gse_state = {
     "temperatureEngine1": 0,
     "temperatureEngine2": 0,
     "pressureGn2": 0,
+    "pressureCombustionChamber": 0,
 }
 
 load_cell_ip = os.environ["LOAD_CELL_IP"]
@@ -329,7 +330,10 @@ def handle_update_gse_state(new_state):
                     gse_state[key] = -1
                     new_state[index] = -1
                 else:
-                    gse_state[key] = val
+                    if "pressure" in key:
+                        gse_state[key] = get_pressure_from_voltage(key, val)
+                    else:
+                        gse_state[key] = val
     db_thread = Thread(
         target=insert_into_db, args=(engine, new_state, "gse", GSE_DATA_FORMAT)
     )
@@ -406,7 +410,7 @@ if __name__ == "__main__":
             (gse_ip, gse_port),
             gse_connection_lock,
             GSE_DATA_LENGTH,
-            "<L???????????????ffffffffffffff",  # Should match the one in fake_rocket.py
+            "<L???????????????fffffffffffffff",  # Should match the one in fake_rocket.py
             handle_update_gse_state,
             "GSE",
         ),
