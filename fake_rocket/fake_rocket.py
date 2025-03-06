@@ -85,20 +85,23 @@ def start_server(
 
                     shared_state["batteryVoltage"] += random.randint(-1, 1)
                     shared_state["supplyVoltage"] += random.randint(-1, 1)
-                    
+
                     if (int((datetime.now() - start_time).total_seconds())) % 20 < 1:
                         shared_state["altitude"] = 40
                         shared_state["accelerationY"] = 0
                         shared_state["ecefVelocityY"] = 0
-                    
+
                     shared_state["accelerationY"] += random.randint(0, 5)
                     shared_state["ecefVelocityY"] += shared_state["accelerationY"]
-                    shared_state["altitude"] += shared_state["ecefVelocityY"] + 0.5*shared_state["accelerationY"]
+                    shared_state["altitude"] += (
+                        shared_state["ecefVelocityY"]
+                        + 0.5 * shared_state["accelerationY"]
+                    )
 
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
                     shared_state["altitude"] += random.randint(0, 1)
                 elif system_name == "GSE":
-                    data_format = "<L???????????????ffffffffffffff"  # Should match the one in server.py
+                    data_format = "<L???????????????fffffffffffffff"  # Should match the one in server.py
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
@@ -108,7 +111,7 @@ def start_server(
                     shared_state["temperatureEngine1"] += random.randint(-1, 1) / 1000
                     shared_state["temperatureEngine2"] += random.randint(-1, 1) / 1000
                     shared_state["pressureGn2"] += random.randint(-1, 1) / 1000
-                    
+
                 else:
                     data_format = "<Lf"
                     data_to_send = (shared_state[key] for key in LOAD_CELL_DATA_FORMAT)
@@ -191,6 +194,7 @@ def main():
         "temperatureEngine1": -200,
         "temperatureEngine2": -200,
         "pressureGn2": 1.2,
+        "pressureCombustionChamber": 10,
     }
 
     ecu_manager = Manager()

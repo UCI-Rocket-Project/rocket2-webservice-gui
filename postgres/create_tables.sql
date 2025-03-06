@@ -83,7 +83,8 @@ CREATE TABLE IF NOT EXISTS gse (
     solenoidCurrentLngVent FLOAT,
     temperatureEngine1 FLOAT,
     temperatureEngine2 FLOAT,
-    pressureGn2 FLOAT
+    pressureGn2 FLOAT,
+    pressureCombustionChamber FLOAT
 );
 
 CREATE TABLE IF NOT EXISTS load_cell (

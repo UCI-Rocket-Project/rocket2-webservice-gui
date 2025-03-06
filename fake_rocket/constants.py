@@ -29,6 +29,7 @@ GSE_DATA_FORMAT = [
     "temperatureEngine1",
     "temperatureEngine2",
     "pressureGn2",
+    "pressureCombustionChamber"
 ]
 
 ECU_DATA_FORMAT = [

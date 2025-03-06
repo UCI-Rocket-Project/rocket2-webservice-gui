@@ -10,7 +10,6 @@ export function Gse({toggleKey, keydown}) {
         useContext(RocketState);
 
     const {handleStopPressureFill} = useToolingContext();
-
     return (
         <div className={styles.gseBox}>
             <div className={styles.boundingBox}>
@@ -40,6 +39,21 @@ export function Gse({toggleKey, keydown}) {
                         maxValue={120}
                         units={" psi"}
                         name={"Engine TC 2"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                </div>
+                <div className={styles.gseGaugeRow}>
+                <RocketGauge
+                        value={pts.CombustionChamber}
+                        minValue={0}
+                        maxValue={120}
+                        units={" psi"}
+                        name={"Chamber PT"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
                             subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
