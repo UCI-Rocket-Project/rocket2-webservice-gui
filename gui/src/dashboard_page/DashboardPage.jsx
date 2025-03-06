@@ -14,7 +14,7 @@ if (navigator.platform.indexOf("Mac") !== -1 || navigator.userAgent.indexOf("Mac
     TOGGLE_KEY = "x";
 }
 
-export function DashboardPage() {
+export function DashboardPage({viewOnly=false}) {
     const {hasInitialized} = useContext(RocketState);
 
     const [keydown, setKeydown] = useState();
@@ -27,14 +27,15 @@ export function DashboardPage() {
         const handleKeyUp = () => {
             setKeydown(null);
         };
+        if(!viewOnly){
+            document.addEventListener("keydown", handleKeyDown);
+            document.addEventListener("keyup", handleKeyUp);
 
-        document.addEventListener("keydown", handleKeyDown);
-        document.addEventListener("keyup", handleKeyUp);
-
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-            document.removeEventListener("keyup", handleKeyUp);
-        };
+            return () => {
+                document.removeEventListener("keydown", handleKeyDown);
+                document.removeEventListener("keyup", handleKeyUp);
+            };
+        }
     }, []);
 
     if (!hasInitialized.current) {
