@@ -5,6 +5,7 @@ import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 import {DiagramPage} from "./diagram_page/DiagramPage";
 import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
+import {PlumbingPage} from "./plumbing_page/PlumbingPage";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {Navbar} from "./Navbar";
 import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsContext";
@@ -75,16 +76,16 @@ export function App() {
                 } else if (key.includes("temperature")) {
                     let key_name = key.substring(11, key.length);
                     if (state[key] === 0) {
+                        // Reset the value to 0 if we get a missing reading so it doesn't just average it again
                         tcs[key_name] = 0;
-                        console.log(key, "is 0");
                     } else {
                         tcs[key_name] = ((currentTcs.current[key_name] || 0) + state[key]) / 2.0;
                     }
                 } else if (key.includes("pressure")) {
                     let key_name = key.substring(8, key.length);
                     if (state[key] === 0) {
+                        // Reset the value to 0 if we get a missing reading so it doesn't just average it again
                         pts[key_name] = 0;
-                        console.log(key, "is 0");
                     } else {
                         pts[key_name] = ((currentPts.current[key_name] || 0) + state[key]) / 2.0;
                     }
@@ -101,7 +102,11 @@ export function App() {
                         }
                         igniters[igniterName][igniterType] = state[key];
                     }
-                } else if (key.includes("altitude") || key.includes("acceleration") || key.includes("ecefVelocityY")) {
+                } else if (
+                    key.includes("altitude") ||
+                    key.includes("acceleration") ||
+                    key.includes("ecefVelocityY")
+                ) {
                     let key_name = key;
                     flight[key_name] = state[key];
                 } else {
@@ -193,9 +198,13 @@ export function App() {
                             path="/analytics"
                             element={<AnalyticsPage />}
                         />
-                         <Route
+                        <Route
                             path="/view"
-                            element={<DashboardPage viewOnly={true}/>}
+                            element={<DashboardPage viewOnly={true} />}
+                        />
+                        <Route
+                            path="/plumbing"
+                            element={<PlumbingPage />}
                         />
                     </Routes>
                 </Router>

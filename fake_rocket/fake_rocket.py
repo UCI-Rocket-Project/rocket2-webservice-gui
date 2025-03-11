@@ -56,6 +56,7 @@ def start_server(
     shared_state,
     command_handler,
 ):
+    global gse_state, ecu_state
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(("", port))
     server_socket.listen(1)
@@ -79,7 +80,11 @@ def start_server(
                     shared_state["packet_time"] = (
                         int((datetime.now() - start_time).total_seconds()) * 1000
                     )
-                    shared_state["pressureCopv"] += random.randint(-1, 1) / 1000
+                    if shared_state["solenoidInternalStateCopvVent"]:
+                        shared_state["pressureCopv"] += random.randint(-10, 0) / 1000
+                        if shared_state["pressureCopv"] < 0:
+                            shared_state["pressureCopv"] = 0
+
                     shared_state["pressureLox"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLng"] += random.randint(-1, 1) / 1000
 
@@ -108,6 +113,8 @@ def start_server(
                     shared_state["packet_time"] = (
                         int((datetime.now() - start_time).total_seconds()) * 1000
                     )
+                    if shared_state["solenoidInternalStateGn2Fill"]:
+                        ecu_state["pressureCopv"] += random.randint(0, 10) / 1000
                     shared_state["temperatureEngine1"] += random.randint(-1, 1) / 1000
                     shared_state["temperatureEngine2"] += random.randint(-1, 1) / 1000
                     shared_state["pressureGn2"] += random.randint(-1, 1) / 1000
@@ -213,7 +220,7 @@ def main():
         "solenoidCurrentPv2": 0,
         "solenoidCurrentVent": 0,
         "temperatureCopv": 0,
-        "pressureCopv": 1.2,
+        "pressureCopv": 0,
         "pressureLox": 1.1,
         "pressureLng": 1.1,
         "pressureInjectorLox": 0,
