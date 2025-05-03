@@ -11,6 +11,11 @@ import {Navbar} from "./Navbar";
 import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsContext";
 import {ToolingContextProvider} from "./dashboard_page/tooling/tooling-context/tooling-context";
 
+/*
+ * This file contains the main App component that sets up the routing and state management for the application.
+ * It fetches the rocket state from the server and updates the context with the latest data.
+ * The App component also initializes the solenoids, tcs, pts, igniters, and misc states and passes them down to the rest of the app.
+ */
 export function App() {
     const [solenoids, setSolenoids] = useState({});
     const [tcs, setTcs] = useState({});
@@ -54,6 +59,7 @@ export function App() {
         updateRocket(systemName, solenoidName, value);
     };
 
+    // This function is used to parse the state of the rocket and update the context with the latest data.
     const parseState = useCallback(
         (state, timestamps) => {
             let solenoids = {};
@@ -125,7 +131,7 @@ export function App() {
             for (let system in timestamps) {
                 updateTimestamps(timestamps[system], system);
             }
-
+            // Update the app so it knows it has valid data. Only useful on initialization
             if (
                 Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("CopvVent") !==
                     -1 &&
@@ -137,6 +143,7 @@ export function App() {
         [updateTimestamps]
     );
 
+    // This function fetches the rocket state from the server and dispatches the parsed state to the context.
     const fetchAndDispatchRocketState = useCallback(async () => {
         try {
             const ecuState = (await getEcuState()).data;
@@ -154,6 +161,7 @@ export function App() {
         }
     }, [parseState]);
 
+    // Start the loop to fetch the rocket state every 250ms
     useEffect(() => {
         const intervalId = setInterval(() => {
             fetchAndDispatchRocketState();
@@ -180,7 +188,6 @@ export function App() {
             <ToolingContextProvider>
                 <Router>
                     <Navbar />
-
                     <Routes>
                         <Route
                             path="/"

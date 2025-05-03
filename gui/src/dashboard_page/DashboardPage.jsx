@@ -14,11 +14,12 @@ if (navigator.platform.indexOf("Mac") !== -1 || navigator.userAgent.indexOf("Mac
     TOGGLE_KEY = "x";
 }
 
-export function DashboardPage({viewOnly=false}) {
+export function DashboardPage({viewOnly = false}) {
     const {hasInitialized} = useContext(RocketState);
 
     const [keydown, setKeydown] = useState();
 
+    // Listen for keydown and keyup events to lock and unlock the gui
     useEffect(() => {
         const handleKeyDown = (event) => {
             setKeydown(event.key);
@@ -27,7 +28,7 @@ export function DashboardPage({viewOnly=false}) {
         const handleKeyUp = () => {
             setKeydown(null);
         };
-        if(!viewOnly){
+        if (!viewOnly) {
             document.addEventListener("keydown", handleKeyDown);
             document.addEventListener("keyup", handleKeyUp);
 
