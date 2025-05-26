@@ -8,5 +8,7 @@ run:
 	docker-compose -f docker-compose-prod.yaml up
 rocket:
 	python fake_rocket/fake_rocket.py
+graphs:
+	cd webservice && python graphs.py
 test:
 	cd gui && npx playwright test
