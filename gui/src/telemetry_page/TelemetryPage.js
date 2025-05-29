@@ -13,8 +13,9 @@ export function TelemetryPage() {
             style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-end",
                 flexDirection: "row",
+                alignItems: "flex-start",
                 gap: 20,
                 margin: "20px 20px 0px 20px"
             }}

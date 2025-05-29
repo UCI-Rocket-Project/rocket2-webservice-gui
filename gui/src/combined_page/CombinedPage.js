@@ -8,24 +8,22 @@ export function CombinedPage() {
             style={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "between",
+                justifyContent: "space-between",
                 height: "100vh",
                 width: "100%",
                 gap: "80px",
                 boxSizing: "border-box"
             }}
         >
-            <TelemetryPage />
-
             <div
                 style={{
                     minWidth: 600,
-                    width: 600,
-                    overflow: "auto"
+                    width: 600
                 }}
             >
                 <PlumbingPage />
             </div>
+            <TelemetryPage />
         </div>
     );
 }

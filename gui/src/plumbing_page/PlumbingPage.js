@@ -13,7 +13,7 @@ export function PlumbingPage() {
         lngSection: 0
     });
     const {pts, solenoids} = useContext(RocketState);
-    const scaleFactor = 0.8;
+    const scaleFactor = 1;
     const BORDER_SIZE = 3;
     useEffect(() => {
         // Copv Section
