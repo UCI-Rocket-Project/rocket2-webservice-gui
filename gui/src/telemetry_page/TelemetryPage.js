@@ -5,83 +5,90 @@ import BatteryG from "../battery_gauge/BatteryGauge";
 import RocketSim from "../rocket_sim/RocketSim";
 import {RocketState} from "../Context";
 
-
 export function TelemetryPage() {
-
-    const {flight, misc}=
-    useContext(RocketState);
+    const {flight, misc} = useContext(RocketState);
 
     return (
-        <div className={styles.parent}>
-            <div className={styles.container}>
-                TELEMETRY PAGE
-            </div>
-            <div className={styles.container}>
-                <div className={styles.GaugeCol}>
-                    <RocketGauge
-                        value={flight.altitude}
-                        minValue={0}
-                        maxValue={15000}
-                        name={"Altitude"}
-                        units={" ft"}
-                        arc={{
-                            colorArray: ["#5BE12C", "#EA4228"],
-                            subArcs: [{ limit: 100 }, { limit: 300 }, {}],
-                            padding: 0.02,
-                            width: 0.3
-                        }}
-                    />
-                    <RocketGauge
-                        value={flight.ecefVelocityY}
-                        minValue={0}
-                        maxValue={500}
-                        name={"Speed"}
-                        units={" mph"}
-                        arc={{
-                            colorArray: ["#5BE12C", "#EA4228"],
-                            subArcs: [{ limit: 100 }, { limit: 300 }, {}],
-                            padding: 0.02,
-                            width: 0.3
-                        }}
-                    />
-                    <RocketGauge
-                        value={flight.accelerationY}
-                        minValue={0}
-                        maxValue={125}
-                        name={"Y Acceleration"}
-                        units={" ft/s²"}
-                        arc={{
-                            colorArray: ["#5BE12C", "#EA4228"],
-                            subArcs: [{ limit: 30 }, { limit: 60 }, { limit: 80 }],
-                            padding: 0.02,
-                            width: 0.3
-                        }}
-                    />
-                </div>
-                <div className={styles.GaugeCol}>
-                    <div>
-                        <RocketSim color={"#ff0000"}></RocketSim>
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                flexDirection: "row",
+                alignItems: "flex-start",
+                gap: 20,
+                margin: "20px 20px 0px 20px"
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column"
+                }}
+            >
+                <RocketGauge
+                    value={flight.altitude}
+                    minValue={0}
+                    maxValue={15000}
+                    name={"Altitude"}
+                    units={" ft"}
+                    arc={{
+                        colorArray: ["#5BE12C", "#EA4228"],
+                        subArcs: [{limit: 100}, {limit: 300}, {}],
+                        padding: 0.02,
+                        width: 0.3
+                    }}
+                />
+                <RocketGauge
+                    value={flight.ecefVelocityY}
+                    minValue={0}
+                    maxValue={500}
+                    name={"Speed"}
+                    units={" mph"}
+                    arc={{
+                        colorArray: ["#5BE12C", "#EA4228"],
+                        subArcs: [{limit: 100}, {limit: 300}, {}],
+                        padding: 0.02,
+                        width: 0.3
+                    }}
+                />
+                <RocketGauge
+                    value={flight.accelerationY}
+                    minValue={0}
+                    maxValue={125}
+                    name={"Y Acceleration"}
+                    units={" ft/s²"}
+                    arc={{
+                        colorArray: ["#5BE12C", "#EA4228"],
+                        subArcs: [{limit: 30}, {limit: 60}, {limit: 80}],
+                        padding: 0.02,
+                        width: 0.3
+                    }}
+                />
+
+                <div>
+                    <div className={styles.battery}>
+                        Battery Voltage
+                        <BatteryG
+                            val={misc.supplyVoltage}
+                            width={300}
+                            height={100}
+                        />
                     </div>
-                </div>
-                <div className={styles.row}>
-                    <div>
-                        <div className={styles.battery}>
-                            Battery Voltage
-                            <BatteryG val={misc.supplyVoltage} />
-                        </div>
-                    </div>
-                    <div>
-                        <div className={styles.battery}>
-                            Supply Voltage
-                            <BatteryG val={misc.batteryVoltage}  />
-                        </div>
+                    <div className={styles.battery}>
+                        Supply Voltage
+                        <BatteryG
+                            val={misc.batteryVoltage}
+                            width={300}
+                            height={100}
+                        />
                     </div>
                 </div>
             </div>
 
+            <RocketSim color={"#ff0000"}></RocketSim>
         </div>
     );
 }
-
-
-

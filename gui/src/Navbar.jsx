@@ -61,9 +61,6 @@ export function Navbar() {
                 <button>
                     <Link to="/analytics">Analytics</Link>
                 </button>
-                <button>
-                    <Link to="/plumbing">Plumbing</Link>
-                </button>
             </div>
 
             <div style={{display: "flex", flexDirection: "row", gap: 8}}>
