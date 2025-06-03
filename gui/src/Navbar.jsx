@@ -58,16 +58,22 @@ export function Navbar() {
                         <div className={styles.unskewed}>Dashboard</div>
                     </Link>
                     <Link
-                        to="/telemetry"
+                        to="/rocket"
                         className={styles.navbarButton}
                     >
-                        <div className={styles.unskewed}>Telemetry</div>
+                        <div className={styles.unskewed}>Rocket</div>
                     </Link>
                     <Link
                         to="/analytics"
                         className={styles.navbarButton}
                     >
                         <div className={styles.unskewed}>Analytics</div>
+                    </Link>
+                    <Link
+                        to="/view"
+                        className={styles.navbarButton}
+                    >
+                        <div className={styles.unskewed}>View Only</div>
                     </Link>
                 </div>
                 <div className={styles.systemStatuses}>
