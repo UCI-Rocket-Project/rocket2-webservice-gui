@@ -1,0 +1,67 @@
+html,
+body {
+    margin: 0px;
+    background-color: var(--mk-dark-gray-900);
+    color: white;
+    font-family: "Montserrat", sans-serif;
+    line-height: 35px;
+}
+
+.topSpacing {
+    height: 50px;
+}
+.navbar {
+    background-color: var(--mk-gray-900);
+    position: fixed; /* Set the navbar to fixed position */
+    top: 0; /* Position the navbar at the top of the page */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Full width */
+    height: 50px;
+    z-index: 10;
+}
+.systemStatuses {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.navbarButtons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.navbarButton {
+    background-color: var(--mk-gray-800);
+    border-left: 3px solid var(--mk-gray-900);
+    font-size: 20px;
+    height: 50px;
+    color: white;
+    text-decoration: none;
+    transform: skew(-20deg);
+    padding: 0px 40px 0px 40px;
+    display: flex;
+    align-items: center;
+}
+.navbarButton:hover {
+    background-color: var(--mk-gray-700);
+}
+.unskewed {
+    transform: skew(20deg);
+    text-decoration: none;
+    color: white;
+}
+:root {
+    --mk-gray-900: hsl(220, 30%, 6%);
+    --mk-gray-800: hsl(220, 30%, 12%);
+    --mk-gray-700: hsl(220, 30%, 18%);
+    --mk-gray-600: hsl(220, 30%, 24%);
+    --mk-dark-gray-900: hsl(220, 20%, 9%);
+    --mk-dark-gray-800: hsl(220, 20%, 17%);
+    --mk-dark-gray-700: hsl(220, 20%, 25%);
+}
+
+.lastButton {
+    margin-left: -10px;
+}

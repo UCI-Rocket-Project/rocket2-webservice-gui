@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsContext";
 import {useEffect, useState} from "react";
-
+import styles from "./navbar.module.css";
 export function Navbar() {
     const {lastGseTimestamp, lastEcuTimestamp, lastLoadCellTimestamp} =
         useRocketTimestampsContext();
@@ -47,52 +47,69 @@ export function Navbar() {
     }, [lastLoadCellTimestamp]);
 
     return (
-        <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-            <div>
-                <button>
-                    <Link to="/">Dashboard</Link>
-                </button>
-                <button>
-                    <Link to="/rocket">Rocket</Link>
-                </button>
-                <button>
-                    <Link to="/telemetry">Telemetry</Link>
-                </button>
-                <button>
-                    <Link to="/analytics">Analytics</Link>
-                </button>
-            </div>
+        <div>
+            <div className={styles.topSpacing}></div>
+            <div className={styles.navbar}>
+                <div className={styles.navbarButtons}>
+                    <Link
+                        to="/"
+                        className={`${styles.lastButton} ${styles.navbarButton} `}
+                    >
+                        <div className={styles.unskewed}>Dashboard</div>
+                    </Link>
+                    <Link
+                        to="/telemetry"
+                        className={styles.navbarButton}
+                    >
+                        <div className={styles.unskewed}>Telemetry</div>
+                    </Link>
+                    <Link
+                        to="/analytics"
+                        className={styles.navbarButton}
+                    >
+                        <div className={styles.unskewed}>Analytics</div>
+                    </Link>
+                </div>
+                <div className={styles.systemStatuses}>
+                    {/* <span>Time since last packet:</span> */}
 
-            <div style={{display: "flex", flexDirection: "row", gap: 8}}>
-                {/* <span>Time since last packet:</span> */}
-
-                <span
-                    style={{display: "flex", color: timeSinceLastGsePacket > 1000 ? "red" : null}}
-                >
-                    GSE:{" "}
-                    <span style={{minWidth: 60, textAlign: "right"}}>
-                        {timeSinceLastGsePacket}ms
+                    <span
+                        style={{
+                            display: "flex",
+                            paddingRight: 40,
+                            color: timeSinceLastGsePacket > 1000 ? "red" : null
+                        }}
+                    >
+                        GSE:{" "}
+                        <span style={{minWidth: 60, textAlign: "right"}}>
+                            {timeSinceLastGsePacket}ms
+                        </span>
                     </span>
-                </span>
-                <span
-                    style={{display: "flex", color: timeSinceLastEcuPacket > 1000 ? "red" : null}}
-                >
-                    ECU:{" "}
-                    <span style={{minWidth: 60, textAlign: "right"}}>
-                        {timeSinceLastEcuPacket}ms
+                    <span
+                        style={{
+                            display: "flex",
+                            paddingRight: 40,
+                            color: timeSinceLastEcuPacket > 1000 ? "red" : null
+                        }}
+                    >
+                        ECU:{" "}
+                        <span style={{minWidth: 60, textAlign: "right"}}>
+                            {timeSinceLastEcuPacket}ms
+                        </span>
                     </span>
-                </span>
-                <span
-                    style={{
-                        display: "flex",
-                        color: timeSinceLastLoadCellPacket > 1000 ? "red" : null
-                    }}
-                >
-                    Load Cell:{" "}
-                    <span style={{minWidth: 60, textAlign: "right"}}>
-                        {timeSinceLastLoadCellPacket}ms
+                    <span
+                        style={{
+                            display: "flex",
+                            paddingRight: 40,
+                            color: timeSinceLastLoadCellPacket > 1000 ? "red" : null
+                        }}
+                    >
+                        Load Cell:{" "}
+                        <span style={{minWidth: 60, textAlign: "right"}}>
+                            {timeSinceLastLoadCellPacket}ms
+                        </span>
                     </span>
-                </span>
+                </div>
             </div>
         </div>
     );

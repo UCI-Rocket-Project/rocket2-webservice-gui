@@ -11,7 +11,8 @@
 
 .title {
     text-align: center;
-    margin-top: 1vh;
+    margin-top: 0px;
+    padding-top: 20px;
     margin-bottom: 1vh;
 }
 
