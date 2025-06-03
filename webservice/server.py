@@ -238,6 +238,25 @@ def set_solenoid(system_name, switch_name, new_state):
         )
     else:
         return {"error": "no system with that name"}
+#new load cell reader
+def recv_packet(sock):
+    # find SYNC in stream
+    buf = b''
+    while True:
+        b = sock.recv(1)
+        if not b:
+            raise ConnectionError
+        buf += b
+        if buf.endswith(SYNC):
+            break
+    # now read the 7-byte payload
+    payload = sock.recv(7)
+    while len(payload) < 7:
+        part = sock.recv(7 - len(payload))
+        if not part:
+            raise ConnectionError
+        payload += part
+    return payload
 
 
 def start_system_listening(
@@ -263,10 +282,19 @@ def start_system_listening(
                 connection = gse_connection
             else:
                 print("LOAD CEll", flush=True)
-                load_cell_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                load_cell_connection.connect(connection_info)
+                load_cell_connection = socket.create_connection(connection_info)
                 connection = load_cell_connection
                 print("LOAD CEll CONNECTED", flush=True)
+                while True:
+                    data = recv_packet(connection)
+                    ts, b0, b1, b2 = struct.unpack('<I3B', data)
+                    raw = (b0 << 16) | (b1 << 8) | b2
+                    if raw & (1 << 23):
+                        raw -= (1 << 24)
+                    list_data=[ts, raw/-30.6]
+                    # print(list_data)    debugging print
+                    update_handler(list_data)
+
             failed_attempts = 0
             while True:
                 with connection_lock:

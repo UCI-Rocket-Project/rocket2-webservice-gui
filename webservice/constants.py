@@ -81,7 +81,7 @@ ECU_DATA_FORMAT = [
 PT_CALIBRATIONS = {
     # "ptName": (scaling, y_int)
     # Old 1K Cal (235, -240)
-    "pressureGn2": (1, 0),  # Unused
+    "pressureGn2": (190, 11.9),  # Unused
     "pressureCombustionChamber": (190, 11.9),
     "pressureLox": (190, 11.9),  # 1K
     "pressureLng": (190, 11.9),  # 1K
@@ -90,6 +90,6 @@ PT_CALIBRATIONS = {
     "pressureInjectorLng": (190, 11.9),  # 1K
 }
 
-LOAD_CELL_DATA_LENGTH = 8  # 4(packet_time) + 4 * 1(floats) + \r\n
-
+LOAD_CELL_DATA_LENGTH = 7  # 4(packet_time) + 4 * 1(floats) + \r\n
+SYNC = b'\xAA\x55'
 LOAD_CELL_DATA_FORMAT = ["packet_time", "total_force"]
