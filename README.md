@@ -1,5 +1,7 @@
 # Webservice & GUI
 
+Look at Krinsky's Guide to Rocket GUI.pdf for all information about the GUI
+
 ## For developers
 
 ### 1: Set up pre-commit to make all your code nice before committing

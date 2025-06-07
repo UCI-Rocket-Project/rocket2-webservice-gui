@@ -50,7 +50,7 @@ const RocketSim = () => {
 
         // Create the camera.
         cameraRef.current = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-        cameraRef.current.position.set(0, 5, 20);
+        cameraRef.current.position.set(10, 20, 20);
 
         // Create the renderer.
         rendererRef.current = new THREE.WebGLRenderer({antialias: true});
@@ -71,7 +71,7 @@ const RocketSim = () => {
         const groundTexture = textureLoader.load("dirt.jpg", (texture) => {
             texture.wrapS = THREE.MirroredRepeatWrapping;
             texture.wrapT = THREE.MirroredRepeatWrapping;
-            texture.repeat.set(20, 20);
+            texture.repeat.set(100, 100);
             texture.anisotropy = rendererRef.current.capabilities.getMaxAnisotropy();
         });
         const groundGeometry = new THREE.PlaneGeometry(1000, 1000);
@@ -201,11 +201,6 @@ const RocketSim = () => {
                 // Adjust the camera's vertical position by the same delta to maintain its relative offset.
                 cameraRef.current.position.y += deltaY;
 
-                // Update the ground texture's tiling as the rocket ascends.
-                if (groundRef.current.material.map) {
-                    const newRepeat = Math.max(20, smoothedAltitude / 5);
-                    groundRef.current.material.map.repeat.set(newRepeat, newRepeat);
-                }
                 // Update OrbitControls target.
                 controls.target.copy(rocketRef.current.position);
                 setAltitudeDisplay(smoothedAltitude.toFixed(2));
@@ -216,25 +211,18 @@ const RocketSim = () => {
                 // Extract horizontal acceleration and velocity data from flight.
                 // Default to zero if data are missing.
                 const {
-                    accelerationX = 0,
-                    accelerationY = 0,
                     ecefVelocityX = 0,
-                    ecefVelocityY = 0
+                    ecefVelocityY = 0,
+                    ecefVelocityZ = 0
                 } = flightRef.current || {};
-                // Compute the magnitude of the horizontal velocity.
-                const velocityMagnitude = Math.hypot(ecefVelocityX, ecefVelocityY);
-                // Only update roll if the rocket is moving to avoid jitter.
-                if (velocityMagnitude > 0.001) {
-                    // Calculate angles (in radians) for the acceleration and velocity vectors.
-                    const accelerationAngle = Math.atan2(accelerationY, accelerationX);
-                    const velocityAngle = Math.atan2(ecefVelocityY, ecefVelocityX);
-                    // The target roll is the difference between these angles.
-                    const targetRoll = accelerationAngle - velocityAngle;
-                    // Smoothly interpolate the current roll (rotation.z) toward the target.
-                    rocketRef.current.rotation.z = THREE.MathUtils.lerp(
-                        rocketRef.current.rotation.z,
-                        targetRoll,
-                        0.05
+                const velocity = new THREE.Vector3(ecefVelocityX, -ecefVelocityY, ecefVelocityZ);
+                if (velocity.lengthSq() > 10) {
+                    const rocketPos = rocketRef.current.position.clone();
+                    const lookTarget = rocketPos.clone().add(velocity);
+                    rocketRef.current.lookAt(lookTarget);
+                } else {
+                    rocketRef.current.lookAt(
+                        rocketRef.current.position.clone().add(new THREE.Vector3(0, -1, 0))
                     );
                 }
             }

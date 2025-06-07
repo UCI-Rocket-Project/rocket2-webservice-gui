@@ -110,7 +110,7 @@ export function App() {
                 } else if (
                     key.includes("altitude") ||
                     key.includes("acceleration") ||
-                    key.includes("ecefVelocityY")
+                    key.includes("ecefVelocity")
                 ) {
                     let key_name = key;
                     flight[key_name] = state[key];
