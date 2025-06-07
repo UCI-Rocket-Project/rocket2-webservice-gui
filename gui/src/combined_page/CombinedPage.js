@@ -9,7 +9,7 @@ export function CombinedPage() {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
-                height: "100vh",
+                height: "95vh",
                 width: "100%",
                 gap: "80px",
                 boxSizing: "border-box"

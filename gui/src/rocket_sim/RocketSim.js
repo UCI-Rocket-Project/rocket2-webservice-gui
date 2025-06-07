@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OBJLoader} from "three/addons/loaders/OBJLoader";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {RocketState} from "../Context";
-
+const SIZE = 750;
 const RocketSim = () => {
     // Get the latest flight data from context.
     const {flight} = useContext(RocketState);
@@ -50,11 +50,11 @@ const RocketSim = () => {
 
         // Create the camera.
         cameraRef.current = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-        cameraRef.current.position.set(10, 20, 20);
+        cameraRef.current.position.set(5, 20, 10);
 
         // Create the renderer.
         rendererRef.current = new THREE.WebGLRenderer({antialias: true});
-        rendererRef.current.setSize(1000, 1000);
+        rendererRef.current.setSize(SIZE, SIZE);
         const container = document.getElementById("rocket-container");
         while (container.firstChild) {
             container.removeChild(container.firstChild);
@@ -175,7 +175,7 @@ const RocketSim = () => {
         const onWindowResize = () => {
             cameraRef.current.aspect = 1;
             cameraRef.current.updateProjectionMatrix();
-            rendererRef.current.setSize(1000, 1000);
+            rendererRef.current.setSize(SIZE, SIZE);
         };
         window.addEventListener("resize", onWindowResize);
 

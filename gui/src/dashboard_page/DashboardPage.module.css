@@ -12,7 +12,7 @@
 .title {
     text-align: center;
     margin-top: 0px;
-    padding-top: 20px;
+    padding-top: 0px;
     margin-bottom: 1vh;
 }
 
@@ -110,6 +110,7 @@
 }
 
 .darkButton {
+    padding: 10px 0px;
     background-color: rgb(24, 24, 27);
     border: none;
     color: white;

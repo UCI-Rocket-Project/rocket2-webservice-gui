@@ -3,7 +3,6 @@ import {RocketState} from "./Context";
 import {getEcuState, getGseState, getLoadCellState, updateRocket} from "./webservice";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {CombinedPage} from "./combined_page/CombinedPage";
-import {DiagramPage} from "./diagram_page/DiagramPage";
 import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {Navbar} from "./Navbar";
@@ -194,10 +193,6 @@ export function App() {
                         />
                         <Route
                             path="/rocket"
-                            element={<DiagramPage />}
-                        />
-                        <Route
-                            path="/telemetry"
                             element={<CombinedPage />}
                         />
                         <Route
