@@ -51,10 +51,7 @@ export function DashboardPage({viewOnly = false}) {
                 toggleKey={TOGGLE_KEY}
                 keydown={keydown}
             />
-            <div
-                className={styles.graphBox}
-                style={{overflowY: "auto", height: "95vh"}}
-            >
+            <div className={styles.graphBox}>
                 <TcChartContainer />
                 <PressureChartContainer />
                 <LoadCellChartContainer />
