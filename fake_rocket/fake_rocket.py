@@ -93,11 +93,19 @@ def start_server(
 
                     if (int((datetime.now() - start_time).total_seconds())) % 20 < 1:
                         shared_state["altitude"] = 40
+                        shared_state["accelerationX"] = 0
                         shared_state["accelerationY"] = 0
+                        shared_state["accelerationZ"] = 0
+                        shared_state["ecefVelocityX"] = 0
                         shared_state["ecefVelocityY"] = 0
+                        shared_state["ecefVelocityZ"] = 0
 
                     shared_state["accelerationY"] = 1
+                    shared_state["accelerationX"] = random.randint(-1, 1) * 1
+                    shared_state["accelerationZ"] = random.randint(-1, 1) * 1
+                    shared_state["ecefVelocityX"] += shared_state["accelerationX"]
                     shared_state["ecefVelocityY"] += shared_state["accelerationY"]
+                    shared_state["ecefVelocityZ"] += shared_state["accelerationZ"]
                     shared_state["altitude"] += (
                         shared_state["ecefVelocityY"]
                         + 0.5 * shared_state["accelerationY"]

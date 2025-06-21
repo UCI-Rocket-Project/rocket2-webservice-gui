@@ -21,12 +21,12 @@ export function Ecu({toggleKey, keydown}) {
                     <RocketGauge
                         value={tcs.Copv}
                         minValue={0}
-                        maxValue={35}
+                        maxValue={40}
                         name={"COPV TC"}
                         units={" °C"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 22}, {limit: 27}, {limit: 35}],
+                            subArcs: [{limit: 26}, {limit: 34}, {limit: 40}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -79,8 +79,8 @@ export function Ecu({toggleKey, keydown}) {
                         name={"LOX INJ PT"}
                         units={" psi"}
                         arc={{
-                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
+                            colorArray: ["#EA4228", "#FFAC1C", "#5BE12C"],
+                            subArcs: [{limit: 200}, {limit: 300}, {limit: 500}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -92,8 +92,8 @@ export function Ecu({toggleKey, keydown}) {
                         name={"LNG INJ PT"}
                         units={" psi"}
                         arc={{
-                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
+                            colorArray: ["#EA4228", "#FFAC1C", "#5BE12C"],
+                            subArcs: [{limit: 200}, {limit: 300}, {limit: 500}],
                             padding: 0.02,
                             width: 0.3
                         }}

@@ -4,11 +4,12 @@
     top: -5px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 5;
+    z-index: 15;
     border-radius: 10px;
-    background-color: rgb(24, 24, 27);
+    background-color: rgb(38,38,43);
     width: 800px;
 }
+
 .dropdownContent {
     min-height: 0px;
     height: 0px;

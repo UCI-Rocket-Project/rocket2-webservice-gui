@@ -51,12 +51,12 @@ export function Gse({toggleKey, keydown}) {
                 <RocketGauge
                         value={pts.CombustionChamber}
                         minValue={0}
-                        maxValue={120}
+                        maxValue={350}
                         units={" psi"}
                         name={"Chamber PT"}
                         arc={{
-                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            colorArray: ["#EA4228", "#FFAC1C", "#5BE12C"],
+                            subArcs: [{limit: 120}, {limit: 250}, {limit: 350}],
                             padding: 0.02,
                             width: 0.3
                         }}

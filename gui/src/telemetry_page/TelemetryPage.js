@@ -31,12 +31,12 @@ export function TelemetryPage() {
                 <RocketGauge
                     value={flight.altitude}
                     minValue={0}
-                    maxValue={15000}
+                    maxValue={25000}
                     name={"Altitude"}
                     units={" ft"}
                     arc={{
-                        colorArray: ["#5BE12C", "#EA4228"],
-                        subArcs: [{limit: 100}, {limit: 300}, {}],
+                        colorArray: ["#EA4228", "#FFAC1C", "#5BE12C"],
+                        subArcs: [{limit: 12000}, {limit: 14000}, {}],
                         padding: 0.02,
                         width: 0.3
                     }}
