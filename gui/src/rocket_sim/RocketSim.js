@@ -1,108 +1,304 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useContext, useMemo, useState, useRef} from "react";
 import * as THREE from "three";
 import {OBJLoader} from "three/addons/loaders/OBJLoader";
-
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {RocketState} from "../Context";
+const SIZE = 750;
 const RocketSim = () => {
-    let scene, camera, renderer, rocketModel, hemisphereLight, ground;
+    // Get the latest flight data from context.
+    const {flight} = useContext(RocketState);
+    // Create an instance of the OBJLoader.
+    const loader = useMemo(() => new OBJLoader(), []);
+    // For displaying the altitude.
+    const [altitudeDisplay, setAltitudeDisplay] = useState(0);
 
-    const loader = new OBJLoader();
+    // Refs for three.js objects.
+    const sceneRef = useRef();
+    const cameraRef = useRef();
+    const rendererRef = useRef();
+    const rocketRef = useRef();
+    const groundRef = useRef();
+    const fireParticlesRef = useRef([]); // for the fire particles
+
+    // Keep the latest flight data in a ref so that the animation loop always uses it.
+    const flightRef = useRef(flight);
+    useEffect(() => {
+        flightRef.current = flight;
+    }, [flight]);
 
     useEffect(() => {
-        // Create a scene
-        scene = new THREE.Scene();
+        // ---------------------------
+        // Scene Setup
+        // ---------------------------
+        sceneRef.current = new THREE.Scene();
 
-        // Create a camera
-        camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Update aspect ratio
-
-        // Create a renderer
-        renderer = new THREE.WebGLRenderer();
-        renderer.setSize(800, 800); // Set canvas size to 600x600 pixels
-
-        // Check if the renderer.domElement is already appended
-        const existingCanvas = document.getElementById("rocket-container").querySelector("canvas");
-        if (existingCanvas) {
-            // If canvas already exists, remove it before appending the new one
-            document.getElementById("rocket-container").removeChild(existingCanvas);
+        // Create a starfield background.
+        const textureLoader = new THREE.TextureLoader();
+        const stars = [];
+        for (let i = 0; i < 10000; i++) {
+            stars.push(
+                THREE.MathUtils.randFloatSpread(2000),
+                THREE.MathUtils.randFloatSpread(2000),
+                THREE.MathUtils.randFloatSpread(2000)
+            );
         }
+        const starsGeometry = new THREE.BufferGeometry();
+        starsGeometry.setAttribute("position", new THREE.Float32BufferAttribute(stars, 3));
+        const starsMaterial = new THREE.PointsMaterial({color: 0x888888});
+        const starField = new THREE.Points(starsGeometry, starsMaterial);
+        sceneRef.current.add(starField);
 
-        document.getElementById("rocket-container").appendChild(renderer.domElement);
+        // Create the camera.
+        cameraRef.current = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        cameraRef.current.position.set(5, 20, 10);
 
-        // Load the rocket model
+        // Create the renderer.
+        rendererRef.current = new THREE.WebGLRenderer({antialias: true});
+        rendererRef.current.setSize(SIZE, SIZE);
+        const container = document.getElementById("rocket-container");
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+        container.appendChild(rendererRef.current.domElement);
+
+        // --- Lights ---
+        const ambientLight = new THREE.AmbientLight(0x404040, 1);
+        sceneRef.current.add(ambientLight);
+        const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+        sceneRef.current.add(hemisphereLight);
+
+        // --- Create a Tiled Ground Plane ---
+        const groundTexture = textureLoader.load("dirt.jpg", (texture) => {
+            texture.wrapS = THREE.MirroredRepeatWrapping;
+            texture.wrapT = THREE.MirroredRepeatWrapping;
+            texture.repeat.set(100, 100);
+            texture.anisotropy = rendererRef.current.capabilities.getMaxAnisotropy();
+        });
+        const groundGeometry = new THREE.PlaneGeometry(1000, 1000);
+        const groundMaterial = new THREE.MeshStandardMaterial({
+            map: groundTexture,
+            color: 0xffffff,
+            roughness: 1
+        });
+        groundRef.current = new THREE.Mesh(groundGeometry, groundMaterial);
+        groundRef.current.rotation.x = -Math.PI / 2;
+        sceneRef.current.add(groundRef.current);
+
+        // --- Setup OrbitControls to enable dragging.
+        const controls = new OrbitControls(cameraRef.current, rendererRef.current.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // ---------------------------
+        // Fire Particle System Parameters
+        // ---------------------------
+        const fireParams = {
+            particleCount: 300,
+            particleRadiusRange: {min: 0.1, max: 0.6},
+            xVelocityRange: 0.5,
+            zVelocityRange: 0.5,
+            yVelocityRange: {min: 1, max: 3},
+            initialFireY: 20, // Starting Y position relative to the rocket.
+            fireResetThreshold: 10 // When a particle reaches this Y, it resets.
+        };
+
+        // ---------------------------
+        // Load the Rocket Model & Attach Fire Particles
+        // ---------------------------
         loader.load(
             "/rocket.obj",
-            function (object) {
-                rocketModel = object;
+            (object) => {
+                rocketRef.current = object;
+                // Rotate and scale the model.
+                rocketRef.current.rotation.x = Math.PI / 2;
+                rocketRef.current.scale.set(0.37, 0.37, 0.37);
+                // Initialize the rocket's altitude (using flight data or default to 9).
+                const initialAltitude =
+                    flightRef.current?.altitude && flightRef.current.altitude > 0
+                        ? flightRef.current.altitude
+                        : 9;
+                rocketRef.current.position.set(0, initialAltitude, 0);
+                sceneRef.current.add(rocketRef.current);
 
-                // Rotate the rocket model 90 degrees
-                rocketModel.rotation.x = Math.PI / 2;
+                // --- Create a Fire Particle System ---
+                const fireGroup = new THREE.Group();
+                fireGroup.rotation.x = THREE.MathUtils.degToRad(90);
+                const particles = [];
+                for (let i = 0; i < fireParams.particleCount; i++) {
+                    const radius =
+                        Math.random() *
+                            (fireParams.particleRadiusRange.max -
+                                fireParams.particleRadiusRange.min) +
+                        fireParams.particleRadiusRange.min;
+                    const geometry = new THREE.SphereGeometry(radius, 8, 8);
+                    const colorStart = new THREE.Color(0xffff00); // yellow
+                    const colorEnd = new THREE.Color(0xffa500); // orange
+                    const color = colorStart.clone().lerp(colorEnd, Math.random());
+                    const material = new THREE.MeshBasicMaterial({
+                        color: color,
+                        transparent: true,
+                        opacity: 0.8
+                    });
+                    const particle = new THREE.Mesh(geometry, material);
+                    // Start each particle at the specified initial Y (beneath the rocket).
+                    particle.position.set(0, fireParams.initialFireY, 0);
+                    // Assign a random velocity.
+                    particle.velocity = new THREE.Vector3(
+                        Math.random() * fireParams.xVelocityRange - fireParams.xVelocityRange / 2,
+                        Math.random() *
+                            (fireParams.yVelocityRange.max - fireParams.yVelocityRange.min) +
+                            fireParams.yVelocityRange.min,
+                        Math.random() * fireParams.zVelocityRange - fireParams.zVelocityRange / 2
+                    );
+                    particles.push(particle);
+                    fireGroup.add(particle);
+                }
+                // Save the fire particles for updating in the animation loop.
+                fireParticlesRef.current = particles;
+                // Attach the fire particles group to the rocket so it moves along with it.
+                rocketRef.current.add(fireGroup);
 
-                // Shrink the rocket model
-                rocketModel.scale.set(0.1, 0.1, 0.1); // Adjust the scale as needed
-                rocketModel.position.y = 2;
-                scene.add(rocketModel);
+                // Set the initial OrbitControls target to the rocket's position.
+                controls.target.copy(rocketRef.current.position);
             },
-            function (xhr) {
-                console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+            (xhr) => {
+                console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
             },
-            function (error) {
-                console.log("An error happened");
+            (error) => {
+                console.error("Error loading rocket model:", error);
             }
         );
 
-        // Create a hemisphere light for daylight simulation
-        hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-        scene.add(hemisphereLight);
+        // ---------------------------
+        // Handle Resizing
+        // ---------------------------
+        const onWindowResize = () => {
+            cameraRef.current.aspect = 1;
+            cameraRef.current.updateProjectionMatrix();
+            rendererRef.current.setSize(SIZE, SIZE);
+        };
+        window.addEventListener("resize", onWindowResize);
 
-        // Create ground
-        const textureLoader = new THREE.TextureLoader();
-        const groundTexture = textureLoader.load("dirt.jpg"); // Replace with your texture path
-
-        const groundGeometry = new THREE.PlaneGeometry(1000, 1000); // Adjust size as needed
-        const groundMaterial = new THREE.MeshStandardMaterial({
-            map: groundTexture,
-            color: 0xaaaaaa,
-            roughness: 1
-        });
-        ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2; // Rotate the ground to be horizontal
-        scene.add(ground);
-
-        // Set camera position
-        // Set camera position
-        camera.position.set(0, 5, 0);
-        camera.lookAt(scene.position);
-
-        // Animation function
+        // ---------------------------
+        // Animation Loop
+        // ---------------------------
         const animate = () => {
             requestAnimationFrame(animate);
+            const time = performance.now() * 0.001;
 
-            // Update rocket model based on web app data
+            if (rocketRef.current) {
+                // Smoothly interpolate the rocket's altitude.
+                const currentAltitude = rocketRef.current.position.y;
+                const targetAltitude =
+                    flightRef.current?.altitude > 0 ? flightRef.current.altitude : 9 + time * 2;
+                const smoothedAltitude = THREE.MathUtils.lerp(
+                    currentAltitude,
+                    targetAltitude,
+                    0.05
+                );
+                const deltaY = smoothedAltitude - currentAltitude;
+                rocketRef.current.position.y = smoothedAltitude;
+                // Adjust the camera's vertical position by the same delta to maintain its relative offset.
+                cameraRef.current.position.y += deltaY;
 
-            // Update camera rotation
-            const time = performance.now() * 0.001; // Convert milliseconds to seconds
-            const rotationSpeed = 0.1; // Degrees per second
-            if (rocketModel) {
-                rocketModel.position.y = rocketModel.position.y + 0.1;
-                camera.position.x = 8 * Math.cos(time * rotationSpeed);
-                camera.position.z = 8 * Math.sin(time * rotationSpeed);
-                camera.position.y = rocketModel.position.y + 5;
-                camera.lookAt(rocketModel.position);
+                // Update OrbitControls target.
+                controls.target.copy(rocketRef.current.position);
+                setAltitudeDisplay(smoothedAltitude.toFixed(2));
+
+                // -----------------------------------------
+                // Update Rocket Roll Based on Flight Data
+                // -----------------------------------------
+                // Extract horizontal acceleration and velocity data from flight.
+                // Default to zero if data are missing.
+                const {
+                    ecefVelocityX = 0,
+                    ecefVelocityY = 0,
+                    ecefVelocityZ = 0
+                } = flightRef.current || {};
+                const velocity = new THREE.Vector3(ecefVelocityX, -ecefVelocityY, ecefVelocityZ);
+                if (velocity.lengthSq() > 10) {
+                    const rocketPos = rocketRef.current.position.clone();
+                    const lookTarget = rocketPos.clone().add(velocity);
+                    rocketRef.current.lookAt(lookTarget);
+                } else {
+                    rocketRef.current.lookAt(
+                        rocketRef.current.position.clone().add(new THREE.Vector3(0, -1, 0))
+                    );
+                }
             }
 
-            // Render the scene
-            renderer.render(scene, camera);
+            // Update the fire particles.
+            if (fireParticlesRef.current.length > 0) {
+                fireParticlesRef.current.forEach((particle) => {
+                    // Move the particle upward.
+                    particle.position.add(particle.velocity);
+                    // Calculate a normalized progress factor for fading.
+                    const t =
+                        (particle.position.y - fireParams.initialFireY) /
+                        (fireParams.initialFireY - fireParams.fireResetThreshold);
+                    // Fade the particle as it rises.
+                    particle.material.opacity = 0.8 * (1 - t);
+                    // When fully faded, reset the particle.
+                    if (t >= 1) {
+                        particle.position.set(0, fireParams.initialFireY, 0);
+                        particle.velocity.set(
+                            Math.random() * fireParams.xVelocityRange -
+                                fireParams.xVelocityRange / 2,
+                            Math.random() *
+                                (fireParams.yVelocityRange.max - fireParams.yVelocityRange.min) +
+                                fireParams.yVelocityRange.min,
+                            Math.random() * fireParams.zVelocityRange -
+                                fireParams.zVelocityRange / 2
+                        );
+                        particle.material.opacity = 0.8;
+                    }
+                });
+            }
+
+            controls.update();
+            rendererRef.current.render(sceneRef.current, cameraRef.current);
         };
 
-        // Start the animation loop
         animate();
 
-        // Cleanup function
+        // ---------------------------
+        // Cleanup on Component Unmount
+        // ---------------------------
         return () => {
-            renderer.dispose();
+            window.removeEventListener("resize", onWindowResize);
+            controls.dispose();
+            rendererRef.current.dispose();
         };
-    }, []);
+    }, [loader]);
 
-    return <div id="rocket-container" />;
+    // ---------------------------
+    // Render: Container & UI Controls
+    // ---------------------------
+    return (
+        <div style={{position: "relative"}}>
+            <div id="rocket-container" />
+            <div
+                className="controls"
+                style={{
+                    position: "absolute",
+                    top: 20,
+                    left: 20,
+                    color: "black",
+                    background: "rgba(255,255,255,0.6)",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    fontFamily: "sans-serif"
+                }}
+            >
+                <div>
+                    <strong>Altitude:</strong> {altitudeDisplay} m
+                </div>
+                <div style={{marginTop: "10px", fontSize: "0.8em"}}>
+                    <em>Drag on the canvas to orbit the camera.</em>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default RocketSim;

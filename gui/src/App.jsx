@@ -2,13 +2,18 @@ import {useEffect, useRef, useState, useCallback} from "react";
 import {RocketState} from "./Context";
 import {getEcuState, getGseState, getLoadCellState, updateRocket} from "./webservice";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
-import {TelemetryPage} from "./telemetry_page/TelemetryPage";
-import {DiagramPage} from "./diagram_page/DiagramPage";
+import {CombinedPage} from "./combined_page/CombinedPage";
 import {AnalyticsPage} from "./analytics_page/AnalyticsPage";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {Navbar} from "./Navbar";
 import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsContext";
+import {ToolingContextProvider} from "./dashboard_page/tooling/tooling-context/tooling-context";
 
+/*
+ * This file contains the main App component that sets up the routing and state management for the application.
+ * It fetches the rocket state from the server and updates the context with the latest data.
+ * The App component also initializes the solenoids, tcs, pts, igniters, and misc states and passes them down to the rest of the app.
+ */
 export function App() {
     const [solenoids, setSolenoids] = useState({});
     const [tcs, setTcs] = useState({});
@@ -52,6 +57,7 @@ export function App() {
         updateRocket(systemName, solenoidName, value);
     };
 
+    // This function is used to parse the state of the rocket and update the context with the latest data.
     const parseState = useCallback(
         (state, timestamps) => {
             let solenoids = {};
@@ -73,10 +79,20 @@ export function App() {
                     solenoids[solenoidName][solenoidType] = state[key];
                 } else if (key.includes("temperature")) {
                     let key_name = key.substring(11, key.length);
-                    tcs[key_name] = state[key];
+                    if (state[key] === 0) {
+                        // Reset the value to 0 if we get a missing reading so it doesn't just average it again
+                        tcs[key_name] = 0;
+                    } else {
+                        tcs[key_name] = ((currentTcs.current[key_name] || 0) + state[key]) / 2.0;
+                    }
                 } else if (key.includes("pressure")) {
                     let key_name = key.substring(8, key.length);
-                    pts[key_name] = state[key];
+                    if (state[key] === 0) {
+                        // Reset the value to 0 if we get a missing reading so it doesn't just average it again
+                        pts[key_name] = 0;
+                    } else {
+                        pts[key_name] = ((currentPts.current[key_name] || 0) + state[key]) / 2.0;
+                    }
                 } else if (key.includes("igniter")) {
                     if (key.includes("Armed")) {
                         igniters.armed = state[key];
@@ -90,10 +106,11 @@ export function App() {
                         }
                         igniters[igniterName][igniterType] = state[key];
                     }
-                } else if (key.includes("altitude")) {
-                    let key_name = key;
-                    flight[key_name] = state[key];
-                } else if (key.includes("acceleration")) {
+                } else if (
+                    key.includes("altitude") ||
+                    key.includes("acceleration") ||
+                    key.includes("ecefVelocity")
+                ) {
                     let key_name = key;
                     flight[key_name] = state[key];
                 } else {
@@ -112,7 +129,7 @@ export function App() {
             for (let system in timestamps) {
                 updateTimestamps(timestamps[system], system);
             }
-
+            // Update the app so it knows it has valid data. Only useful on initialization
             if (
                 Object.keys({...currentSolenoids.current, ...solenoids}).indexOf("CopvVent") !==
                     -1 &&
@@ -124,6 +141,7 @@ export function App() {
         [updateTimestamps]
     );
 
+    // This function fetches the rocket state from the server and dispatches the parsed state to the context.
     const fetchAndDispatchRocketState = useCallback(async () => {
         try {
             const ecuState = (await getEcuState()).data;
@@ -131,9 +149,9 @@ export function App() {
             const loadCellState = (await getLoadCellState()).data;
 
             const timestamps = {
-                ecu: ecuState.time_recv,
-                gse: gseState.time_recv,
-                load_cell: loadCellState.time_recv
+                ecu: ecuState.packet_time,
+                gse: gseState.packet_time,
+                load_cell: loadCellState.packet_time
             };
             parseState({...gseState, ...ecuState, ...loadCellState}, timestamps);
         } catch (error) {
@@ -141,6 +159,7 @@ export function App() {
         }
     }, [parseState]);
 
+    // Start the loop to fetch the rocket state every 250ms
     useEffect(() => {
         const intervalId = setInterval(() => {
             fetchAndDispatchRocketState();
@@ -164,28 +183,29 @@ export function App() {
                 flight
             }}
         >
-            <Router>
-                <Navbar />
-
-                <Routes>
-                    <Route
-                        path="/"
-                        element={<DashboardPage />}
-                    />
-                    <Route
-                        path="/rocket"
-                        element={<DiagramPage />}
-                    />
-                    <Route
-                        path="/telemetry"
-                        element={<TelemetryPage />}
-                    />
-                    <Route
-                        path="/analytics"
-                        element={<AnalyticsPage />}
-                    />
-                </Routes>
-            </Router>
+            <ToolingContextProvider>
+                <Router>
+                    <Navbar />
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={<DashboardPage />}
+                        />
+                        <Route
+                            path="/rocket"
+                            element={<CombinedPage />}
+                        />
+                        <Route
+                            path="/analytics"
+                            element={<AnalyticsPage />}
+                        />
+                        <Route
+                            path="/view"
+                            element={<DashboardPage viewOnly={true} />}
+                        />
+                    </Routes>
+                </Router>
+            </ToolingContextProvider>
         </RocketState.Provider>
     );
 }

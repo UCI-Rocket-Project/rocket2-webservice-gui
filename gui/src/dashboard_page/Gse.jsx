@@ -3,10 +3,13 @@ import styles from "./DashboardPage.module.css";
 import RocketGauge from "../rocket_gauge/RocketGauge";
 import RocketSwitch from "../rocket_switch/RocketSwitch";
 import {RocketState} from "../Context";
+import {useToolingContext} from "./tooling/tooling-context/tooling-context";
 
 export function Gse({toggleKey, keydown}) {
-    const {solenoids, pts, igniters, misc, handleToggleState, isAborted} = useContext(RocketState);
+    const {solenoids, pts, tcs, igniters, misc, handleToggleState, isAborted} =
+        useContext(RocketState);
 
+    const {handleStopPressureFill} = useToolingContext();
     return (
         <div className={styles.gseBox}>
             <div className={styles.boundingBox}>
@@ -18,14 +21,42 @@ export function Gse({toggleKey, keydown}) {
                 </h2>
                 <div className={styles.gseGaugeRow}>
                     <RocketGauge
-                        value={pts.Gn2}
+                        value={tcs.Engine1}
                         minValue={0}
-                        maxValue={6000}
+                        maxValue={120}
                         units={" psi"}
-                        name={"GN2 PT"}
+                        name={"Engine TC 1"}
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 4000}, {limit: 5000}, {limit: 6000}],
+                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                    <RocketGauge
+                        value={tcs.Engine2}
+                        minValue={0}
+                        maxValue={120}
+                        units={" psi"}
+                        name={"Engine TC 2"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                </div>
+                <div className={styles.gseGaugeRow}>
+                <RocketGauge
+                        value={pts.CombustionChamber}
+                        minValue={0}
+                        maxValue={350}
+                        units={" psi"}
+                        name={"Chamber PT"}
+                        arc={{
+                            colorArray: ["#EA4228", "#FFAC1C", "#5BE12C"],
+                            subArcs: [{limit: 120}, {limit: 250}, {limit: 350}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -44,7 +75,13 @@ export function Gse({toggleKey, keydown}) {
                         name="GN2 Fill"
                         expected_value={solenoids["Gn2Fill"]?.expected}
                         feedback_value={solenoids["Gn2Fill"]?.current}
-                        onClick={(event) => handleToggleState("gse", "Gn2Fill", event)}
+                        onClick={(event) => {
+                            handleToggleState("gse", "Gn2Fill", event);
+
+                            if (!event) {
+                                handleStopPressureFill();
+                            }
+                        }}
                         enabled={keydown === toggleKey && !isAborted}
                     />
                 </div>

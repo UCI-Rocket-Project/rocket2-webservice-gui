@@ -1,7 +1,7 @@
 import logging
 import struct
 import binascii
-
+import time
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -13,7 +13,10 @@ logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 def insert_into_db(engine, data, table_name, data_format):
     """Inserts a new row of data into the given table"""
     try:
-        insert_statement = dict_to_insert_statement(table_name, data, data_format)
+        time_recv = time.time()
+        insert_statement = dict_to_insert_statement(
+            table_name, [time_recv, *data], ["time_recv", *data_format]
+        )
         with Session(engine) as session:
             session.execute(text(insert_statement))
             session.commit()
@@ -40,7 +43,7 @@ def dict_to_insert_statement(table_name, data, data_format):
 def _gen_gse_pack(gse_state):
     """Returns a byte string representing a GSE command packet"""
     pack = struct.pack(
-        "<????????????",  # Should match the one in fake_rocket.py
+        "<????????????",  # This is the data format for a GSE command packet. Should match https://github.com/UCI-Rocket-Project/rocket2-overview which should match the one in fake_rocket.py
         gse_state["igniterExpected0"],  # igniter0Fire
         gse_state["igniterExpected1"],  # igniter1Fire
         gse_state["alarmExpected"],  # alarm
@@ -61,7 +64,7 @@ def _gen_gse_pack(gse_state):
 def _gen_ecu_pack(ecu_state):
     """Returns a byte string representing an ECU command packet"""
     pack = struct.pack(
-        "<????",  # Should match the one in fake_rocket.py
+        "<????",  # This is the data format for a ECU command packet. Should match https://github.com/UCI-Rocket-Project/rocket2-overview which should match the one in fake_rocket.py
         ecu_state["solenoidExpectedCopvVent"],
         ecu_state["solenoidExpectedPv1"],
         ecu_state["solenoidExpectedPv2"],

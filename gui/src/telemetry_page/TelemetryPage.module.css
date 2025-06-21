@@ -11,11 +11,18 @@
     gap: 30px;
     border-radius: 10px;
     background-color: rgb(44, 45, 49);
-    width: 50%;
+    width: 100%;
 }
 
 
 .GaugeCol {
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.Battery{
     display: flex;
     border-radius: 10px;
     justify-content: center;

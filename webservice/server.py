@@ -31,7 +31,7 @@ ecu_lock = Lock()
 ecu_connection_lock = Lock()
 
 ecu_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "solenoidCurrentCopvVent": 0,
     "solenoidCurrentPv1": 0,
     "solenoidCurrentPv2": 0,
@@ -54,7 +54,7 @@ gse_lock = Lock()
 gse_connection_lock = Lock()
 
 gse_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "igniterExpected0": 0,
     "igniterExpected1": 0,
     "igniterCurrent0": 0,
@@ -78,9 +78,10 @@ gse_state = {
     "solenoidExpectedLoxVent": -1,
     "solenoidExpectedMvasClose": -1,
     "solenoidExpectedLngVent": -1,
-    "temperatureLox": 0,
-    "temperatureLng": 0,
+    "temperatureEngine1": 0,
+    "temperatureEngine2": 0,
     "pressureGn2": 0,
+    "pressureCombustionChamber": 0,
 }
 
 load_cell_ip = os.environ["LOAD_CELL_IP"]
@@ -91,7 +92,7 @@ load_cell_lock = Lock()
 load_cell_connection_lock = Lock()
 
 load_cell_state = {
-    "time_recv": 0,
+    "packet_time": 0,
     "total_force": 0,
 }
 
@@ -108,6 +109,7 @@ db_config = {
     "user": "gs",
     "password": "rocket",
 }
+
 engine = create_engine(
     f"postgresql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}"
 )
@@ -127,31 +129,32 @@ def clear_data_from_db():
 
 @app.route("/data/<system_name>/<selected_keys>", methods=["GET"])
 def get_data_from_db(system_name, selected_keys):
+    """Returns all of the data from the database for the given set of selected keys"""
     try:
         connection = psycopg2.connect(**db_config)
         cursor = connection.cursor()
-        key_str = "time_recv, "
+        key_str = "packet_time, "
         for key in selected_keys.split(","):
             key_str += f"{key}, "
         key_str = key_str[:-2]
         where_claus = ""
         if request.args.get("startTime") or request.args.get("endTime"):
-            where_claus = f"WHERE time_recv > {request.args.get('startTime', 0)} \
-            AND time_recv < {request.args.get('endTime',200)}"
+            where_claus = f"WHERE packet_time > {request.args.get('startTime', 0)} \
+            AND packet_time < {request.args.get('endTime',200)}"
 
         cursor.execute(
-            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY time_recv ASC;"
+            f"SELECT {key_str} FROM {system_name} {where_claus} ORDER BY packet_time ASC;"
         )
         data = cursor.fetchall()
         cursor.close()
 
-        # Reduce data points down to at most 500 points
-        while len(data) > 500:
-            reduced_data = []
-            for i, row in enumerate(data):
-                if i % 2 == 0:
-                    reduced_data.append(row)
-            data = reduced_data
+        # Reduce data points down to at most 500 points to prevent slowing down the GUI
+        num_divides = len(data) // 500
+        reduced_data = []
+        for i, row in enumerate(data):
+            if i % (num_divides + 1) == 0:
+                reduced_data.append(row)
+        data = reduced_data
         return data
     except Exception:
         return {}
@@ -159,6 +162,7 @@ def get_data_from_db(system_name, selected_keys):
 
 @app.route("/<system_name>/keys", methods=["GET"])
 def get_system_keys_from_db(system_name):
+    """Returns all of the keys in the DB for the user to choose from for the analytics page"""
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
     cursor.execute(f"SELECT * FROM {system_name};")
@@ -176,7 +180,7 @@ def save_db_to_files():
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
     for table_name in ["ecu", "gse", "load_cell"]:
-        cursor.execute(f"SELECT * FROM {table_name} ORDER BY time_recv DESC;")
+        cursor.execute(f"SELECT * FROM {table_name} ORDER BY packet_time DESC;")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
         with open(
@@ -247,11 +251,13 @@ def start_system_listening(
     update_handler,
     system_name,
 ):
+    """Persistent listener that will connect to the given system and listen for data"""
     global ecu_connection, gse_connection, load_cell_connection
     while True:
         try:
             logging.info(f"Attempting to connect to {system_name}")
-            connection = ecu_connection
+            connection = None
+            # Figure out which port to connect to based on the system its supposed to monitor
             if system_name == "ECU":
                 ecu_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 ecu_connection.connect(connection_info)
@@ -266,14 +272,28 @@ def start_system_listening(
                 connection = load_cell_connection
             failed_attempts = 0
             while True:
+                # Receive a packet of data from the system
                 with connection_lock:
                     raw_data = connection.recv(package_length)
+                # Check if the data is the correct length
                 if len(raw_data) == package_length:
                     list_data = struct.unpack("<L", raw_data[-4:])[0]
-                    
-                    # ! load cell has no validation for cyclic redundancy check
-                    if system_name == 'LOAD_CELL' or binascii.crc32(raw_data[:-4]) == list_data:                        
-                        list_data = list(struct.unpack(package_format, raw_data if system_name == 'LOAD_CELL' else raw_data[:-4]))
+
+                    # Check the CRC for data corruption. Note: load cell has no validation for cyclic redundancy check so just skip it
+                    if (
+                        system_name == "LOAD_CELL"
+                        or binascii.crc32(raw_data[:-4]) == list_data
+                    ):
+                        list_data = list(
+                            struct.unpack(
+                                package_format,
+                                (
+                                    raw_data
+                                    if system_name == "LOAD_CELL"
+                                    else raw_data[:-4]
+                                ),
+                            )
+                        )
                         update_handler(list_data)
                     # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
@@ -281,7 +301,9 @@ def start_system_listening(
                         f"Didn't get complete packet from {system_name}: {len(raw_data)}"
                     )
                     failed_attempts += 1
-                    if failed_attempts > 10:  # Assume we have disconnected
+                    if (
+                        failed_attempts > 10
+                    ):  # Assume we have disconnected and try to reconnect
                         logging.error(
                             f"Failed to get consistent packets from {system_name}. Restarting connection"
                         )
@@ -295,34 +317,45 @@ def start_system_listening(
 
 
 def handle_update_gse_state(new_state):
+    """Code for updating the GSE state when a new packet is received"""
     global is_gse_initialized
     state_missmatch = False
     with gse_lock:
-        # Take the voltage from the pressures and convert them using the calibration curves
         for index, (key, val) in enumerate(zip(GSE_DATA_FORMAT, new_state)):
             if "pressure" in key:
+                # Take the voltage from the pressures and convert them using the calibration curves
                 new_state[index] = get_pressure_from_voltage(key, val)
             if "InternalState" in key:
+                # If we have no idea what the state should be
                 if not is_gse_initialized:
+                    # Set it to be true
                     gse_state[key.replace("InternalState", "Expected")] = int(val)
+                # If we know what the state should be and it doesn't match
                 elif gse_state[key.replace("InternalState", "Expected")] != int(val):
                     logging.info(
                         f"GSE state for {key.replace('InternalState', 'Expected')} does not match "
                     )
+
                     state_missmatch = True
             else:
+                # Update all of the values in the webservice state to match the new state
                 if type(val) == bool:
                     gse_state[key] = int(val)
                 elif math.isnan(val):
                     gse_state[key] = -1
                     new_state[index] = -1
                 else:
-                    gse_state[key] = val
+                    if "pressure" in key:
+                        gse_state[key] = get_pressure_from_voltage(key, val)
+                    else:
+                        gse_state[key] = val
+    # Create a new thread to save to database so we can keep listening for data
     db_thread = Thread(
         target=insert_into_db, args=(engine, new_state, "gse", GSE_DATA_FORMAT)
     )
     db_thread.start()
 
+    # If we had a missmatch send a command
     if state_missmatch and is_gse_initialized:
         send_solenoid_command(gse_state, gse_connection, gse_connection_lock, "gse")
     is_gse_initialized = True
@@ -333,18 +366,21 @@ def handle_update_ecu_state(new_state):
     state_missmatch = False
     with ecu_lock:
         for index, (key, val) in enumerate(zip(ECU_DATA_FORMAT, new_state)):
-            # Take the voltage from the pressures and convert them using the calibration curves
             if "pressure" in key:
+                # Take the voltage from the pressures and convert them using the calibration curves
                 new_state[index] = get_pressure_from_voltage(key, val)
             if "InternalState" in key:  # If it is an internal state key
+                # If we have no idea what the state should be
                 if not is_ecu_initialized:
                     ecu_state[key.replace("InternalState", "Expected")] = int(val)
+                # If we know what the state should be and it doesn't match
                 elif ecu_state[key.replace("InternalState", "Expected")] != int(val):
                     logging.info(
                         f"ECU state for {key.replace('InternalState', 'Expected')} does not match "
                     )
                     state_missmatch = True
             else:
+                # Update all of the values in the webservice state to match the new state
                 if type(val) == bool:
                     ecu_state[key] = int(val)
                 elif math.isnan(val):
@@ -355,17 +391,20 @@ def handle_update_ecu_state(new_state):
                         ecu_state[key] = get_pressure_from_voltage(key, val)
                     else:
                         ecu_state[key] = val
+    # Create a new thread to save to database so we can keep listening for data
     db_thread = Thread(
         target=insert_into_db, args=(engine, new_state, "ecu", ECU_DATA_FORMAT)
     )
     db_thread.start()
+    # If we had a missmatch send a command
     if state_missmatch and is_ecu_initialized:
         send_solenoid_command(ecu_state, ecu_connection, ecu_connection_lock, "ecu")
     is_ecu_initialized = True
 
+
 def handle_update_load_cell_state(new_state):
     global is_load_cell_initialized
-    
+
     with load_cell_lock:
         for index, (key, val) in enumerate(zip(LOAD_CELL_DATA_FORMAT, new_state)):
             if type(val) == bool:
@@ -375,24 +414,26 @@ def handle_update_load_cell_state(new_state):
                 new_state[index] = -1
             else:
                 load_cell_state[key] = val
-                        
-    # db_thread = Thread(
-    #     target=insert_into_db, args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT)
-    # )
-    
-    # db_thread.start()
-    
+    # Create a new thread to save to database so we can keep listening for data
+    db_thread = Thread(
+        target=insert_into_db,
+        args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT),
+    )
+
+    db_thread.start()
+
     is_load_cell_initialized = True
 
 
 if __name__ == "__main__":
+    # Start GSE Listener
     gse_listening_thread = Thread(
         target=start_system_listening,
         args=(
             (gse_ip, gse_port),
             gse_connection_lock,
             GSE_DATA_LENGTH,
-            "<L???????????????ffffffffffffff",  # Should match the one in fake_rocket.py
+            "<L???????????????fffffffffffffff",  # This is the data format for a GSE data packet. Should match https://github.com/UCI-Rocket-Project/rocket2-overview which should match the one in fake_rocket.py
             handle_update_gse_state,
             "GSE",
         ),
@@ -400,20 +441,22 @@ if __name__ == "__main__":
     gse_listening_thread.daemon = True
     gse_listening_thread.start()
 
+    # Start ECU Listener
     ecu_listening_thread = Thread(
         target=start_system_listening,
         args=(
             (ecu_ip, ecu_port),
             ecu_connection_lock,
             ECU_DATA_LENGTH,
-            "<Lff????fffffffffffffffffffffffffffffff",  # Should match the one in fake_rocket.py
+            "<Lff????fffffffffffffffffffffffffffffff",  # This is the data format for a ECU data packet. Should match https://github.com/UCI-Rocket-Project/rocket2-overview which should match the one in fake_rocket.py
             handle_update_ecu_state,
             "ECU",
         ),
     )
     ecu_listening_thread.daemon = True
     ecu_listening_thread.start()
-    
+
+    # Start Load Cell Listener
     load_cell_listening_thread = Thread(
         target=start_system_listening,
         args=(
@@ -427,7 +470,8 @@ if __name__ == "__main__":
     )
     load_cell_listening_thread.daemon = True
     load_cell_listening_thread.start()
-    
+
+    # Start the Flask server
     app.run(
         host="0.0.0.0", port=8000
     )  # DO NOT TURN ON DEBUG MODE OR IT WILL SHIT BRICKS

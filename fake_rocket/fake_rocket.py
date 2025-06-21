@@ -56,6 +56,7 @@ def start_server(
     shared_state,
     command_handler,
 ):
+    global gse_state, ecu_state
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(("", port))
     server_socket.listen(1)
@@ -72,30 +73,75 @@ def start_server(
                 packed_data = None
                 if system_name == "ECU":
                     data_format = "<Lff????fffffffffffffffffffffffffffffff"  # Should match the one in server.py
-                    data_to_send = (shared_state[key] for key in ECU_DATA_FORMAT)
+                    data_to_send = [shared_state[key] for key in ECU_DATA_FORMAT]
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
 
-                    shared_state["time_recv"] = (
+                    shared_state["packet_time"] = (
                         int((datetime.now() - start_time).total_seconds()) * 1000
                     )
-                    shared_state["pressureCopv"] += random.randint(-1, 1) / 1000
+                    if shared_state["solenoidInternalStateCopvVent"]:
+                        shared_state["pressureCopv"] += random.randint(-10, 0) / 1000
+                        if shared_state["pressureCopv"] < 0:
+                            shared_state["pressureCopv"] = 0
+
                     shared_state["pressureLox"] += random.randint(-1, 1) / 1000
                     shared_state["pressureLng"] += random.randint(-1, 1) / 1000
+
+                    shared_state["batteryVoltage"] += random.randint(-1, 1)
+                    shared_state["supplyVoltage"] += random.randint(-1, 1)
+
+                    if (int((datetime.now() - start_time).total_seconds())) % 20 < 1:
+                        shared_state["altitude"] = 40
+                        shared_state["accelerationX"] = 0
+                        shared_state["accelerationY"] = 0
+                        shared_state["accelerationZ"] = 0
+                        shared_state["ecefVelocityX"] = 0
+                        shared_state["ecefVelocityY"] = 0
+                        shared_state["ecefVelocityZ"] = 0
+
+                    shared_state["accelerationY"] = 1
+                    shared_state["accelerationX"] = random.randint(-1, 1) * 1
+                    shared_state["accelerationZ"] = random.randint(-1, 1) * 1
+                    shared_state["ecefVelocityX"] += shared_state["accelerationX"]
+                    shared_state["ecefVelocityY"] += shared_state["accelerationY"]
+                    shared_state["ecefVelocityZ"] += shared_state["accelerationZ"]
+                    shared_state["altitude"] += (
+                        shared_state["ecefVelocityY"]
+                        + 0.5 * shared_state["accelerationY"]
+                    )
+
                     shared_state["temperatureCopv"] += random.randint(-1, 1)
-                else:
-                    data_format = "<L???????????????ffffffffffffff"  # Should match the one in server.py
+                    shared_state["altitude"] += random.randint(0, 1)
+                elif system_name == "GSE":
+                    data_format = "<L???????????????fffffffffffffff"  # Should match the one in server.py
                     data_to_send = (shared_state[key] for key in GSE_DATA_FORMAT)
                     packed_data = struct.pack(data_format, *data_to_send)
                     crc32_value = binascii.crc32(packed_data)
-                    shared_state["time_recv"] = (
+                    shared_state["packet_time"] = (
                         int((datetime.now() - start_time).total_seconds()) * 1000
                     )
-                    shared_state["temperatureLox"] += random.randint(-1, 1) / 1000
-                    shared_state["temperatureLng"] += random.randint(-1, 1) / 1000
+                    if shared_state["solenoidInternalStateGn2Fill"]:
+                        ecu_state["pressureCopv"] += random.randint(0, 10) / 1000
+                    shared_state["temperatureEngine1"] += random.randint(-1, 1) / 1000
+                    shared_state["temperatureEngine2"] += random.randint(-1, 1) / 1000
                     shared_state["pressureGn2"] += random.randint(-1, 1) / 1000
 
-                client_socket.sendall(packed_data + struct.pack("<L", crc32_value))
+                else:
+                    data_format = "<Lf"
+                    data_to_send = (shared_state[key] for key in LOAD_CELL_DATA_FORMAT)
+                    packed_data = struct.pack(data_format, *data_to_send)
+                    shared_state["packet_time"] = (
+                        int((datetime.now() - start_time).total_seconds()) * 1000
+                    )
+                    shared_state["total_force"] += 1.0
+                    crc32_value = None
+
+                client_socket.sendall(
+                    (packed_data + struct.pack("<L", crc32_value))
+                    if crc32_value
+                    else packed_data
+                )
                 time.sleep(0.5)
         except BrokenPipeError:
             logging.warning(f"{system_name} lost connection to webservice. Restarting")
@@ -128,9 +174,10 @@ def main():
     global gse_state, ecu_state
     gse_port = 10002
     ecu_port = 10004
+    load_cell_port = 10069
     gse_manager = Manager()
     initial_gse_state = {
-        "time_recv": 10,
+        "packet_time": 10,
         "igniterArmed": 0,
         "igniter0Continuity": 0,
         "igniter1Continuity": 0,
@@ -159,28 +206,29 @@ def main():
         "solenoidCurrentLoxVent": 0,
         "solenoidCurrentLngFill": 0,
         "solenoidCurrentLngVent": 0,
-        "temperatureLox": -200,
-        "temperatureLng": -200,
+        "temperatureEngine1": -200,
+        "temperatureEngine2": -200,
         "pressureGn2": 1.2,
+        "pressureCombustionChamber": 10,
     }
 
     ecu_manager = Manager()
     initial_ecu_state = {
-        "time_recv": 10,
+        "packet_time": 10,
         "packetRssi": 0,
         "packetLoss": 0,
         "solenoidInternalStateCopvVent": 0,
         "solenoidInternalStatePv1": 0,
         "solenoidInternalStatePv2": 0,
         "solenoidInternalStateVent": 0,
-        "supplyVoltage": 0,
-        "batteryVoltage": 0,
+        "supplyVoltage": 30,
+        "batteryVoltage": 40,
         "solenoidCurrentCopvVent": 0,
         "solenoidCurrentPv1": 0,
         "solenoidCurrentPv2": 0,
         "solenoidCurrentVent": 0,
         "temperatureCopv": 0,
-        "pressureCopv": 1.2,
+        "pressureCopv": 0,
         "pressureLox": 1.1,
         "pressureLng": 1.1,
         "pressureInjectorLox": 0,
@@ -189,13 +237,13 @@ def main():
         "angularVelocityY": 0,
         "angularVelocityZ": 0,
         "accelerationX": 0,
-        "accelerationY": 500,
+        "accelerationY": 200,
         "accelerationZ": 0,
         "magneticFieldX": 0,
         "magneticFieldY": 0,
         "magneticFieldZ": 0,
         "temperature": 0,
-        "altitude": 90,
+        "altitude": 40,
         "ecefPositionX": 0,
         "ecefPositionY": 0,
         "ecefPositionZ": 0,
@@ -204,6 +252,11 @@ def main():
         "ecefVelocityY": 0,
         "ecefVelocityZ": 0,
         "ecefVelocityAccuracy": 0,
+    }
+    load_cell_manager = Manager()
+    initial_load_cell_state = {
+        "packet_time": 10,
+        "total_force": 123,
     }
 
     ecu_state = ecu_manager.dict(initial_ecu_state)
@@ -221,6 +274,15 @@ def main():
         daemon=True,
     )
     gse_server_thread.start()
+
+    load_cell_state = load_cell_manager.dict(initial_load_cell_state)
+    load_cell_server_thread = threading.Thread(
+        target=start_server,
+        args=("LOAD_CELL", load_cell_port, load_cell_state, None),
+        daemon=True,
+    )
+    load_cell_server_thread.start()
+
     try:
         # Keep the main thread running
         while True:

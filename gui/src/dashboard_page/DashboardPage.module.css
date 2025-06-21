@@ -3,15 +3,32 @@
     justify-content: space-between;
 }
 
-::-webkit-scrollbar-button {
-    display: none;
-    width: 50px;
-    height: 50px;
+.graphBox {
+    width: 100%;
+    overflow-y: auto;
+    height: 95vh;
 }
-
+/* This must be written globally */
+:global(.DashboardPage_graphBox__h4DO1::-webkit-scrollbar) {
+    width: 25px;
+    height: 100%;
+}
+:global(.DashboardPage_graphBox__h4DO1::-webkit-scrollbar-track) {
+    background: rgb(44, 44, 44);
+}
+:global(.DashboardPage_graphBox__h4DO1::-webkit-scrollbar-thumb) {
+    background-color: rgb(159, 159, 159);
+    border-radius: 15px;
+    margin: 5px;
+    border: 7px solid rgb(44, 44, 44);
+}
+:global(.DashboardPage_graphBox__h4DO1::-webkit-scrollbar-thumb:hover) {
+    background-color: rgb(204, 204, 204);
+}
 .title {
     text-align: center;
-    margin-top: 1vh;
+    margin-top: 0px;
+    padding-top: 0px;
     margin-bottom: 1vh;
 }
 
@@ -21,19 +38,9 @@
     background-color: rgb(44, 45, 49);
 }
 
-.toolingBoundingBox {
-    overflow: auto;
-    height: 500px;
-}
-
-.tooling {
-    width: 100%;
-    height: "100%";
-}
-
 .gseBox {
-    min-width: 400px;
-    width: 500px; /* Don't know why this needs to be here */
+    min-width: 500px;
+    width: 700px; /* Don't know why this needs to be here */
     padding-left: 5px;
     padding-right: 5px;
     height: 300px;
@@ -44,9 +51,6 @@
     padding-left: 5px;
     padding-right: 5px;
     height: 300px;
-}
-.graphBox {
-    width: 100%;
 }
 
 .ecuSwitchColumn {
@@ -118,28 +122,8 @@
     justify-content: center;
 }
 
-.dropdown {
-    transition: all 0.5s ease-in-out;
-    position: absolute;
-    top: -5px;
-    left: 30%;
-    z-index: 5;
-    border-radius: 10px;
-    background-color: rgb(24, 24, 27);
-    width: 40%;
-}
-.dropdownContent {
-    min-height: 0px;
-    height: 0px;
-    transition: all 0.5s ease-in-out;
-    overflow: hidden;
-}
-
-.dropdown:hover .dropdownContent {
-    height: 600px;
-}
-
 .darkButton {
+    padding: 10px 0px;
     background-color: rgb(24, 24, 27);
     border: none;
     color: white;

@@ -1,6 +1,6 @@
-GSE_DATA_LENGTH = 79  # 4(time_recv) + 15(bool) + 4 * 14(floats) + 4(crc)
+GSE_DATA_LENGTH = 83  # 4(packet_time) + 15(bool) + 4 * 15(floats) + 4(crc)
 GSE_DATA_FORMAT = [
-    "time_recv",
+    "packet_time",
     "igniterArmed",
     "igniterCurrent0",
     "igniterCurrent1",
@@ -27,17 +27,18 @@ GSE_DATA_FORMAT = [
     "solenoidCurrentMvasClose",
     "solenoidCurrentLoxVent",
     "solenoidCurrentLngVent",
-    "temperatureLox",
-    "temperatureLng",
+    "temperatureEngine1",
+    "temperatureEngine2",
     "pressureGn2",
+    "pressureCombustionChamber",
 ]
 
 ECU_DATA_LENGTH = (
-    144  # 4(time_recv) + 4 * 2(floats) + 4(bool) + 4 * 31(floats) + 4(crc) + \r\n
+    144  # 4(packet_time) + 4 * 2(floats) + 4(bool) + 4 * 31(floats) + 4(crc) + \r\n
 )
 
 ECU_DATA_FORMAT = [
-    "time_recv",
+    "packet_time",
     "packetRssi",
     "packetLoss",
     "solenoidInternalStateCopvVent",
@@ -79,20 +80,16 @@ ECU_DATA_FORMAT = [
 
 PT_CALIBRATIONS = {
     # "ptName": (scaling, y_int)
-    "pressureGn2": (1, 0),
-    "pressureLox": (235, -240),  # 500 Identical with LNGInjector
-    "pressureLng": (134, -163),  # 500 identical with LOX
+    # Old 1K Cal (235, -240)
+    "pressureGn2": (1, 0),  # Unused
+    "pressureCombustionChamber": (190, 11.9),
+    "pressureLox": (190, 11.9),  # 1K
+    "pressureLng": (190, 11.9),  # 1K
     "pressureCopv": (964, 37.2),
-    "pressureInjectorLox": (235, -240),  # 500 identical with LOX
-    "pressureInjectorLng": (235, -240)  # 500 identical with LOX
-    # "pressureInjectorLng":(954 ,-139)
+    "pressureInjectorLox": (190, 11.9),  # 1K
+    "pressureInjectorLng": (190, 11.9),  # 1K
 }
 
-LOAD_CELL_DATA_LENGTH = (
-    8  # 4(time_recv) + 4 * 1(floats) + \r\n
-)
+LOAD_CELL_DATA_LENGTH = 8  # 4(packet_time) + 4 * 1(floats) + \r\n
 
-LOAD_CELL_DATA_FORMAT = [
-    "time_recv",
-    "total_force"
-]
+LOAD_CELL_DATA_FORMAT = ["packet_time", "total_force"]
