@@ -42,6 +42,20 @@ services:
             - 5432:5432
         networks:
             - basic_net
+    questdb:
+        image: questdb/questdb:latest # Always use a specific tag like :latest or :8.0.0
+        restart: always
+        volumes: 
+            - ./questdb_data:/var/lib/questdb # Mounts the named volume 'questdb_data'
+        ports:
+            - "9000:9000"
+            - "8812:8812"
+            - "9009:9009"
+        networks:
+            - basic_net
+
+
+
     adminer:
         image: adminer
         restart: always
