@@ -84,7 +84,9 @@ CREATE TABLE IF NOT EXISTS gse (
     temperatureEngine1 FLOAT,
     temperatureEngine2 FLOAT,
     pressureGn2 FLOAT,
-    pressureCombustionChamber FLOAT
+    pressureVent FLOAT,
+    pressureLoxInjTee FLOAT, 
+    pressureLoxMvas FLOAT
 );
 
 CREATE TABLE IF NOT EXISTS load_cell (

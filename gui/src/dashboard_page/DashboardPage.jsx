@@ -7,6 +7,7 @@ import {Ecu} from "./Ecu";
 import {TcChartContainer} from "./tc_graph/TcChartContainer";
 import {LoadCellChartContainer} from "./load_cell_graph/LoadCellChartContainer";
 import {Tooling} from "./tooling/tooling";
+import { PressureChartContainerLines } from "./pressure_graph_lines/PressureChartContainerLines";
 
 let TOGGLE_KEY = "Control";
 
@@ -56,6 +57,7 @@ export function DashboardPage({viewOnly=false}) {
             >
                 <TcChartContainer />
                 <PressureChartContainer />
+                <PressureChartContainerLines />
                 <LoadCellChartContainer />
             </div>
             <Ecu

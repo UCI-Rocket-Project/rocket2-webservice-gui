@@ -1,4 +1,4 @@
-GSE_DATA_LENGTH = 83  # 4(packet_time) + 15(bool) + 4 * 15(floats) + 4(crc)
+GSE_DATA_LENGTH = 91  # 4(packet_time) + 15(bool) + 4 * 17(floats) + 4(crc)
 GSE_DATA_FORMAT = [
     "packet_time",
     "igniterArmed",
@@ -30,7 +30,9 @@ GSE_DATA_FORMAT = [
     "temperatureEngine1",
     "temperatureEngine2",
     "pressureGn2",
-    "pressureCombustionChamber",
+    "pressureLoxInjTee",
+    "pressureVent",
+    "pressureLoxMvas"
 ]
 
 ECU_DATA_LENGTH = (
@@ -82,12 +84,15 @@ PT_CALIBRATIONS = {
     # "ptName": (scaling, y_int)
     # Old 1K Cal (235, -240)
     "pressureGn2": (1, 0),  # Unused
-    "pressureCombustionChamber": (190, 11.9),
+    "pressureVent": (190, 11.9),
     "pressureLox": (190, 11.9),  # 1K
     "pressureLng": (190, 11.9),  # 1K
     "pressureCopv": (964, 37.2),
     "pressureInjectorLox": (190, 11.9),  # 1K
     "pressureInjectorLng": (190, 11.9),  # 1K
+    "pressureLoxInjTee": (190, 11.9),  # 1K
+    "pressureLoxMvas": (190, 11.9),  # 1K
+    "pressureVent": (190, 11.9)
 }
 
 LOAD_CELL_DATA_LENGTH = 8  # 4(packet_time) + 4 * 1(floats) + \r\n

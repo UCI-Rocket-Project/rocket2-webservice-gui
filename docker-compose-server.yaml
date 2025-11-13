@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+    webservice:
+        image: webservice
+        ports:
+            - "8000:8000"
+        environment:
+            - ECU_IP=10.0.2.1
+            - ECU_PORT=10001
+            - GSE_IP=10.0.2.0
+            - GSE_PORT=10001
+            - LOAD_CELL_IP=10.0.255.2
+            - LOAD_CELL_PORT=10001
+        volumes:
+            - ./webservice:/app
+        healthcheck:
+            test: curl --fail http://localhost:8000/ecu/state || exit 1
+            interval: 20s
+        networks:
+            - basic_net
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_DB: rocket2
+            POSTGRES_USER: gs
+            POSTGRES_PASSWORD: rocket
+        volumes:
+            - ./postgres:/docker-entrypoint-initdb.d
+        ports:
+            - 5432:5432
+        networks:
+            - basic_net
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
+networks:
+    basic_net:
+        driver: bridge

@@ -24,8 +24,8 @@ export function AbortButton({keydown, toggleKey}) {
                             handleToggleState("ecu", "CopvVent", 1);
                             handleToggleState("gse", "Gn2Fill", 0);
                             handleToggleState("gse", "Gn2Vent", 1);
-                            handleToggleState("gse", "MvasClose", 0);
-                            handleToggleState("gse", "MvasOpen", 1);
+                            handleToggleState("gse", "MvasClose", 1);
+                            handleToggleState("gse", "MvasOpen", 0);
                         }}
                         src="/button_off_open.png"
                         style={{width: 300}}

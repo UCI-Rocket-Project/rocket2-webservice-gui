@@ -49,11 +49,11 @@ export function Gse({toggleKey, keydown}) {
                 </div>
                 <div className={styles.gseGaugeRow}>
                 <RocketGauge
-                        value={pts.CombustionChamber}
+                        value={pts.Vent}
                         minValue={0}
                         maxValue={120}
                         units={" psi"}
-                        name={"Chamber PT"}
+                        name={"Vent PT"} //change the name to "vent pt" --fix-next-commit
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
                             subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
@@ -61,6 +61,37 @@ export function Gse({toggleKey, keydown}) {
                             width: 0.3
                         }}
                     />
+                </div>
+                {/* <div className={styles.gseGaugeRow}>
+                <RocketGauge
+                        value={pts.LoxInjTee}
+                        minValue={0}
+                        maxValue={120}
+                        units={" psi"}
+                        name={"LoxInjTee"} //change the name to "vent pt" --fix-next-commit
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                <RocketGauge
+                        value={pts.LoxMvas}
+                        minValue={0}
+                        maxValue={120}
+                        units={" psi"}
+                        name={"LoxMvas"} //change the name to "vent pt" --fix-next-commit
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                </div> */}
+                <div className={styles.gseGaugeRow}>
+                
                 </div>
                 {/* GSE top row switches */}
                 <div className={styles.switchRow}>

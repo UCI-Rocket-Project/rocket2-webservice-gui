@@ -81,7 +81,9 @@ gse_state = {
     "temperatureEngine1": 0,
     "temperatureEngine2": 0,
     "pressureGn2": 0,
-    "pressureCombustionChamber": 0,
+    "pressureLoxInjTee": 0,
+    "pressureVent":0,
+    "pressureLoxMvas":0,
 }
 
 load_cell_ip = os.environ["LOAD_CELL_IP"]
@@ -125,7 +127,7 @@ def clear_data_from_db():
         session.commit()
     return "ok"
 
-
+#fix in next --hang issue
 @app.route("/data/<system_name>/<selected_keys>", methods=["GET"])
 def get_data_from_db(system_name, selected_keys):
     try:
@@ -167,7 +169,7 @@ def get_system_keys_from_db(system_name):
     column_names = [desc[0] for desc in cursor.description]
     return column_names
 
-
+# fix in next --hang issue
 @app.route("/data/save", methods=["POST"])
 def save_db_to_files():
     """Takes the contents of the ecu and gse tables and saves them into csv files"""
@@ -352,6 +354,12 @@ def handle_update_ecu_state(new_state):
             # Take the voltage from the pressures and convert them using the calibration curves
             if "pressure" in key:
                 new_state[index] = get_pressure_from_voltage(key, val)
+
+                #added to check force --remove-next-commit
+                # if "pressureInjectorLox" in key: 
+                #     print(f"lox reading {get_pressure_from_voltage(key, val)}")
+                # if "pressureInjectorLng" in key: 
+                #     print(f"lng reading {get_pressure_from_voltage(key, val)}")
             if "InternalState" in key:  # If it is an internal state key
                 if not is_ecu_initialized:
                     ecu_state[key.replace("InternalState", "Expected")] = int(val)
@@ -410,7 +418,7 @@ if __name__ == "__main__":
             (gse_ip, gse_port),
             gse_connection_lock,
             GSE_DATA_LENGTH,
-            "<L???????????????fffffffffffffff",  # Should match the one in fake_rocket.py
+            "<L???????????????fffffffffffffffff",  # Should match the one in fake_rocket.py
             handle_update_gse_state,
             "GSE",
         ),

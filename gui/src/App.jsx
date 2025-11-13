@@ -143,6 +143,8 @@ export function App() {
             const gseState = (await getGseState()).data;
             const loadCellState = (await getLoadCellState()).data;
 
+            console.log(ecuState);
+
             const timestamps = {
                 ecu: ecuState.packet_time,
                 gse: gseState.packet_time,

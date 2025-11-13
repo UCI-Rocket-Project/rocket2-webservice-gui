@@ -1,0 +1,6 @@
+export ECU_IP=10.0.2.1
+export ECU_PORT=10001
+export GSE_IP=10.0.2.0
+export GSE_PORT=10001
+export LOAD_CELL_IP=10.0.255.2
+export LOAD_CELL_PORT=10001

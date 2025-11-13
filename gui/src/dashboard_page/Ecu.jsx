@@ -141,16 +141,7 @@ export function Ecu({toggleKey, keydown}) {
                             />
                         </div>
                     </div>
-                    <div
-                        className={styles.boundingBox}
-                        style={{width: 450}}
-                    >
-                        <h2 className={styles.title}>ABORT</h2>
-                        <AbortButton
-                            toggleKey={toggleKey}
-                            keydown={keydown}
-                        />
-                    </div>
+                    
                     {/* battery */}
                     {/* <div className={styles.switchRow}>
                             <div className={styles.battery}>
@@ -170,6 +161,16 @@ export function Ecu({toggleKey, keydown}) {
                             </div>
                         </div> */}
                 </div>
+                <div
+                        className={styles.boundingBox}
+                        style={{width: 450}}
+                    >
+                        <h2 className={styles.title}>ABORT</h2>
+                        <AbortButton
+                            toggleKey={toggleKey}
+                            keydown={keydown}
+                        />
+                    </div>
             </div>
         </div>
     );

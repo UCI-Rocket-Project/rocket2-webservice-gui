@@ -87,6 +87,11 @@ def send_solenoid_command(state, connection, connection_lock, system_name):
 
 
 def get_pressure_from_voltage(pt_name, voltage):
+    #test voltage remove-next-commit
+    # if "pressureInjectorLox" in pt_name: 
+    #     print(f"lox voltage reading {voltage}")
+    # if "pressureInjectorLng" in pt_name:
+    #     print(f"lng voltage reading {voltage}")
     scaling, y_int = PT_CALIBRATIONS[pt_name]
     val = (voltage * scaling) + y_int
     return val if val > 0 else 0
