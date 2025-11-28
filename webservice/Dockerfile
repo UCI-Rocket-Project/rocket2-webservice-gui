@@ -1,6 +1,8 @@
 # Use an official Python runtime as a parent image
 FROM python:3.12
 
+ENV PYTHONUNBUFFERED=1
+
 # Set the working directory to /app
 WORKDIR /app
 

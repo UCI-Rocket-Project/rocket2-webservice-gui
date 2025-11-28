@@ -9,11 +9,13 @@ from constants import PT_CALIBRATIONS
 
 logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 
-
 def insert_into_db(engine, data, table_name, data_format):
+    return insert_into_db(engine, data, table_name, data_format, 0)
+
+def insert_into_db(engine, data, table_name, data_format, recv_offset):
     """Inserts a new row of data into the given table"""
     try:
-        time_recv = time.time()
+        time_recv = time.time() + recv_offset
         insert_statement = dict_to_insert_statement(table_name, [time_recv, *data], ["time_recv", *data_format])
         with Session(engine) as session:
             session.execute(text(insert_statement))

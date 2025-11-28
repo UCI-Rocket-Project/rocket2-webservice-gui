@@ -16,6 +16,7 @@ services:
         ports:
             - "8000:8000"
         environment:
+            - NIDAQ_Device=Dev1
             - ECU_IP=fake_rocket
             - ECU_PORT=10004
             - GSE_IP=fake_rocket

@@ -3,3 +3,5 @@ webservice/saves
 *.venv
 *.DS_Store
 webservice/coldflows
+daqserver/venv/
+daqserver/*.venv/

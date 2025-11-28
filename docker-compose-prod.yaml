@@ -16,6 +16,8 @@ services:
         ports:
             - "8000:8000"
         environment:
+            - NIDAQ_IP=host.docker.internal
+            - NIDAQ_PORT=1622
             - ECU_IP=10.0.2.1
             - ECU_PORT=10001
             - GSE_IP=10.0.2.0

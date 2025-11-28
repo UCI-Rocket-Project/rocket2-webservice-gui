@@ -12,6 +12,10 @@ import struct
 from threading import Lock, Thread
 import binascii
 
+import zmq
+import pyarrow as pa
+import numpy as np
+
 from flask import Flask, request
 from flask_cors import CORS
 from sqlalchemy import create_engine
@@ -19,9 +23,14 @@ import psycopg2
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-
 from helpers import send_solenoid_command, insert_into_db, get_pressure_from_voltage
 from constants import *
+
+nidaq_ip = os.environ["NIDAQ_IP"]
+nidaq_port = int(os.environ["NIDAQ_PORT"])
+nidaq_context = None
+nidaq_socket = None
+nidaq_connection = None
 
 ecu_ip = os.environ["ECU_IP"]
 ecu_port = int(os.environ["ECU_PORT"])
@@ -179,7 +188,8 @@ def save_db_to_files():
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
     for table_name in ["ecu", "gse", "load_cell"]:
-        cursor.execute(f"SELECT * FROM {table_name} ORDER BY packet_time DESC;")
+        # TODO: Why was this oredered by packet time and not recieve time
+        cursor.execute(f"SELECT * FROM {table_name} ORDER BY time_recv DESC;")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
         with open(
@@ -240,7 +250,40 @@ def set_solenoid(system_name, switch_name, new_state):
         )
     else:
         return {"error": "no system with that name"}
+    
+def bulk_insert_into_db(batch):
+    keys = batch.schema.names
+    data_columns = [col.to_numpy() for col in batch.columns]
 
+    for row_values in zip(*data_columns):
+        state = dict(zip(keys, row_values))
+        timestamp = state['timestamp']
+        insert_into_db(engine, row_values, "nidaq", keys, timestamp)
+
+def start_nidaq_listening():
+    global nidaq_connection
+
+    while True:
+        try:
+            nidaq_context = zmq.Context()
+            nidaq_socket = nidaq_context.socket(zmq.SUB)
+            nidaq_socket.connect(f"tcp://{nidaq_ip}:{nidaq_port}") 
+            nidaq_socket.setsockopt_string(zmq.SUBSCRIBE, "")
+
+            while True:
+                msg = nidaq_socket.recv()
+                with pa.ipc.open_stream(msg) as reader:
+                    batch = reader.read_next_batch()
+
+                    db_thread = Thread(
+                        target=bulk_insert_into_db, args=(batch,)
+                    )
+                    db_thread.start()
+                
+        except Exception as e:
+            nidaq_socket.close()
+            logging.error(f"NIDAQ listener failed: {e}")
+            time.sleep(0.5)
 
 def start_system_listening(
     connection_info,
@@ -263,12 +306,13 @@ def start_system_listening(
                 gse_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 gse_connection.connect(connection_info)
                 connection = gse_connection
-            else:
-                print("LOAD CEll", flush=True)
+            elif system_name == "LOAD_CELL":
                 load_cell_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 load_cell_connection.connect(connection_info)
                 connection = load_cell_connection
-                print("LOAD CEll CONNECTED", flush=True)
+            else:
+                print(f"Attemping to connect to invalid system: {system_name}")
+                break
             failed_attempts = 0
             while True:
                 with connection_lock:
@@ -453,6 +497,13 @@ if __name__ == "__main__":
     )
     load_cell_listening_thread.daemon = True
     load_cell_listening_thread.start()
+
+    nidaq_listening_thread = Thread(
+        target=start_nidaq_listening,
+        args=(),
+    )
+    nidaq_listening_thread.daemon = True
+    nidaq_listening_thread.start()
 
     app.run(
         host="0.0.0.0", port=8000

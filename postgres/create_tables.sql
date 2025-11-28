@@ -94,3 +94,10 @@ CREATE TABLE IF NOT EXISTS load_cell (
     packet_time INTEGER,
     total_force FLOAT
 );
+
+CREATE TABLE IF NOT EXISTS nidaq (
+    time_recv FLOAT,
+    timestamp FLOAT,
+    ArduinoPWM FLOAT,
+    ArduinoPWM2 FLOAT
+);
