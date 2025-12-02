@@ -166,7 +166,7 @@ def main():
     global gse_state, ecu_state
     gse_port = 10002
     ecu_port = 10004
-    load_cell_port = 10069
+    load_cell_port = 10001 #WTF? this was also 10069 before???
     gse_manager = Manager()
     initial_gse_state = {
         "packet_time": 10,

@@ -401,6 +401,8 @@ def handle_update_load_cell_state(new_state):
             else:
                 load_cell_state[key] = val
 
+    #print(f"Load Cell Force: {load_cell_state["total_force"]}", flush=True) #don't buffer, just flush out 
+    # Create a new thread to save to database so we can keep listening for data
     db_thread = Thread(
         target=insert_into_db,
         args=(engine, new_state, "load_cell", LOAD_CELL_DATA_FORMAT),
