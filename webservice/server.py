@@ -382,6 +382,7 @@ def handle_update_ecu_state(new_state):
     db_thread = Thread(
         target=insert_into_db, args=(engine, new_state, "ecu", ECU_DATA_FORMAT)
     )
+    #print(new_state)
     db_thread.start()
     if state_missmatch and is_ecu_initialized:
         send_solenoid_command(ecu_state, ecu_connection, ecu_connection_lock, "ecu")

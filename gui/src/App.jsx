@@ -143,7 +143,7 @@ export function App() {
             const gseState = (await getGseState()).data;
             const loadCellState = (await getLoadCellState()).data;
 
-            console.log(ecuState);
+            console.log("Pressure LOX: " + ecuState.pressureInjectorLox);
 
             const timestamps = {
                 ecu: ecuState.packet_time,
