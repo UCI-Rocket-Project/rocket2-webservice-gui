@@ -393,6 +393,7 @@ def handle_update_load_cell_state(new_state):
     global is_load_cell_initialized
 
     with load_cell_lock:
+        print(new_state, flush=True)
         for index, (key, val) in enumerate(zip(LOAD_CELL_DATA_FORMAT, new_state)):
             if type(val) == bool:
                 load_cell_state[key] = int(val)
@@ -447,7 +448,7 @@ if __name__ == "__main__":
             (load_cell_ip, load_cell_port),
             load_cell_connection_lock,
             LOAD_CELL_DATA_LENGTH,
-            "<Lf",
+            "<Ll",
             handle_update_load_cell_state,
             "LOAD_CELL",
         ),
