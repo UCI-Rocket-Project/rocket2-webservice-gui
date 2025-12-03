@@ -91,6 +91,6 @@ CREATE TABLE IF NOT EXISTS gse (
 
 CREATE TABLE IF NOT EXISTS load_cell (
     time_recv FLOAT,
-    packet_time INTEGER,
+    packet_time BIGINT,
     total_force FLOAT
 );

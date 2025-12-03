@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+    gui:
+        image: gui
+        volumes:
+            - ./gui/src:/app/src
+        ports:
+            - "3000:3000"
+        networks:
+            - basic_net
+        environment:
+            - WATCHPACK_POLLING=true
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_DB: rocket2
+            POSTGRES_USER: gs
+            POSTGRES_PASSWORD: rocket
+        volumes:
+            - ./postgres:/docker-entrypoint-initdb.d
+        ports:
+            - 5432:5432
+        networks:
+            - basic_net
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
+networks:
+    basic_net:
+        driver: bridge

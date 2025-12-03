@@ -88,7 +88,7 @@ PT_CALIBRATIONS = {
     "pressureLox": (190, 11.9),  # 1K
     "pressureLng": (190, 11.9),  # 1K
     "pressureCopv": (964, 37.2),
-    "pressureInjectorLox": (190, 11.9),  # 1K
+    "pressureInjectorLox": (190, 18.2),  # 1K
     "pressureInjectorLng": (190, 11.9),  # 1K
     "pressureLoxInjTee": (190, 11.9),  # 1K
     "pressureLoxMvas": (190, 11.9),  # 1K

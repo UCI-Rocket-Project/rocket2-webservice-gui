@@ -6,6 +6,8 @@ run_dev:
 	docker-compose -f docker-compose-dev.yaml up
 server:
 	docker-compose -f docker-compose-server.yaml up
+guionly:
+	docker-compose -f docker-compose-gui.yaml up
 run:
 	docker-compose -f docker-compose-prod.yaml up
 rocket:
