@@ -15,7 +15,7 @@ def insert_into_db(engine, data, table_name, data_format):
 def insert_into_db(engine, data, table_name, data_format, recv_offset):
     """Inserts a new row of data into the given table"""
     try:
-        time_recv = time.time() + recv_offset
+        time_recv = time.time() + recv_offset # TODO: if we are using questdb webservice no longer interacts with load cell
         insert_statement = dict_to_insert_statement(table_name, [time_recv, *data], ["time_recv", *data_format])
         with Session(engine) as session:
             session.execute(text(insert_statement))

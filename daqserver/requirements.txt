@@ -2,3 +2,7 @@ nidaqmx
 numpy
 pyarrow
 pyzmq
+matplotlib
+pandas
+questdb
+scipy

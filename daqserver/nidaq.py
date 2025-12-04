@@ -1,6 +1,7 @@
 import nidaqmx
 from nidaqmx.constants import READ_ALL_AVAILABLE
 from nidaqmx.constants import AcquisitionType
+from nidaqmx.constants import TerminalConfiguration
 from nidaqmx.stream_readers import AnalogMultiChannelReader
 
 import logging
@@ -23,7 +24,7 @@ from nidaq_constants import *
 nidaq_device = "Dev1"
 nidaq_state = {}
 nidaqTask = None
-nidaqFreq = 10
+nidaqFreq = 1000
 nidaqBufferLenSec = 5
 nidaq_lock = Lock()
 
@@ -46,8 +47,9 @@ def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
         for channel_name in data_format:
             nidaqTask.ai_channels.add_ai_voltage_chan(
                 f"{nidaq_device}/ai{channel_port}",
-                min_val=-5,
-                max_val=5,
+                min_val=-10,
+                max_val=10,
+                terminal_config=TerminalConfiguration.DIFF,
                 )
             
             pa_data_format.append((channel_name, pa.float64()))
@@ -103,4 +105,4 @@ def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
             time.sleep(1 / pythonPollingFreq)
 
 if __name__ == "__main__":
-    start_nidaq_task(NIDAQ_DATA_FORMAT, nidaqFreq, nidaqBufferLenSec, 1)
+    start_nidaq_task(NIDAQ_DATA_FORMAT, nidaqFreq, nidaqBufferLenSec, 100)

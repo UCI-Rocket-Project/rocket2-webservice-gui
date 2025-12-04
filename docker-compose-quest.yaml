@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  questdb:
+    image: questdb/questdb:9.2.2
+    ports:
+      - "9000:9000"
+      - "9009:9009"
+      - "8812:8812"
+      - "9003:9003"
+    volumes:
+      - ./quest:/var/lib/questdb
+networks:
+    basic_net:
+        driver: bridge
