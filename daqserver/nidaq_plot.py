@@ -9,13 +9,12 @@ from datetime import datetime
 
 # --- Configuration ---
 nidaq_device = "Dev1"
-nidaqFreq = 1000        # Samples per second
+nidaqFreq = 100000        # Samples per second
 duration = 5            # Seconds to record
 total_samples = nidaqFreq * duration
 
 # Define your channel names here (or import them)
-NIDAQ_DATA_FORMAT = ["Load Cell", "Battery"] 
-#NIDAQ_DATA_FORMAT = ["Load Cell"] 
+NIDAQ_DATA_FORMAT = ["Load Cell"] 
 
 def scan_and_plot():
     try:
@@ -25,8 +24,8 @@ def scan_and_plot():
             for i, channel_name in enumerate(NIDAQ_DATA_FORMAT):
                 task.ai_channels.add_ai_voltage_chan(
                     f"{nidaq_device}/ai{i}",
-                    min_val=-10.0, 
-                    max_val=10.0,
+                    min_val=-10, # Updated to match your plot range preference
+                    max_val=10,
                     terminal_config=TerminalConfiguration.DIFF, 
                     name_to_assign_to_channel=channel_name
                 )
@@ -85,7 +84,7 @@ def save_to_csv(data, freq, channel_names, filename):
     data_T = data.T
     
     with open(filename, mode='w', newline='') as file:
-        writer = csv.writer("./saves/" + file)
+        writer = csv.writer(file)
         
         # Write Header
         header = ["Time(s)"] + channel_names
@@ -117,6 +116,15 @@ def create_plot(data, freq, channel_names):
     plt.title(f"NIDAQ Data ({duration}s Scan)")
     plt.xlabel("Time (s)")
     plt.ylabel("Voltage (V)")
+    
+    # --- Formatting Changes ---
+    # 1. Force fixed Y-axis limits
+    #.plt.ylim(-10, 10)
+    
+    # 2. Disable scientific notation (e.g. 1e-3)
+    # useOffset=False prevents matplotlib from doing the "+1.23e-5" thing at the top of the axis
+    plt.ticklabel_format(style='plain', axis='y', useOffset=False)
+    
     plt.legend(loc='upper right')
     plt.grid(True)
     plt.tight_layout()

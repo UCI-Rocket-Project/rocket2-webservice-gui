@@ -9,7 +9,7 @@ from datetime import datetime
 
 # --- Configuration ---
 nidaq_device = "Dev1"
-target_freq = 100        # The final desired data rate (samples per second)
+target_freq = 1000        # The final desired data rate (samples per second)
 duration = 5             # Seconds to record
 samples_to_average = 100 # Number of raw samples to average into one output sample
 
@@ -28,8 +28,8 @@ def scan_and_plot():
             for i, channel_name in enumerate(NIDAQ_DATA_FORMAT):
                 task.ai_channels.add_ai_voltage_chan(
                     f"{nidaq_device}/ai{i}",
-                    min_val=-10.0, 
-                    max_val=10.0,
+                    min_val=-0.2, 
+                    max_val=0.2,
                     terminal_config=TerminalConfiguration.DIFF, # Using Differential signaling
                     name_to_assign_to_channel=channel_name
                 )
