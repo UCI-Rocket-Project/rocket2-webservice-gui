@@ -95,6 +95,8 @@ PT_CALIBRATIONS = {
     "pressureVent": (190, 11.9)
 }
 
+LOAD_CELL_CALIBRATION = (-0.029, 98.6) #load cell calibration value~ (for v1.0 board), (scaling, y-int) (-42, -2240)
+#-0.029 and 98.6 combo is pretty accurate
 LOAD_CELL_DATA_LENGTH = 8  # 4(packet_time) + 4 * 1(floats) + \r\n
-
+``
 LOAD_CELL_DATA_FORMAT = ["packet_time", "total_force"]

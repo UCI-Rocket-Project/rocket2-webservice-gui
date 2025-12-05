@@ -21,7 +21,7 @@ services:
             - GSE_IP=10.0.2.0
             - GSE_PORT=10001
             - LOAD_CELL_IP=10.0.255.2
-            - LOAD_CELL_PORT=10001 #NO FUCKING WAY!!! (it was 10001 previously)
+            - LOAD_CELL_PORT=10001 #Prev. 10069 previously
         volumes:
             - ./webservice:/app
         healthcheck:

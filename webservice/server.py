@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 
-from helpers import send_solenoid_command, insert_into_db, get_pressure_from_voltage
+from helpers import send_solenoid_command, insert_into_db, get_pressure_from_voltage, get_force_from_voltage
 from constants import *
 
 ecu_ip = os.environ["ECU_IP"]
@@ -205,7 +205,6 @@ def get_state(system_name):
         with load_cell_lock:
             return load_cell_state
     return {"error": "No system"}
-
 
 @app.route("/<system_name>/state/<switch_name>/<new_state>", methods=["POST"])
 def set_solenoid(system_name, switch_name, new_state):
@@ -396,14 +395,15 @@ def handle_update_load_cell_state(new_state):
         print(new_state, flush=True)
         for index, (key, val) in enumerate(zip(LOAD_CELL_DATA_FORMAT, new_state)):
             if type(val) == bool:
-                load_cell_state[key] = int(val)
+                #load_cell_state[key] = int(val)
+                load_cell_state[key] = int(get_force_from_voltage(val)) #note: why type bool?
             elif math.isnan(val):
                 load_cell_state[key] = -1
                 new_state[index] = -1
             else:
-                load_cell_state[key] = val
+                #load_cell_state[key] = val
+                load_cell_state[key] = get_force_from_voltage(val)
 
-    #print(f"Load Cell Force: {load_cell_state["total_force"]}", flush=True) #don't buffer, just flush out 
     # Create a new thread to save to database so we can keep listening for data
     db_thread = Thread(
         target=insert_into_db,

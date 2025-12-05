@@ -5,7 +5,7 @@ import time
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from constants import PT_CALIBRATIONS
+from constants import PT_CALIBRATIONS, LOAD_CELL_CALIBRATION
 
 logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 
@@ -95,3 +95,9 @@ def get_pressure_from_voltage(pt_name, voltage):
     scaling, y_int = PT_CALIBRATIONS[pt_name]
     val = (voltage * scaling) + y_int
     return val if val > 0 else 0
+
+def get_force_from_voltage(voltage):
+    #test voltage remove-next-commit
+    scaling, y_int = LOAD_CELL_CALIBRATION
+    val = (-voltage * scaling) + y_int
+    return val #if val > 0 else 0
