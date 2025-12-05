@@ -149,4 +149,9 @@ def stream_nidaq_to_questdb():
         logging.error(f"General Error: {e}")
 
 if __name__ == "__main__":
-    stream_nidaq_to_questdb()
+    while True:
+        try:
+            stream_nidaq_to_questdb()
+        except Exception as e:
+            print(f"HIGH LEVEL ERROR: {e}")
+            time.sleep(1)
