@@ -24,11 +24,8 @@ from nidaq_constants import *
 nidaq_device = "Dev1"
 nidaq_state = {}
 nidaqTask = None
-nidaqFreq = 1000
-nidaqBufferLenSec = 5
-nidaq_lock = Lock()
+nidaqFreq = 100000
 
-nidaq_port = int(os.environ["NIDAQ_PORT"])
 
 def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
     '''try:
@@ -43,8 +40,8 @@ def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
         for channel_name in data_format:
             nidaqTask.ai_channels.add_ai_voltage_chan(
                 f"{nidaq_device}/ai{channel_port}",
-                min_val=-10,
-                max_val=10,
+                min_val=-0.02,
+                max_val=0.02,
                 terminal_config=TerminalConfiguration.DIFF,
                 )
 
@@ -79,18 +76,23 @@ def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
                     valid_data_buffers = data_buffer[:, :samples_available]
 
                     # For timestamp array
-                    samples_duration = (samples_available - 1) / freq
-                    timestamps = (np.arange(samples_available) / freq) - samples_duration
+                    period = 1 / freq * 1_000_000_000 # ns period per sample
+                    samples_duration = (samples_available - 1) * period
+                    relative_ns = (np.arange(samples_available, dtype=np.float64) * period) - samples_duration
 
+                    print(relative_ns)
+                    timestamps = relative_ns.astype(np.int64) + time.time_ns()
 
+                    np.set_printoptions(formatter={'int': '{:d}'.format}) # Force integer formatting
                     df = pd.DataFrame({
-                        'timestamps': timestamps,
-                        **(zip(data_format, valid_data_buffers)),
+                        'timestamps': pd.to_datetime(timestamps, unit='ns'),
+                        **(dict(zip(data_format, valid_data_buffers))),
                         })
                     
-                    sender.dataframe(df, table_name='LOAD_CELL', at='timestamp')
+                    sender.dataframe(df, table_name='LOAD_CELL', at='timestamps')
 
                     print(f"Sending packet to DB...")
+                    print(df)
                     
                 time.sleep(1 / pythonPollingFreq)
 

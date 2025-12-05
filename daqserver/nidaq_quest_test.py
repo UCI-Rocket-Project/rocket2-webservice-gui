@@ -12,6 +12,8 @@ import time
 
 import struct
 
+import datetime
+
 from threading import Lock, Thread
 
 import numpy as np
@@ -24,11 +26,9 @@ from nidaq_constants import *
 nidaq_device = "Dev1"
 nidaq_state = {}
 nidaqTask = None
-nidaqFreq = 1000
+nidaqFreq = 100000
 nidaqBufferLenSec = 5
 nidaq_lock = Lock()
-
-nidaq_port = int(os.environ["NIDAQ_PORT"])
 
 def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
     '''try:
@@ -53,15 +53,20 @@ def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
                 valid_data_buffers = data_buffer[:, :samples_available]
 
                 # For timestamp array
-                period = 1 / freq / 1_000_000_000
+                period = 1 / freq * 1_000_000_000 # ns period per sample
                 samples_duration = (samples_available - 1) * period
-                timestamps = np.arange(samples_available, start=-
-                                       samples_duration, stop=0, step=1/freq / 1_000_000_000, dtype=np.int64)
+                relative_ns = (np.arange(samples_available, dtype=np.float64) * period) - samples_duration
 
+                print(relative_ns)
+                timestamps = relative_ns.astype(np.int64) + time.time_ns()
+
+                np.set_printoptions(formatter={'int': '{:d}'.format}) # Force integer formatting
                 print(timestamps)
+                print(time.time_ns())
+
                 TimestampNanos.now()
                 df = pd.DataFrame({
-                    'timestamps': timestamps,
+                    'timestamps': pd.to_datetime(timestamps, unit='ns'),
                     **(dict(zip(data_format, valid_data_buffers))),
                     })
                 
