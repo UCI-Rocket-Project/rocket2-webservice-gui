@@ -9,8 +9,8 @@ from datetime import datetime
 
 # --- Configuration ---
 nidaq_device = "Dev1"
-nidaqFreq = 100000        # Samples per second
-duration = 2            # Seconds to record
+nidaqFreq = 10000        # Samples per second
+duration = 10            # Seconds to record
 total_samples = nidaqFreq * duration
 
 # Define your channel names here (or import them)
@@ -58,8 +58,14 @@ def scan_and_plot():
                 number_of_samples_per_channel=total_samples,
                 timeout=duration + 5.0 
             )
+
+            #data_buffer *= 149866.66666
+            #data_buffer -= 1980
+            data_buffer *= 221496.118985
+            data_buffer += -2926.253938
             
             print("Acquisition complete.")
+
 
             # 5. Export to CSV
             timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -101,28 +107,38 @@ def save_to_csv(data, freq, channel_names, filename):
 def create_plot(data, freq, channel_names):
     print("Generating plot...")
     
-    # Create time axis
     num_samples = data.shape[1]
     time_axis = np.linspace(0, num_samples / freq, num_samples)
 
     plt.figure(figsize=(10, 6))
     
-    # Iterate through channels and plot them
+    # --- FIX: DECIMATION / DOWNSAMPLING ---
+    # Plotting 1 million points causes an overflow. 
+    # We will plot every Nth point to make the graph renderable.
+    # 100,000 Hz / 10 = 10,000 points per second (still very high res visually)
+    decimation_factor = 10 
+    
+    # If you have > 5 million points, increase this to 100
+    if num_samples > 1000000:
+        decimation_factor = 100
+
+    # Iterate through channels
     for i, channel_name in enumerate(channel_names):
         if "Bat" in channel_name:
             continue
-        plt.plot(time_axis, data[i], label=channel_name)
+            
+        # Apply the slice [::decimation_factor] to skip points
+        plt.plot(
+            time_axis[::decimation_factor], 
+            data[i][::decimation_factor], 
+            label=channel_name
+        )
 
     plt.title(f"NIDAQ Data ({duration}s Scan)")
     plt.xlabel("Time (s)")
-    plt.ylabel("Voltage (V)")
+    plt.ylabel("Force (lbs)")
     
-    # --- Formatting Changes ---
-    # 1. Force fixed Y-axis limits
-    plt.ylim(-0.015, 0.015)
-    
-    # 2. Disable scientific notation (e.g. 1e-3)
-    # useOffset=False prevents matplotlib from doing the "+1.23e-5" thing at the top of the axis
+    # Disable scientific notation on Y axis
     plt.ticklabel_format(style='plain', axis='y', useOffset=False)
     
     plt.legend(loc='upper right')

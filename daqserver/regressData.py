@@ -9,8 +9,7 @@ import os
 # }
 
 file_map = {
-    0: 0, 18: 18, 132: 132, 117: 117, 150: 150, 160: 160,
-    130: 130, 185: 185,
+    0: 0, 18: 18, 115: 115, 155: 155, 165: 165, 190: 190,
 }
 
 # Lists to store the final data points
@@ -23,7 +22,7 @@ voltage_to_weight_map = {}
 print("Reading files and calculating averages...")
 
 for idx, weight in file_map.items():
-    filename = f"./raw_clean/a{idx}.csv"
+    filename = f"./calibrationnight/a{idx}.csv"
     
     if os.path.exists(filename):
         # Load data, skipping header
@@ -42,7 +41,7 @@ for idx, weight in file_map.items():
         weights.append(weight)
         voltage_to_weight_map[current_avg_voltage] = weight
         
-        print(f"File {filename}: Weight={weight}lb, Avg Voltage={current_avg_voltage:.4f}")
+        print(f"File {filename}: Weight={weight}lb, Avg Voltage={current_avg_voltage:.20f}")
     else:
         print(f"Warning: {filename} not found.")
 
