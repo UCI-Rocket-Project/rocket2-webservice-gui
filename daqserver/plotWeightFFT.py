@@ -3,8 +3,8 @@ import numpy as np
 import os
 
 # --- Calibration Parameters ---
-SLOPE = 135547.807920      
-INTERCEPT = -11.119940 
+SLOPE = 149866.66666    
+INTERCEPT = 0
 
 # --- FFT Filter Settings ---
 ENABLE_FILTER = True
@@ -15,18 +15,22 @@ FILTER_MODE = 'pass'
 # Adjusted to 0-5 Hz so you can see the weight (DC signal). 
 # Set to 50000 and 150000 for your specific request, but ensure your Sampling Rate > 300,000 Hz!
 FILTER_LOW_FREQ = 0
-FILTER_HIGH_FREQ = 20
+FILTER_HIGH_FREQ = 9999
 
 # Map: file_index -> weight
+# file_map = {
+#     2: 22, 3: 30, 4: 39, 5: 47, 8: 73, 11: 98,
+#     13: 115, 15: 132, 17: 153, 19: 178, 21: 203
+# }
 file_map = {
-    2: 22, 3: 30, 4: 39, 5: 47, 8: 73, 11: 98,
-    13: 115, 15: 132, 17: 153, 19: 178, 21: 203
+    0: 0, 18: 18, 132: 132, 117: 117, 150: 150, 160: 160,
+    130: 130, 185: 185,
 }
 
 # --- Path Configuration & Debugging ---
 # Set this to the folder name where your CSVs are stored. 
 # Use "." if they are in the same folder as this script.
-DATA_DIR = "saves" 
+DATA_DIR = "raw_clean" 
 
 print(f"Current Working Directory: {os.getcwd()}")
 print(f"Looking for data files in: {os.path.abspath(DATA_DIR)}")
@@ -83,7 +87,7 @@ print("-" * 90)
 
 for idx, weight in file_map.items():
     # Robustly join paths (handles Windows/Mac/Linux slashes automatically)
-    filename = os.path.join(DATA_DIR, f"a{idx}_cleaned.csv")
+    filename = os.path.join(DATA_DIR, f"a{idx}.csv")
     
     if os.path.exists(filename):
         # Load data

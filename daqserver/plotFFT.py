@@ -5,12 +5,18 @@ import math
 
 # --- Configuration ---
 # Set this to the folder name where your CSVs are stored.
-DATA_DIR = "saves" 
+DATA_DIR = "raw_clean" 
 
 # Map: file_index -> weight
+# file_map = {
+#     2: 22, 3: 30, 4: 39, 5: 47, 8: 73, 11: 98,
+#     13: 115, 15: 132, 17: 153, 19: 178, 21: 203
+# }
+
+
 file_map = {
-    2: 22, 3: 30, 4: 39, 5: 47, 8: 73, 11: 98,
-    13: 115, 15: 132, 17: 153, 19: 178, 21: 203
+    0: 0, 18: 18, 132: 132, 117: 117, 150: 150, 160: 160,
+    130: 130, 185: 185,
 }
 
 # --- Setup Plot Grid ---
@@ -26,7 +32,7 @@ print(f"Generating FFTs for {num_plots} files from '{DATA_DIR}'...")
 
 for i, (idx, weight) in enumerate(file_map.items()):
     ax = axes_flat[i]
-    filename = os.path.join(DATA_DIR, f"a{idx}_cleaned.csv")
+    filename = os.path.join(DATA_DIR, f"a{idx}.csv")
     
     if os.path.exists(filename):
         # 1. Load Data

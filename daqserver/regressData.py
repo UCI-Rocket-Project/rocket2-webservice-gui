@@ -3,9 +3,14 @@ import numpy as np
 import os
 
 # Map: file_index -> weight (lbs)
+# file_map = {
+#     2: 22, 3: 30, 4: 39, 5: 47, 8: 73, 11: 98,
+#     13: 115, 15: 132, 17: 153, 19: 178, 21: 203
+# }
+
 file_map = {
-    2: 22, 3: 30, 4: 39, 5: 47, 8: 73, 11: 98,
-    13: 115, 15: 132, 17: 153, 19: 178, 21: 203
+    0: 0, 18: 18, 132: 132, 117: 117, 150: 150, 160: 160,
+    130: 130, 185: 185,
 }
 
 # Lists to store the final data points
@@ -18,7 +23,7 @@ voltage_to_weight_map = {}
 print("Reading files and calculating averages...")
 
 for idx, weight in file_map.items():
-    filename = f"./saves/a{idx}_cleaned.csv"
+    filename = f"./raw_clean/a{idx}.csv"
     
     if os.path.exists(filename):
         # Load data, skipping header
@@ -28,9 +33,9 @@ for idx, weight in file_map.items():
         # Calculate the mean of the voltage column for this entire file
         # Check if data is 1D (single row) or 2D (multiple rows)
         if data.ndim == 1:
-            current_avg_voltage = data[2]
+            current_avg_voltage = data[1]
         else:
-            current_avg_voltage = np.mean(data[:, 2])
+            current_avg_voltage = np.mean(data[:, 1])
         
         # Store data
         avg_voltages.append(current_avg_voltage)

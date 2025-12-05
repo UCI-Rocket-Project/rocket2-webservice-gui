@@ -10,7 +10,7 @@ from datetime import datetime
 # --- Configuration ---
 nidaq_device = "Dev1"
 nidaqFreq = 100000        # Samples per second
-duration = 5            # Seconds to record
+duration = 2            # Seconds to record
 total_samples = nidaqFreq * duration
 
 # Define your channel names here (or import them)
@@ -24,8 +24,8 @@ def scan_and_plot():
             for i, channel_name in enumerate(NIDAQ_DATA_FORMAT):
                 task.ai_channels.add_ai_voltage_chan(
                     f"{nidaq_device}/ai{i}",
-                    min_val=-10, # Updated to match your plot range preference
-                    max_val=10,
+                    min_val=-0.02, # Updated to match your plot range preference
+                    max_val=0.02,
                     terminal_config=TerminalConfiguration.DIFF, 
                     name_to_assign_to_channel=channel_name
                 )
@@ -119,7 +119,7 @@ def create_plot(data, freq, channel_names):
     
     # --- Formatting Changes ---
     # 1. Force fixed Y-axis limits
-    #.plt.ylim(-10, 10)
+    plt.ylim(-0.015, 0.015)
     
     # 2. Disable scientific notation (e.g. 1e-3)
     # useOffset=False prevents matplotlib from doing the "+1.23e-5" thing at the top of the axis
