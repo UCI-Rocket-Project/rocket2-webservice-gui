@@ -25,6 +25,7 @@ nidaq_device = "Dev1"
 nidaq_state = {}
 nidaqTask = None
 nidaqFreq = 100000
+nidaqBufferLenSec = 5
 
 
 def start_nidaq_task(data_format, freq, bufferTime, pythonPollingFreq):
