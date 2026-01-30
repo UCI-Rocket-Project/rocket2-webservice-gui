@@ -21,7 +21,7 @@ export function PressureChartContainerLines() {
                     ...prevData,
                     {
                         time: elapsedSeconds,
-                        LoxIngTee: ptsRef.current.LoxInjTee,
+                        LoxIngTee: ptsRef.current.Gn2,
                         Vent: ptsRef.current.Vent,
                         LoxMvas: ptsRef.current.LoxMvas
                     }

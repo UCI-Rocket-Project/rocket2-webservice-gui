@@ -88,8 +88,8 @@ def send_solenoid_command(state, connection, connection_lock, system_name):
 
 def get_pressure_from_voltage(pt_name, voltage):
     #test voltage remove-next-commit
-    if "pressureCopv" in pt_name: 
-        print(f"pressureCopv {voltage}")
+    #if "pressureCopv" in pt_name: 
+    #    print(f"pressureCopv {voltage}")
     # if "pressureInjectorLng" in pt_name:
     #     print(f"lng voltage reading {voltage}")
     scaling, y_int = PT_CALIBRATIONS[pt_name]
@@ -98,6 +98,7 @@ def get_pressure_from_voltage(pt_name, voltage):
 
 def get_force_from_voltage(voltage):
     #test voltage remove-next-commit
-    scaling, y_int = LOAD_CELL_CALIBRATION
+    scaling, y_int = LOAD_CELL_CALIBRATION 
     val = (-voltage * scaling) + y_int
+    # val = voltage - raw value only, uncomment for calibration
     return val #if val > 0 else 0

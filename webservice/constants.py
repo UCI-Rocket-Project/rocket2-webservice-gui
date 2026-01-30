@@ -83,20 +83,20 @@ ECU_DATA_FORMAT = [
 PT_CALIBRATIONS = {
     # "ptName": (scaling, y_int)
     # Old 1K Cal (235, -240)
-    "pressureGn2": (1, 0),  # Unused
+    "pressureGn2": (190, 11.9),  # Unused
     "pressureVent": (190, 11.9),
     "pressureLox": (190, 11.9),  # 1K
     "pressureLng": (190, 11.9),  # 1K
     "pressureCopv": (964, 37.2),
-    "pressureInjectorLox": (190, 18.2),  # 1K
+    "pressureInjectorLox": (190, 11.9),  # 1K
     "pressureInjectorLng": (190, 11.9),  # 1K
     "pressureLoxInjTee": (190, 11.9),  # 1K
     "pressureLoxMvas": (190, 11.9),  # 1K
     "pressureVent": (190, 11.9)
 }
 
-LOAD_CELL_CALIBRATION = (-0.029, 98.6) #load cell calibration value~ (for v1.0 board), (scaling, y-int) (-42, -2240)
+LOAD_CELL_CALIBRATION = (-0.0509, -14) #load cell calibration value~ (for v1.0 board), (scaling, y-int) (-42, -2240)
 #-0.029 and 98.6 combo is pretty accurate
 LOAD_CELL_DATA_LENGTH = 8  # 4(packet_time) + 4 * 1(floats) + \r\n
-``
 LOAD_CELL_DATA_FORMAT = ["packet_time", "total_force"]
+ 

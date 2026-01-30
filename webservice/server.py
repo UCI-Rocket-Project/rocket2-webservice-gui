@@ -288,6 +288,7 @@ def start_system_listening(
                                 else raw_data[:-4],
                             )
                         )
+                        print(list_data)
                         update_handler(list_data)
                     # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
@@ -392,17 +393,19 @@ def handle_update_load_cell_state(new_state):
     global is_load_cell_initialized
 
     with load_cell_lock:
-        print(new_state, flush=True)
+        #print(new_state, flush=True)
         for index, (key, val) in enumerate(zip(LOAD_CELL_DATA_FORMAT, new_state)):
             if type(val) == bool:
-                #load_cell_state[key] = int(val)
-                load_cell_state[key] = int(get_force_from_voltage(val)) #note: why type bool?
+                #load_cell_state[key] = int(get_force_from_voltage(val)) #note: why type bool?
+                load_cell_state[key] = int(val)
             elif math.isnan(val):
                 load_cell_state[key] = -1
                 new_state[index] = -1
             else:
-                #load_cell_state[key] = val
-                load_cell_state[key] = get_force_from_voltage(val)
+                #load_cell_state[key] = get_force_from_voltage(val)
+                load_cell_state[key] = val 
+
+            #print("INDEX: " + str(index) + "KEY: " + str(load_cell_state[key]))
 
     # Create a new thread to save to database so we can keep listening for data
     db_thread = Thread(
