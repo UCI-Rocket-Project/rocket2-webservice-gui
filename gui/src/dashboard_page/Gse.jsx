@@ -4,6 +4,8 @@ import RocketGauge from "../rocket_gauge/RocketGauge";
 import RocketSwitch from "../rocket_switch/RocketSwitch";
 import {RocketState} from "../Context";
 import {useToolingContext} from "./tooling/tooling-context/tooling-context";
+import RocketToggle  from "../rocket_toggle/RocketToggle";
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function Gse({toggleKey, keydown}) {
     const {solenoids, pts, tcs, igniters, misc, handleToggleState, isAborted} =
@@ -20,32 +22,7 @@ export function Gse({toggleKey, keydown}) {
                     GSE
                 </h2>
                 <div className={styles.gseGaugeRow}>
-                    <RocketGauge
-                        value={tcs.Engine1}
-                        minValue={0}
-                        maxValue={120}
-                        units={" psi"}
-                        name={"Engine TC 1"}
-                        arc={{
-                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
-                            padding: 0.02,
-                            width: 0.3
-                        }}
-                    />
-                    <RocketGauge
-                        value={tcs.Engine2}
-                        minValue={0}
-                        maxValue={120}
-                        units={" psi"}
-                        name={"Engine TC 2"}
-                        arc={{
-                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
-                            subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
-                            padding: 0.02,
-                            width: 0.3
-                        }}
-                    />
+                    
                 </div>
                 <div className={styles.gseGaugeRow}>
                 <RocketGauge
@@ -57,6 +34,19 @@ export function Gse({toggleKey, keydown}) {
                         arc={{
                             colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
                             subArcs: [{limit: 70}, {limit: 100}, {limit: 120}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                <RocketGauge
+                        value={pts.LoxInjTee}
+                        minValue={0}
+                        maxValue={500}
+                        units={" psi"}
+                        name={"PT4"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
                             padding: 0.02,
                             width: 0.3
                         }}
@@ -124,11 +114,11 @@ export function Gse({toggleKey, keydown}) {
                         onClick={(event) => handleToggleState("gse", "Gn2Disconnect", event)}
                         enabled={keydown === toggleKey && !isAborted}
                     />
-                    <RocketSwitch
+                    {/* <RocketSwitch
                         name="MVAS"
                         expected_value={solenoids["MvasOpen"]?.expected}
                         feedback_value={solenoids["MvasOpen"]?.expected}
-                        onClick={(event) => {
+                        onClick={ (event) => {
                             if (solenoids["MvasOpen"]["expected"] == 0) {
                                 handleToggleState("gse", "MvasClose", 0);
                                 handleToggleState("gse", "MvasOpen", 1);
@@ -138,7 +128,40 @@ export function Gse({toggleKey, keydown}) {
                             }
                         }}
                         enabled={keydown === toggleKey && !isAborted}
-                    />
+                    /> */}
+                </div>
+                <div className={styles.switchRow}>
+                    <RocketToggle
+                        name="MVASOPEN"
+                        delay={0}
+                        expected_value={solenoids["MvasOpen"]?.expected}
+                        feedback_value={solenoids["MvasOpen"]?.feedback}
+                        enabled={keydown === toggleKey && !isAborted}
+                        onClick={async () => {
+                            handleToggleState("gse", "MvasOpen", 1);
+                            await delay(1000);
+                            const error = (solenoids["MvasOpen"] === 0); // success
+                            console.log(error);
+                            handleToggleState("gse", "MvasOpen", 0);
+                            return error;
+                            }
+                        }
+                        />
+                    <RocketToggle
+                        name="MVASCLOSE"
+                        delay={0}
+                        expected_value={solenoids["MvasClose"]?.expected}
+                        feedback_value={solenoids["MvasClose"]?.feedback}
+                        enabled={keydown === toggleKey && !isAborted}
+                        onClick={async () => {
+                            handleToggleState("gse", "MvasClose", 1);
+                            await delay(1000);
+                            const error = (solenoids["MvasClose"] === 1); // success
+                            handleToggleState("gse", "MvasClose", 0);
+                            return error;
+                            }
+                        }
+                        />
                 </div>
                 <div className={styles.switchRow}>
                     <RocketSwitch

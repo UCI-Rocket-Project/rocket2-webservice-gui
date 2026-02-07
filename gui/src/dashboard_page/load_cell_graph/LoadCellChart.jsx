@@ -14,9 +14,9 @@ export function LoadCellChart({data}) {
         <div style={{display: "flex", flexDirection: "column", gap: 8}}>
             <ResponsiveContainer
                 width="100%"
-                height={500}
+                height={450}
             >
-                <LineChart data={data}>
+                <LineChart data={data} margin = {{right:40}}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="time"

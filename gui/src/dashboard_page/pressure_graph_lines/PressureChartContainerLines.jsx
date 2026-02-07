@@ -21,9 +21,12 @@ export function PressureChartContainerLines() {
                     ...prevData,
                     {
                         time: elapsedSeconds,
-                        LoxIngTee: ptsRef.current.Gn2,
+                        LOXMVAS: ptsRef.current.Gn2,
                         Vent: ptsRef.current.Vent,
-                        LoxMvas: ptsRef.current.LoxMvas
+                        LNGMVAS: ptsRef.current.LoxMvas,
+                        LOXINJ: ptsRef.current.InjectorLox,
+                        LOXINJSPARE: ptsRef.current.LoxInjTee,
+                        LNGINJ: ptsRef.current.InjectorLng
                     }
                 ];
 
@@ -48,7 +51,7 @@ export function PressureChartContainerLines() {
                 fontSize: 24
             }}
         >
-            <h4 style={{margin: 0}}>Pressures for Lox</h4>
+            <h4 style={{margin: 0}}>Pressures for lNG</h4>
 
             <PressureChartLines data={data} />
         </div>

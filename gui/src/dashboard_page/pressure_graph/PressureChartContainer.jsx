@@ -48,7 +48,7 @@ export function PressureChartContainer() {
                 fontSize: 24
             }}
         >
-            <h4 style={{margin: 0}}>Pressures</h4>
+            <h4 style={{margin: 0}}>Tank Pressures</h4>
 
             <PressureChart data={data} />
         </div>

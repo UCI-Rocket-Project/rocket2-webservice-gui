@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import styles from "./AbortButton.module.css";
 import {RocketState} from "../../Context";
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function AbortButton({keydown, toggleKey}) {
     const {isAborted, handleToggleState, handleAbort} = useContext(RocketState);
@@ -16,7 +17,7 @@ export function AbortButton({keydown, toggleKey}) {
                     />
                 ) : (
                     <img
-                        onClick={(event) => {
+                        onClick={async (event) => {
                             handleAbort(true);
                             handleToggleState("ecu", "Vent", 0);
                             handleToggleState("ecu", "Pv1", 0);
@@ -26,6 +27,8 @@ export function AbortButton({keydown, toggleKey}) {
                             handleToggleState("gse", "Gn2Vent", 1);
                             handleToggleState("gse", "MvasClose", 1);
                             handleToggleState("gse", "MvasOpen", 0);
+                            await delay(1000);
+                            handleToggleState("gse", "MvasClose", 0);
                         }}
                         src="/button_off_open.png"
                         style={{width: 300}}

@@ -55,7 +55,6 @@ export function DashboardPage({viewOnly=false}) {
                 className={styles.graphBox}
                 style={{overflowY: "auto", height: "95vh"}}
             >
-                <TcChartContainer />
                 <PressureChartContainer />
                 <PressureChartContainerLines />
                 <LoadCellChartContainer />

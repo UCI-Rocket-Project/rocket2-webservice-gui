@@ -44,6 +44,9 @@ export function Ecu({toggleKey, keydown}) {
                             width: 0.3
                         }}
                     />
+                </div>
+                <div className={styles.ecuGaugeRow}>
+
                     <RocketGauge
                         value={pts.Lox}
                         minValue={0}
@@ -57,8 +60,6 @@ export function Ecu({toggleKey, keydown}) {
                             width: 0.3
                         }}
                     />
-                </div>
-                <div className={styles.ecuGaugeRow}>
                     <RocketGauge
                         value={pts.Lng}
                         minValue={0}
@@ -72,6 +73,9 @@ export function Ecu({toggleKey, keydown}) {
                             width: 0.3
                         }}
                     />
+                </div>
+                <div className={styles.ecuGaugeRow}>
+
                     <RocketGauge
                         value={pts.InjectorLox}
                         minValue={0}

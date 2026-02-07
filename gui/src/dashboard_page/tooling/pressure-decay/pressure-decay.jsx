@@ -36,10 +36,13 @@ export function PressureDecay({running, setRunning}) {
     const [startCopvPt, setStartCopvPt] = useState();
     const [startLoxPt, setStartLoxPt] = useState();
     const [startLngPt, setStartLngPt] = useState();
+    const [startVentPt, setStartVentPt] =useState();
 
     const [endCopvPt, setEndCopvPt] = useState();
     const [endLoxPt, setEndLoxPt] = useState();
     const [endLngPt, setEndLngPt] = useState();
+    const [endVentPt, setEndVentPt] = useState();
+
 
     const handleStart = () => {
         setRunning(true);
@@ -47,6 +50,8 @@ export function PressureDecay({running, setRunning}) {
         setStartCopvPt(parseFloat(pts.Copv.toFixed(2)));
         setStartLoxPt(parseFloat(pts.Lox.toFixed(2)));
         setStartLngPt(parseFloat(pts.Lng.toFixed(2)));
+        setStartVentPt(parseFloat(pts.Vent.toFixed(2)));
+
 
         const startTime = Date.now();
         setStartTimestamp(startTime);
@@ -62,7 +67,8 @@ export function PressureDecay({running, setRunning}) {
                     time: elapsedSeconds,
                     Copv: ptsRef.current.Copv,
                     Lox: ptsRef.current.Lox,
-                    Lng: ptsRef.current.Lng
+                    Lng: ptsRef.current.Lng,
+                    Vent:ptsRef.current.Vent,
                 }
             ]);
         }, 1000);
@@ -73,6 +79,7 @@ export function PressureDecay({running, setRunning}) {
             setEndCopvPt(parseFloat(ptsRef.current.Copv.toFixed(2)));
             setEndLoxPt(parseFloat(ptsRef.current.Lox.toFixed(2)));
             setEndLngPt(parseFloat(ptsRef.current.Lng.toFixed(2)));
+            setEndVentPt(parseFloat(ptsRef.current.Vent.toFixed(2)));
 
             setRunning(false);
             setCompletedRun(true);
@@ -88,6 +95,7 @@ export function PressureDecay({running, setRunning}) {
         setStartCopvPt();
         setStartLoxPt();
         setStartLngPt();
+        setStartVentPt();
         setStartTimestamp(0);
         setRunning(false);
         setCompletedRun(false);
@@ -123,6 +131,7 @@ export function PressureDecay({running, setRunning}) {
                         <span>Initial COPV PT: {startCopvPt}</span>
                         <span>Initial LOX PT: {startLoxPt}</span>
                         <span>Initial LNG PT: {startLngPt}</span>
+                        <span>Initial Vent PT:{startVentPt}</span>
                     </div>
 
                     <div style={{height: 1, width: "100%", backgroundColor: "aqua"}} />
@@ -143,6 +152,9 @@ export function PressureDecay({running, setRunning}) {
                                 <div style={{display: "flex", flexDirection: "column"}}>
                                     <span>LNG PT: {pts.Lng} </span>
                                 </div>
+                                <div style={{display: "flex", flexDirection: "column"}}>
+                                    <span>Vent PT: {pts.Vent} </span>
+                                </div>
                             </div>
                         </div>
                     ) : (
@@ -161,6 +173,10 @@ export function PressureDecay({running, setRunning}) {
                                 <div style={{display: "flex", flexDirection: "column"}}>
                                     <span>End LNG PT: {endLngPt} </span>
                                     <span>{calculateChange(startLngPt, endLngPt)} per minute</span>
+                                </div>
+                                <div style={{display: "flex", flexDirection: "column"}}>
+                                    <span>End Vent PT: {endVentPt} </span>
+                                    <span>{calculateChange(startVentPt, endVentPt)} per minute</span>
                                 </div>
                             </div>
                         </div>

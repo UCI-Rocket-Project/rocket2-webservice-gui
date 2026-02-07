@@ -51,9 +51,9 @@ export function PressureChartLines({data}) {
 
             <ResponsiveContainer
                 width="100%"
-                height={500}
+                height={450}
             >
-                <LineChart data={data}>
+                <LineChart data={data} >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="time"
@@ -82,15 +82,36 @@ export function PressureChartLines({data}) {
                         <>
                             <Line
                                 type="monotone"
-                                dataKey="LoxIngTee"
+                                dataKey="LOXMVAS"
                                 stroke="#82ca9d"
                                 dot={false}
                                 isAnimationActive={false}
                             />
                             <Line
                                 type="monotone"
-                                dataKey="LoxMvas"
+                                dataKey="LNGMVAS"
                                 stroke="#fede00"
+                                dot={false}
+                                isAnimationActive={false}
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey ="LOXINJ"
+                                stroke="#f185ff"
+                                dot={false}
+                                isAnimationActive={false}
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey ="LOXINJSPARE"
+                                stroke="#06b806"
+                                dot={false}
+                                isAnimationActive={false}
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey ="LNGINJ"
+                                stroke="#80f0ff"
                                 dot={false}
                                 isAnimationActive={false}
                             />

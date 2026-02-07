@@ -87,7 +87,7 @@ export function App() {
                         // Reset the value to 0 if we get a missing reading so it doesn't just average it again
                         pts[key_name] = 0;
                     } else {
-                        pts[key_name] = ((currentPts.current[key_name] || 0) + state[key]) / 2.0;
+                        pts[key_name] = (/*(currentPts.current[key_name] || 0) +*/ state[key]) // 2.0;
                     }
                 } else if (key.includes("igniter")) {
                     if (key.includes("Armed")) {

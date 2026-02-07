@@ -51,9 +51,9 @@ export function PressureChart({data}) {
 
             <ResponsiveContainer
                 width="100%"
-                height={500}
+                height={450}
             >
-                <LineChart data={data}>
+                <LineChart data={data} margin = {{right:40}}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="time"
