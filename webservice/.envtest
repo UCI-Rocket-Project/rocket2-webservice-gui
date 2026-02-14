@@ -1,4 +1,5 @@
 export ECU_IP=10.0.2.1
+export EXTR_ECU_IP=10.0.2.67
 export ECU_PORT=10001
 export GSE_IP=10.0.2.0
 export GSE_PORT=10001

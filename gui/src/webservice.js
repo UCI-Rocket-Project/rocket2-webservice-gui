@@ -8,6 +8,12 @@ export const getEcuState = () => {
     });
 };
 
+export const getExtrEcuState = () => {
+    return client.get("extr_ecu/state").catch(() => {
+        console.log("error");
+    });
+};
+
 export const getSystemKeys = (systemName) => {
     /**
      * Given the name of the avionics system, returns the keys that are in it's packet

@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState, useCallback} from "react";
 import {RocketState} from "./Context";
-import {getEcuState, getGseState, getLoadCellState, updateRocket} from "./webservice";
+import {getEcuState, getExtrEcuState, getGseState, getLoadCellState, updateRocket} from "./webservice";
 import {DashboardPage} from "./dashboard_page/DashboardPage";
 import {TelemetryPage} from "./telemetry_page/TelemetryPage";
 import {DiagramPage} from "./diagram_page/DiagramPage";
@@ -140,13 +140,16 @@ export function App() {
     const fetchAndDispatchRocketState = useCallback(async () => {
         try {
             const ecuState = (await getEcuState()).data;
+            const extrEcuState = (await getExtrEcuState()).data;
             const gseState = (await getGseState()).data;
             const loadCellState = (await getLoadCellState()).data;
 
-            console.log("Pressure LOX: " + ecuState.pressureInjectorLox);
+            console.log("Extr");
+            console.log(extrEcuState);
 
             const timestamps = {
                 ecu: ecuState.packet_time,
+                extr_ecu: extrEcuState.packet_time,
                 gse: gseState.packet_time,
                 load_cell: loadCellState.packet_time
             };

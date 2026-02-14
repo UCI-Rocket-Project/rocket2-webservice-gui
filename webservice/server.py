@@ -46,6 +46,30 @@ ecu_state = {
     "pressureLng": 0,
 }
 
+
+extr_ecu_ip = os.environ["EXTR_ECU_IP"]
+extr_ecu_port = int(os.environ["ECU_PORT"])
+extr_ecu_connection = None
+is_extr_ecu_initialized = False
+extr_ecu_lock = Lock()
+extr_ecu_connection_lock = Lock()
+
+extr_ecu_state = {
+    "packet_time": 0,
+    "solenoidCurrentCopvVent": 0,
+    "solenoidCurrentPv1": 0,
+    "solenoidCurrentPv2": 0,
+    "solenoidCurrentVent": 0,
+    "solenoidExpectedCopvVent": -1,
+    "solenoidExpectedPv1": -1,
+    "solenoidExpectedPv2": -1,
+    "solenoidExpectedVent": -1,
+    "temperatureCopv": 0,
+    "pressureCopv": 0,
+    "pressureLox": 0,
+    "pressureLng": 0,
+}
+
 gse_ip = os.environ["GSE_IP"]
 gse_port = int(os.environ["GSE_PORT"])
 gse_connection = None
@@ -178,7 +202,7 @@ def save_db_to_files():
         os.makedirs("saves")
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
-    for table_name in ["ecu", "gse", "load_cell"]:
+    for table_name in ["ecu", "gse", "load_cell", "extr_ecu"]:
         cursor.execute(f"SELECT * FROM {table_name} ORDER BY packet_time DESC;")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
@@ -198,6 +222,9 @@ def get_state(system_name):
     if system_name == "ecu":
         with ecu_lock:
             return ecu_state
+    elif system_name == "extr_ecu":
+        with extr_ecu_lock:
+            return extr_ecu_state
     elif system_name == "gse":
         with gse_lock:
             return gse_state
@@ -249,7 +276,7 @@ def start_system_listening(
     update_handler,
     system_name,
 ):
-    global ecu_connection, gse_connection, load_cell_connection
+    global ecu_connection, extr_ecu_connection, gse_connection, load_cell_connection
     while True:
         try:
             logging.info(f"Attempting to connect to {system_name}")
@@ -257,7 +284,11 @@ def start_system_listening(
             if system_name == "ECU":
                 ecu_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 ecu_connection.connect(connection_info)
-                connection = ecu_connection
+                connection = ecu_connection  
+            elif system_name == "EXTR_ECU":
+                extr_ecu_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                extr_ecu_connection.connect(connection_info)
+                connection = extr_ecu_connection
             elif system_name == "GSE":
                 gse_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 gse_connection.connect(connection_info)
@@ -288,7 +319,7 @@ def start_system_listening(
                                 else raw_data[:-4],
                             )
                         )
-                        print(list_data)
+                        #print(list_data)
                         update_handler(list_data)
                     # logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
@@ -389,6 +420,49 @@ def handle_update_ecu_state(new_state):
     is_ecu_initialized = True
 
 
+def handle_update_extr_ecu_state(new_state):
+    global is_extr_ecu_initialized
+    state_missmatch = False
+    with extr_ecu_lock:
+        for index, (key, val) in enumerate(zip(ECU_DATA_FORMAT, new_state)):
+            # Take the voltage from the pressures and convert them using the calibration curves
+            if "pressure" in key:
+                new_state[index] = get_pressure_from_voltage(key, val)
+
+                #added to check force --remove-next-commit
+                # if "pressureInjectorLox" in key: 
+                #     print(f"lox reading {get_pressure_from_voltage(key, val)}")
+                # if "pressureInjectorLng" in key: 
+                #     print(f"lng reading {get_pressure_from_voltage(key, val)}")
+            if "InternalState" in key:  # If it is an internal state key
+                if not is_extr_ecu_initialized:
+                    extr_ecu_state[key.replace("InternalState", "Expected")] = int(val)
+                elif extr_ecu_state[key.replace("InternalState", "Expected")] != int(val):
+                    logging.info(
+                        f"ECU state for {key.replace('InternalState', 'Expected')} does not match "
+                    )
+                    state_missmatch = True
+            else:
+                if type(val) == bool:
+                    extr_ecu_state[key] = int(val)
+                elif math.isnan(val):
+                    extr_ecu_state[key] = -1
+                    new_state[index] = -1
+                else:
+                    if "pressure" in key:
+                        extr_ecu_state[key] = get_pressure_from_voltage(key, val)
+                    else:
+                        extr_ecu_state[key] = val
+    db_thread = Thread(
+        target=insert_into_db, args=(engine, new_state, "extr_ecu", ECU_DATA_FORMAT)
+    )
+    #print(new_state)
+    db_thread.start()
+    if state_missmatch and is_extr_ecu_initialized:
+        send_solenoid_command(extr_ecu_state, extr_ecu_connection, extr_ecu_connection_lock, "extr_ecu")
+    is_extr_ecu_initialized = True
+
+
 def handle_update_load_cell_state(new_state):
     global is_load_cell_initialized
 
@@ -446,6 +520,20 @@ if __name__ == "__main__":
     )
     ecu_listening_thread.daemon = True
     ecu_listening_thread.start()
+
+    extr_ecu_listening_thread = Thread(
+        target=start_system_listening,
+        args=(
+            (extr_ecu_ip, extr_ecu_port),
+            extr_ecu_connection_lock,
+            ECU_DATA_LENGTH,
+            "<Lff????fffffffffffffffffffffffffffffff",  # Should match the one in fake_rocket.py
+            handle_update_extr_ecu_state,
+            "EXTR_ECU",
+        ),
+    )
+    extr_ecu_listening_thread.daemon = True
+    extr_ecu_listening_thread.start()
 
     load_cell_listening_thread = Thread(
         target=start_system_listening,
