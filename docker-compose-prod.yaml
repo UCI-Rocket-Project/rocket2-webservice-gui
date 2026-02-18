@@ -19,7 +19,7 @@ services:
             - ECU_IP=10.0.2.1
             - EXTR_ECU_IP=10.0.2.67
             - ECU_PORT=10001
-            - GSE_IP=10.0.2.0
+            - GSE_IP=10.0.2.3
             - GSE_PORT=10001
             - LOAD_CELL_IP=10.0.255.2
             - LOAD_CELL_PORT=10001 #Prev. 10069 previously

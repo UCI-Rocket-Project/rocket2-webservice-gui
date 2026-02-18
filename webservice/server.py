@@ -381,6 +381,8 @@ def handle_update_ecu_state(new_state):
     global is_ecu_initialized
     state_missmatch = False
     with ecu_lock:
+        logging.info(f"Python log lmao")
+        print("lol test print", flush=True)
         for index, (key, val) in enumerate(zip(ECU_DATA_FORMAT, new_state)):
             # Take the voltage from the pressures and convert them using the calibration curves
             if "pressure" in key:
