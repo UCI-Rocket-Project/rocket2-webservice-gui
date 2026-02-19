@@ -139,6 +139,7 @@ logging.basicConfig(level=logging.INFO)  # Set the logging level to INFO
 def clear_data_from_db():
     with Session(engine) as session:
         session.execute(text("DELETE from ecu;"))
+        session.execute(text("DELETE from extr_ecu;"))
         session.execute(text("DELETE from gse;"))
         session.execute(text("DELETE from load_cell;"))
         session.commit()
