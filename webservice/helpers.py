@@ -78,8 +78,10 @@ def send_solenoid_command(state, connection, connection_lock, system_name):
         with connection_lock:
             if system_name == "ecu":
                 connection.sendall(_gen_ecu_pack(state))
-            else:
+            elif system_name == "gse":
                 connection.sendall(_gen_gse_pack(state))
+            else:
+                logging.error(f"Attempted to send solenoid command for invalid subsystem({system_name})")
     except Exception as e:
         logging.error(f"Failed to set {system_name} Solenoid {e}")
         return {"error": str(e)}

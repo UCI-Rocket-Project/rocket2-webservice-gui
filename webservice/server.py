@@ -416,20 +416,11 @@ def handle_update_ecu_state(new_state):
 
 def handle_update_extr_ecu_state(new_state):
     global is_extr_ecu_initialized
-    state_missmatch = False
     with extr_ecu_lock:
         for index, (key, val) in enumerate(zip(EXTR_ECU_DATA_FORMAT, new_state)):
             # Take the voltage from the pressures and convert them using the calibration curves
             if "pressure" in key:
                 new_state[index] = get_pressure_from_voltage(key, val)
-            if "InternalState" in key:  # If it is an internal state key
-                if not is_extr_ecu_initialized:
-                    extr_ecu_state[key.replace("InternalState", "Expected")] = int(val)
-                elif extr_ecu_state[key.replace("InternalState", "Expected")] != int(val):
-                    logging.info(
-                        f"ECU state for {key.replace('InternalState', 'Expected')} does not match "
-                    )
-                    state_missmatch = True
             else:
                 if type(val) == bool:
                     extr_ecu_state[key] = int(val)
@@ -446,8 +437,6 @@ def handle_update_extr_ecu_state(new_state):
     )
     #print(new_state)
     db_thread.start()
-    if state_missmatch and is_extr_ecu_initialized:
-        send_solenoid_command(extr_ecu_state, extr_ecu_connection, extr_ecu_connection_lock, "extr_ecu")
     is_extr_ecu_initialized = True
 
 
