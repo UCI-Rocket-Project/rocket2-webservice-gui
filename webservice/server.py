@@ -56,18 +56,11 @@ extr_ecu_connection_lock = Lock()
 
 extr_ecu_state = {
     "packet_time": 0,
-    "solenoidCurrentCopvVent": 0,
-    "solenoidCurrentPv1": 0,
-    "solenoidCurrentPv2": 0,
-    "solenoidCurrentVent": 0,
-    "solenoidExpectedCopvVent": -1,
-    "solenoidExpectedPv1": -1,
-    "solenoidExpectedPv2": -1,
-    "solenoidExpectedVent": -1,
-    "temperatureCopv": 0,
-    "pressureCopv": 0,
-    "pressureLox": 0,
-    "pressureLng": 0,
+    "pressureOne": 0,
+    "pressureTwo": 0,
+    "pressureThree": 0,
+    "pressureFour": 0,
+    "pressureFive": 0,
 }
 
 gse_ip = os.environ["GSE_IP"]
@@ -320,8 +313,9 @@ def start_system_listening(
                             )
                         )
                         #print(list_data)
+                        
                         update_handler(list_data)
-                    # logging.info(f"Got data from {system_name} {len(raw_data)}")
+                    logging.info(f"Got data from {system_name} {len(raw_data)}")
                 else:
                     logging.error(
                         f"Didn't get complete packet from {system_name}: {len(raw_data)}"
@@ -381,8 +375,6 @@ def handle_update_ecu_state(new_state):
     global is_ecu_initialized
     state_missmatch = False
     with ecu_lock:
-        logging.info(f"Python log lmao")
-        print("lol test print", flush=True)
         for index, (key, val) in enumerate(zip(ECU_DATA_FORMAT, new_state)):
             # Take the voltage from the pressures and convert them using the calibration curves
             if "pressure" in key:
@@ -426,16 +418,10 @@ def handle_update_extr_ecu_state(new_state):
     global is_extr_ecu_initialized
     state_missmatch = False
     with extr_ecu_lock:
-        for index, (key, val) in enumerate(zip(ECU_DATA_FORMAT, new_state)):
+        for index, (key, val) in enumerate(zip(EXTR_ECU_DATA_FORMAT, new_state)):
             # Take the voltage from the pressures and convert them using the calibration curves
             if "pressure" in key:
                 new_state[index] = get_pressure_from_voltage(key, val)
-
-                #added to check force --remove-next-commit
-                # if "pressureInjectorLox" in key: 
-                #     print(f"lox reading {get_pressure_from_voltage(key, val)}")
-                # if "pressureInjectorLng" in key: 
-                #     print(f"lng reading {get_pressure_from_voltage(key, val)}")
             if "InternalState" in key:  # If it is an internal state key
                 if not is_extr_ecu_initialized:
                     extr_ecu_state[key.replace("InternalState", "Expected")] = int(val)
@@ -456,7 +442,7 @@ def handle_update_extr_ecu_state(new_state):
                     else:
                         extr_ecu_state[key] = val
     db_thread = Thread(
-        target=insert_into_db, args=(engine, new_state, "extr_ecu", ECU_DATA_FORMAT)
+        target=insert_into_db, args=(engine, new_state, "extr_ecu", EXTR_ECU_DATA_FORMAT)
     )
     #print(new_state)
     db_thread.start()

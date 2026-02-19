@@ -52,6 +52,62 @@ export function Gse({toggleKey, keydown}) {
                         }}
                     />
                 </div>
+                <div className={styles.ecuGaugeRow}>
+                    <RocketGauge
+                        value={pts.Two}
+                        minValue={0}
+                        maxValue={500}
+                        name={"*LOX INJ PT"}
+                        units={" psi"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                    <RocketGauge
+                        value={pts.Three}
+                        minValue={0}
+                        maxValue={500}
+                        name={"*LNG INJ PT"}
+                        units={" psi"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                </div>
+                <div className={styles.ecuGaugeRow}>
+                    <RocketGauge
+                        value={pts.Four}
+                        minValue={0}
+                        maxValue={500}
+                        name={"SPARE 4 PT"}
+                        units={" psi"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                    <RocketGauge
+                        value={pts.Five}
+                        minValue={0}
+                        maxValue={500}
+                        name={"SPARE 5 PT"}
+                        units={" psi"}
+                        arc={{
+                            colorArray: ["#5BE12C", "#FFAC1C", "#EA4228"],
+                            subArcs: [{limit: 400}, {limit: 450}, {limit: 500}],
+                            padding: 0.02,
+                            width: 0.3
+                        }}
+                    />
+                </div>
                 {/* <div className={styles.gseGaugeRow}>
                 <RocketGauge
                         value={pts.LoxInjTee}

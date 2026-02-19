@@ -103,6 +103,13 @@ export function PressureChartLines({data}) {
                             />
                             <Line
                                 type="monotone"
+                                dataKey ="LNGINJ"
+                                stroke="#80f0ff"
+                                dot={false}
+                                isAnimationActive={false}
+                            />
+                            <Line
+                                type="monotone"
                                 dataKey ="LOXINJSPARE"
                                 stroke="#06b806"
                                 dot={false}
@@ -110,8 +117,8 @@ export function PressureChartLines({data}) {
                             />
                             <Line
                                 type="monotone"
-                                dataKey ="LNGINJ"
-                                stroke="#80f0ff"
+                                dataKey ="LNGINJSPARE"
+                                stroke="#bb13a5"
                                 dot={false}
                                 isAnimationActive={false}
                             />

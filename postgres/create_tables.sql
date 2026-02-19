@@ -51,6 +51,49 @@ CREATE TABLE IF NOT EXISTS ecu (
     ecefVelocityAccuracy FLOAT
 );
 
+
+CREATE TABLE IF NOT EXISTS extr_ecu (
+    time_recv FLOAT,
+    packet_time INTEGER,
+    packetRssi FLOAT,
+    packetLoss FLOAT,
+    _solenoidInternalStateCopvVent BOOLEAN,
+    _solenoidInternalStatePv1 BOOLEAN,
+    _solenoidInternalStatePv2 BOOLEAN,
+    _solenoidInternalStateVent BOOLEAN,
+    _supplyVoltage FLOAT,
+    _batteryVoltage FLOAT,
+    _solenoidCurrentCopvVent FLOAT,
+    _solenoidCurrentPv1 FLOAT,
+    _solenoidCurrentPv2 FLOAT,
+    _solenoidCurrentVent FLOAT,
+    _temperatureCopv FLOAT,
+    pressureOne FLOAT,
+    pressureTwo FLOAT,
+    pressureThree FLOAT,
+    pressureFour FLOAT,
+    pressureFive FLOAT,
+    _angularVelocityX FLOAT,
+    _angularVelocityY FLOAT,
+    _angularVelocityZ FLOAT,
+    _accelerationX FLOAT,
+    _accelerationY FLOAT,
+    _accelerationZ FLOAT,
+    _magneticFieldX FLOAT,
+    _magneticFieldY FLOAT,
+    _magneticFieldZ FLOAT,
+    _temperature FLOAT,
+    _altitude FLOAT,
+    _ecefPositionX FLOAT,
+    _ecefPositionY FLOAT,
+    _ecefPositionZ FLOAT,
+    _ecefPositionAccuracy FLOAT,
+    _ecefVelocityX FLOAT,
+    _ecefVelocityY FLOAT,
+    _ecefVelocityZ FLOAT,
+    _ecefVelocityAccuracy FLOAT
+);
+
 CREATE TABLE IF NOT EXISTS gse (
     time_recv FLOAT,
     packet_time INTEGER,

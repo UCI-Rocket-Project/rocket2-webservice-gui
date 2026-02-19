@@ -143,17 +143,14 @@ export function App() {
             const extrEcuState = (await getExtrEcuState()).data;
             const gseState = (await getGseState()).data;
             const loadCellState = (await getLoadCellState()).data;
-
-            console.log("Extr");
-            console.log(extrEcuState);
-
+            
             const timestamps = {
                 ecu: ecuState.packet_time,
                 extr_ecu: extrEcuState.packet_time,
                 gse: gseState.packet_time,
                 load_cell: loadCellState.packet_time
             };
-            parseState({...gseState, ...ecuState, ...loadCellState}, timestamps);
+            parseState({...gseState, ...ecuState, ...extrEcuState, ...loadCellState}, timestamps);
         } catch (error) {
             console.error("Error fetching rocket state:", error);
         }

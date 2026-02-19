@@ -21,12 +21,13 @@ export function PressureChartContainerLines() {
                     ...prevData,
                     {
                         time: elapsedSeconds,
-                        LOXMVAS: ptsRef.current.Gn2,
                         Vent: ptsRef.current.Vent,
+                        LOXMVAS: ptsRef.current.Gn2,
                         LNGMVAS: ptsRef.current.LoxMvas,
                         LOXINJ: ptsRef.current.InjectorLox,
-                        LOXINJSPARE: ptsRef.current.LoxInjTee,
-                        LNGINJ: ptsRef.current.InjectorLng
+                        LNGINJ: ptsRef.current.InjectorLng,
+                        LOXINJSPARE: ptsRef.current.Two,
+                        LNGINJSPARE: ptsRef.current.Three,
                     }
                 ];
 

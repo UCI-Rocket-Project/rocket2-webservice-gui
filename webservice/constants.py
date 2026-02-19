@@ -80,6 +80,48 @@ ECU_DATA_FORMAT = [
     "ecefVelocityAccuracy",
 ]
 
+
+EXTR_ECU_DATA_FORMAT = [
+    "packet_time",
+    "packetRssi",
+    "packetLoss",
+    "_solenoidInternalStateCopvVent",
+    "_solenoidInternalStatePv1",
+    "_solenoidInternalStatePv2",
+    "_solenoidInternalStateVent",
+    "_supplyVoltage",
+    "_batteryVoltage",
+    "_solenoidCurrentCopvVent",
+    "_solenoidCurrentPv1",
+    "_solenoidCurrentPv2",
+    "_solenoidCurrentVent",
+    "_temperatureCopv",
+    "pressureOne",
+    "pressureTwo",
+    "pressureThree",
+    "pressureFour",
+    "pressureFive",
+    "_angularVelocityX",
+    "_angularVelocityY",
+    "_angularVelocityZ",
+    "_accelerationX",
+    "_accelerationY",
+    "_accelerationZ",
+    "_magneticFieldX",
+    "_magneticFieldY",
+    "_magneticFieldZ",
+    "_temperature",
+    "_altitude",
+    "_ecefPositionX",
+    "_ecefPositionY",
+    "_ecefPositionZ",
+    "_ecefPositionAccuracy",
+    "_ecefVelocityX",
+    "_ecefVelocityY",
+    "_ecefVelocityZ",
+    "_ecefVelocityAccuracy",
+]
+
 PT_CALIBRATIONS = {
     # "ptName": (scaling, y_int)
     # Old 1K Cal (235, -240)
@@ -92,7 +134,11 @@ PT_CALIBRATIONS = {
     "pressureInjectorLng": (190, 11.9),  # 1K
     "pressureLoxInjTee": (190, 11.9),  # 1K
     "pressureLoxMvas": (190, 11.9),  # 1K
-    "pressureVent": (190, 11.9)
+    "pressureOne": (190, 11.9),
+    "pressureTwo": (190, 11.9),
+    "pressureThree": (190, 11.9),
+    "pressureFour": (190, 11.9),
+    "pressureFive": (190, 11.9)
 }
 
 #-27, 310

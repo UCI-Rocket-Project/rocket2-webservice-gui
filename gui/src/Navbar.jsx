@@ -3,11 +3,12 @@ import {useRocketTimestampsContext} from "./rocket-timestamps/rocketTimestampsCo
 import {useEffect, useState} from "react";
 
 export function Navbar() {
-    const {lastGseTimestamp, lastEcuTimestamp, lastLoadCellTimestamp} =
+    const {lastGseTimestamp, lastEcuTimestamp, lastExtrEcuTimestamp, lastLoadCellTimestamp} =
         useRocketTimestampsContext();
 
     const [timeSinceLastGsePacket, setTimeSinceLastGsePacket] = useState();
     const [timeSinceLastEcuPacket, setTimeSinceLastEcuPacket] = useState();
+    const [timeSinceLastExtrEcuPacket, setTimeSinceLastExtrEcuPacket] = useState();
     const [timeSinceLastLoadCellPacket, setTimeSinceLastLoadCellPacket] = useState();
 
     useEffect(() => {
@@ -17,6 +18,10 @@ export function Navbar() {
     useEffect(() => {
         setTimeSinceLastEcuPacket(Date.now() - lastEcuTimestamp);
     }, [lastEcuTimestamp]);
+
+    useEffect(() => {
+        setTimeSinceLastExtrEcuPacket(Date.now() - lastExtrEcuTimestamp);
+    }, [lastExtrEcuTimestamp]);
 
     useEffect(() => {
         setTimeSinceLastLoadCellPacket(Date.now() - lastLoadCellTimestamp);
@@ -83,6 +88,14 @@ export function Navbar() {
                     ECU:{" "}
                     <span style={{minWidth: 60, textAlign: "right"}}>
                         {timeSinceLastEcuPacket}ms
+                    </span>
+                </span>
+                <span
+                    style={{display: "flex", color: timeSinceLastExtrEcuPacket > 1000 ? "red" : null}}
+                >
+                    EXTR ECU:{" "}
+                    <span style={{minWidth: 60, textAlign: "right"}}>
+                        {timeSinceLastExtrEcuPacket}ms
                     </span>
                 </span>
                 <span
